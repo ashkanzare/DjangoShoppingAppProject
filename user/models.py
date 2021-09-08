@@ -3,9 +3,10 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 
-# Create your models here.
 from constants.vars import PHONE_HELP_TEXT
 
+
+# Create your models here.
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
@@ -50,12 +51,12 @@ class User(AbstractUser):
     password = models.CharField(max_length=500, default=None, blank=True, null=True)
 
     is_costumer = models.BooleanField(default=False)
+    is_manager = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = ['email']
 
     objects = UserManager()
-
 
     def __str__(self):
         return self.phone

@@ -1,3 +1,8 @@
+"""
+    vars.py is a python file that contain constants for using in project
+
+"""
+
 """ Variables """
 FIRST_NAME = 'نام'
 LAST_NAME = 'نام خانوادگی'
@@ -21,6 +26,12 @@ MAX_UNITS = 'حداکثر تعداد واحد'
 USER_TYPE = 'سطح کاربر'
 CUSTOMER = 'مشتری'
 NO_NAME = 'بدون نام'
+DISCOUNT_CODE = 'کد تخفیف'
+END_DATE = 'تاریخ انقضا'
+END_DATE_HELP_TEXT = 'تاریخ به طور خودکار تا یک ماه دیگر تنظیم شده است'
+SEARCH_FOR_USER_HELP_TEXT = 'روی علامت جستجو کلیک کرده و مشتری را بر اساس شماره تلفن پیدا کنید'
+
+
 """ Errors """
 INVALID_USERNAME = 'نام کاربری در سیستم موجود است'
 INVALID_PHONE = 'شماره تماس در سیستم موجود است'
@@ -31,6 +42,7 @@ INVALID_USERNAME_PASSWORD = 'نام کاربری یا رمز عبور اشتبا
 INVALID_LEVEL = 'شما اجازه ی دسترسی به این سطح کاربری را ندارید'
 INVALID_RENT_COUNT = 'شما نمیتوانید بیشتر از 5 کتاب امانت بگیرید'
 RENT_REMAIN = 'تعداد انتخاب های باقیمانده ی شما: '
+
 """ Register Confirmation """
 REGISTER_SUCCESS = 'ثبت نام شما با موفقیت انجام شد'
 
