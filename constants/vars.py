@@ -4,7 +4,7 @@
 """
 
 """ Variables """
-FIRST_NAME = 'نام'
+FIRST_NAME = NAME = 'نام'
 LAST_NAME = 'نام خانوادگی'
 AGE = 'سن'
 EMAIL = 'ایمیل'
@@ -30,8 +30,11 @@ DISCOUNT_CODE = 'کد تخفیف'
 END_DATE = 'تاریخ انقضا'
 END_DATE_HELP_TEXT = 'تاریخ به طور خودکار تا یک ماه دیگر تنظیم شده است'
 SEARCH_FOR_USER_HELP_TEXT = 'روی علامت جستجو کلیک کرده و مشتری را بر اساس شماره تلفن پیدا کنید'
-
-
+PARENT = 'والد'
+CATEGORY = 'دسته'
+DESCRIPTION = 'توضیحات'
+PROPERTY = 'ویژگی'
+PRODUCT = 'محصول'
 """ Errors """
 INVALID_USERNAME = 'نام کاربری در سیستم موجود است'
 INVALID_PHONE = 'شماره تماس در سیستم موجود است'
