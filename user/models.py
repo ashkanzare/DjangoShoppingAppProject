@@ -3,7 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 
-from constants.vars import PHONE_HELP_TEXT
+import constants.vars as const
+from utils.utils_functions import generate_random_code
 
 
 # Create your models here.
@@ -46,10 +47,11 @@ class User(AbstractUser):
 
     username = None
     email = models.EmailField(blank=True, null=True)
-    phone_regex = RegexValidator(regex=r'^9\d{9}$', message=PHONE_HELP_TEXT)
+    phone_regex = RegexValidator(regex=r'^9\d{9}$', message=const.PHONE_HELP_TEXT)
     phone = models.CharField(validators=[phone_regex], max_length=10, unique=True)
+    password = models.CharField(max_length=1000, blank=True, null=True)
 
-    is_costumer = models.BooleanField(default=False)
+    is_customer = models.BooleanField(default=False)
     is_manager = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'phone'
@@ -58,4 +60,12 @@ class User(AbstractUser):
     objects = UserManager()
 
     def __str__(self):
-        return self.phone
+        return f'[ {self.phone} ]'
+
+
+class UserAuthCode(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=const.USER)
+    code = models.CharField(max_length=5, default=generate_random_code)
+
+    def __str__(self):
+        return f'[ {self.user} ] -- [ {self.code} ]'

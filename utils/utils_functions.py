@@ -15,6 +15,12 @@ def generate_random_string():
     return ''.join(choices(chars, k=8))
 
 
+def generate_random_code():
+    """ generate random 5 digits number for user auth """
+    chars = string.digits
+    return ''.join(choices(chars, k=5))
+
+
 def validate_discount_date():
     """ generate end_date for discount code for 30 days """
     timestamp = datetime.utcnow().timestamp()

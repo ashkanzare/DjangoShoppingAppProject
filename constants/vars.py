@@ -4,6 +4,7 @@
 """
 
 """ Variables """
+USER = 'کاربر'
 FIRST_NAME = NAME = 'نام'
 LAST_NAME = 'نام خانوادگی'
 AGE = 'سن'
@@ -35,6 +36,7 @@ CATEGORY = 'دسته'
 DESCRIPTION = 'توضیحات'
 PROPERTY = 'ویژگی'
 PRODUCT = 'محصول'
+USER_AUTH_CODE = 'کد تاییدیه'
 
 """ Errors """
 INVALID_USERNAME = 'نام کاربری در سیستم موجود است'

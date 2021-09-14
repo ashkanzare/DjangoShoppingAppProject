@@ -1,4 +1,3 @@
-
 """OnlineShopApp URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -20,8 +19,9 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('customer/', include('customer.urls')),
-    path('product/', include('product.urls')),
-    path('order/', include('order.urls'))
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+                  path('admin/', admin.site.urls),
+                  path('customer/', include('customer.urls')),
+                  path('product/', include('product.urls')),
+                  path('order/', include('order.urls')),
+                  path('api/', include('core.urls'))
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
