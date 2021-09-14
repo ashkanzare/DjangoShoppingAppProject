@@ -1,10 +1,16 @@
 from django.db import models
 
-# Create your models here.
 import constants.vars as const
+
+""" Product App's Models """
 
 
 class Category(models.Model):
+    """
+         Category Model contains:
+                name(required),
+                parent(optional),
+    """
     name = models.CharField(max_length=250, unique=True, verbose_name=const.NAME)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, verbose_name=const.PARENT)
 
@@ -12,10 +18,15 @@ class Category(models.Model):
         return f"[ Parent: {self.parent.name if self.parent else 0} ] -- [ Child: {self.name} ]"
 
     class Meta:
-        ordering = ('parent__name', )
+        ordering = ('parent__name',)
 
 
 class ProductProperty(models.Model):
+    """
+         ProductProperty Model contains:
+                name(required),
+                parent(required),
+    """
     name = models.CharField(max_length=250, unique=True, verbose_name=const.NAME)
     category = models.ForeignKey(Category, on_delete=models.RESTRICT, verbose_name=const.CATEGORY)
 
@@ -24,6 +35,11 @@ class ProductProperty(models.Model):
 
 
 class Product(models.Model):
+    """
+         Product Model contains:
+                name(required),
+                parent(required),
+    """
     name = models.CharField(max_length=1000, verbose_name=const.NAME)
     category = models.ForeignKey(Category, on_delete=models.RESTRICT, verbose_name=const.CATEGORY)
 
@@ -36,6 +52,12 @@ class Product(models.Model):
 
 
 class PropertyDescription(models.Model):
+    """
+         PropertyDescription Model contains:
+                product(required),
+                property(required),
+                description(required),
+    """
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=const.PRODUCT)
     property = models.ForeignKey(ProductProperty, on_delete=models.RESTRICT, verbose_name=const.PROPERTY)
     description = models.CharField(max_length=1000, verbose_name=const.DESCRIPTION)

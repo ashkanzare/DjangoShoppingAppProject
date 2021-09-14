@@ -141,3 +141,11 @@ STATICFILES_DIRS = (
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user.User'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SESSION_COOKIE_SECURE = False
+# SMS Backend configure
+SMS_BACKEND = 'sms.backends.console.SmsBackend'

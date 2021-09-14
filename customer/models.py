@@ -30,7 +30,7 @@ class Customer(models.Model):
     date = models.DateField(default=datetime.utcnow)
 
     def __str__(self):
-        return f'{self.user.phone} -- {self.last_name if self.last_name else NO_NAME}'
+        return f"{self.user.phone} -- {self.last_name if self.last_name else NO_NAME}"
 
 
 class Address(models.Model):

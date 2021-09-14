@@ -1,9 +1,7 @@
-from django import forms
 from django.contrib import admin
-
 from .models import Category, PropertyDescription, ProductProperty, Product
 
-# Register your models here.
+""" Property App's Models Register """
 
 
 class PropertyDescriptionTabularInline(admin.TabularInline):
@@ -21,6 +19,7 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ['category__name', 'name']
     autocomplete_fields = ['category']
     inlines = [PropertyDescriptionTabularInline]
+    list_filter = ['category']
 
 
 @admin.register(ProductProperty)
@@ -31,4 +30,3 @@ class ProductPropertyAdmin(admin.ModelAdmin):
 @admin.register(PropertyDescription)
 class PropertyDescriptionAdmin(admin.ModelAdmin):
     autocomplete_fields = ['property', 'product']
-

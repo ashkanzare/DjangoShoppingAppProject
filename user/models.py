@@ -48,7 +48,6 @@ class User(AbstractUser):
     email = models.EmailField(blank=True, null=True)
     phone_regex = RegexValidator(regex=r'^9\d{9}$', message=PHONE_HELP_TEXT)
     phone = models.CharField(validators=[phone_regex], max_length=10, unique=True)
-    password = models.CharField(max_length=500, default=None, blank=True, null=True)
 
     is_costumer = models.BooleanField(default=False)
     is_manager = models.BooleanField(default=False)
