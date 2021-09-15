@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils.datetime_safe import datetime
+import django.utils.timezone as current_time
 
 from constants.vars import *
 
@@ -27,7 +27,7 @@ class Customer(models.Model):
     birthday = models.DateField(blank=True, null=True, verbose_name=BIRTHDAY)
     personal_id = models.CharField(max_length=200, unique=True, blank=True, null=True, verbose_name=PERSONAL_ID)
     email = models.EmailField(blank=True, null=True, verbose_name=EMAIL)
-    date = models.DateField(default=datetime.utcnow)
+    date = models.DateField(default=current_time.now)
 
     def __str__(self):
         return f"{self.user.phone} -- {self.last_name if self.last_name else NO_NAME}"

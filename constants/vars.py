@@ -37,6 +37,7 @@ DESCRIPTION = 'توضیحات'
 PROPERTY = 'ویژگی'
 PRODUCT = 'محصول'
 USER_AUTH_CODE = 'کد تاییدیه'
+EXP_TIME = 'زمان انقضا'
 
 """ Errors """
 INVALID_USERNAME = 'نام کاربری در سیستم موجود است'

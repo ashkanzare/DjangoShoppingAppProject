@@ -2,9 +2,11 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
+import django.utils.timezone as current_time
+from django.utils.datetime_safe import datetime
 
 import constants.vars as const
-from utils.utils_functions import generate_random_code
+from utils.utils_functions import generate_random_code, compute_code_expire_time
 
 
 # Create your models here.
@@ -19,7 +21,8 @@ class UserManager(BaseUserManager):
         if not phone:
             raise ValueError('The given phone must be set')
         user = self.model(phone=phone, **extra_fields)
-        user.set_password(password)
+        if password:
+            user.set_password(password)
         user.save(using=self._db)
         return user
 
@@ -49,12 +52,11 @@ class User(AbstractUser):
     email = models.EmailField(blank=True, null=True)
     phone_regex = RegexValidator(regex=r'^9\d{9}$', message=const.PHONE_HELP_TEXT)
     phone = models.CharField(validators=[phone_regex], max_length=10, unique=True)
-    password = models.CharField(max_length=1000, blank=True, null=True)
-
     is_customer = models.BooleanField(default=False)
     is_manager = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'phone'
+
     REQUIRED_FIELDS = ['email']
 
     objects = UserManager()
@@ -64,8 +66,14 @@ class User(AbstractUser):
 
 
 class UserAuthCode(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=const.USER)
-    code = models.CharField(max_length=5, default=generate_random_code)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=const.USER, unique=True)
+    code = models.CharField(max_length=5, default=generate_random_code, verbose_name=const.USER_AUTH_CODE)
+    exp_time = models.DateTimeField(default=compute_code_expire_time, verbose_name=const.EXP_TIME)
 
     def __str__(self):
         return f'[ {self.user} ] -- [ {self.code} ]'
+
+    def check_expire_time(self):
+        now = datetime.utcnow()
+        remaining_time = self.exp_time - now
+        return remaining_time.seconds < 120

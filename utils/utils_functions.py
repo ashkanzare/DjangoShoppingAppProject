@@ -1,6 +1,5 @@
 from random import choices
 import string
-
 from django.utils.datetime_safe import datetime
 
 """
@@ -25,4 +24,11 @@ def validate_discount_date():
     """ generate end_date for discount code for 30 days """
     timestamp = datetime.utcnow().timestamp()
     timestamp += 30 * 24 * 3600
+    return datetime.fromtimestamp(timestamp)
+
+
+def compute_code_expire_time():
+    """ generate end_date for auth code for 2 minutes """
+    timestamp = datetime.utcnow().timestamp()
+    timestamp += 120
     return datetime.fromtimestamp(timestamp)
