@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+{% if user.is_authenticated %}
+    {{ user }}
+    <a href="{% url 'customer:logout' %}">logout</a>
+{% endif %}
+{% if phone %}
+    <div class="text-center">
+            <h2>ثبت نام</h2>
+        </div>
+        <div class="text-right">
+            <form action="{% url 'register-login' %}" method="post" enctype="multipart/form-data" id="register-login">
+                {% csrf_token %}
+                {{ form }}
+                <input type="submit" value="ثبت درخواست">
+            </form>
+        </div>
+    <script>
+        let s;
+    $("#register-login").submit(function(e) {
+
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+
+        var form = $(this);
+        var url = form.attr('action');
+
+        $.ajax({
+               type: "POST",
+               url: url,
+               data: form.serialize(), // serializes the form's elements.
+               success: function(data)
+               {
+                   alert(data); // show response from the python script.
+                   if (data['status'] === 0) {
+                       let new_url = "{% url 'customer:login' %}?token="+data['token'];
+                       window.location.replace(new_url)
+                   }
+                   else if (data['status'] === 1) {
+                       let new_url = "{% url 'customer:register' %}?token="+data['token'];
+                       window.location.replace(new_url)
+                   }
+               }
+             });
+
+
+    });
+    </script>
+{% else %}
+    <div class="text-center">
+    {{ user.token }}
+            <h2>ثبت کد</h2>
+        </div>
+        <div class="text-right">
+            {% if login %}
+                <form action="{% url 'check-code' %}" method="post" enctype="multipart/form-data" id="register-login">
+            {% elif register %}
+                <form action="{% url 'check-code' %}" method="post" enctype="multipart/form-data" id="register-login">
+            {% endif %}
+                {% csrf_token %}
+                {{ form }}
+                <input type="submit" value="ثبت درخواست">
+            </form>
+        </div>
+    <script>
+
+    $("#register-login").submit(function(e) {
+
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+
+        var form = $(this);
+        var url = form.attr('action');
+        var token = window.location.href.split('?')[1].substring(6,)
+        console.log(token, $('#id_code').val())
+        $.ajax({
+               type: "POST",
+               url: url,
+               data:{'token': token, 'code': $('#id_code').val()}, // serializes the form's elements.
+               success: function(data)
+               {
+                   console.log(data); // show response from the python script.
+                   let new_url = "{% url 'customer:register-login' %}";
+                   window.location.replace(new_url)
+               }
+             });
+
+
+    });
+    </script>
+{% endif %}
+</body>
+</html>
