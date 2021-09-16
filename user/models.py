@@ -2,7 +2,6 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
-import django.utils.timezone as current_time
 from django.utils.datetime_safe import datetime
 
 import constants.vars as const
@@ -71,15 +70,15 @@ class User(AbstractUser):
 class UserAuthCode(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=const.USER, unique=True)
     code = models.CharField(max_length=5, default=generate_random_code, verbose_name=const.USER_AUTH_CODE)
-    exp_time = models.DateTimeField(default=compute_code_expire_time, verbose_name=const.EXP_TIME)
+    exp_time = models.IntegerField(default=compute_code_expire_time, verbose_name=const.EXP_TIME)
 
     def __str__(self):
         return f'[ {self.user} ] -- [ {self.code} ]'
 
     def check_expire_time(self):
-        now = datetime.utcnow()
+        now = int(datetime.utcnow().timestamp())
         remaining_time = self.exp_time - now
-        return remaining_time.seconds < 120
+        return 0 < remaining_time <= 120
 
 
 @receiver(post_save, sender=User)

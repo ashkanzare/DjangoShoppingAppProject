@@ -8,6 +8,8 @@ from sms import send_sms
 from user.api.serializers import UserSerializer, CustomerUserSerializer, UserAuthCodeSerializer
 from user.models import User, UserAuthCode
 
+import constants.vars as const
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -33,23 +35,44 @@ def register_login_view(request):
         serializer = CustomerUserSerializer(data=request.data)
         data = {}
         if serializer.is_valid():
+            # user does not exist -> register
             user = serializer.save()
             user.is_customer = True
             user.is_active = False
-            data['response'] = 'user created successfully'
-            data['phone'] = user.phone
-            data['token'] = Token.objects.get(user=user).key
-            data['active'] = user.is_active
-            data['status'] = 1
+            data = {
+                'response': 'user created successfully',
+                'phone': user.phone,
+                'token': Token.objects.get(user=user).key,
+                'active': user.is_active,
+                'status': 1
+            }
             send_sms(
                 str(UserAuthCode.objects.get(user=user).code),
                 '+12065550100',
-                ['+441134960000'],
+                [f'+98{user.phone}'],
                 fail_silently=False
             )
         else:
-            data['error'] = serializer.errors
-            data['status'] = 0
+            try:
+                user = User.objects.get(phone=request.data['phone'])
+                # user exists -> login
+                data = {
+                    'response': 'user exists',
+                    'phone': request.data['phone'],
+                    'token': Token.objects.get(user=user).key,
+                    'status': 0
+                }
+                send_sms(
+                    str(UserAuthCode.objects.create(user=user).code),
+                    '+12065550100',
+                    [f'+98{request.data["phone"]}'],
+                    fail_silently=False
+                )
+            except User.DoesNotExist:
+                data = {
+                    'error': serializer.errors,
+                    status: 2
+                }
         return Response(data)
 
 
@@ -58,20 +81,29 @@ def check_user_code(request):
     if request.method == 'POST':
         serializer = UserAuthCodeSerializer(data=request.data)
         data = {}
-        print(request.data)
         if serializer.is_valid():
             try:
-                user_by_token = Token.objects.get(key=request.data['token']).user
-                user_code = UserAuthCode.objects.get(user=user_by_token)
-                if user_code.code == request.data['code']:
-                    data['status'] = 'ok'
-                    data['active'] = user_by_token.is_active = True
-                    login(request, user_by_token)
-                    user_code.delete()
+                token = Token.objects.get(key=request.data['token'])
+                user = token.user
+                user_code = UserAuthCode.objects.get(user=user)
+                if user_code.check_expire_time():
+                    if user_code.code == request.data['code']:
+                        data['status'] = 'ok', 10
+                        data['active'] = user.is_active = True
+                        login(request, user)
+                        user_code.delete()
+                        token.delete()
+                        Token.objects.create(user=user)
+
+                    else:
+                        data['status'] = 'invalid code', 20
                 else:
-                    data['status'] = 'invalid code'
+                    user_code.delete()
+                    data['status'] = 'time is up', 30
             except (UserAuthCode.DoesNotExist, Token.DoesNotExist):
-                data['status'] = 'invalid input'
+                data['status'] = 'invalid input', 40
         else:
             data['error'] = serializer.errors
         return Response(data)
+
+

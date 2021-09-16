@@ -49,7 +49,10 @@ INVALID_USERNAME_PASSWORD = 'نام کاربری یا رمز عبور اشتبا
 INVALID_LEVEL = 'شما اجازه ی دسترسی به این سطح کاربری را ندارید'
 INVALID_RENT_COUNT = 'شما نمیتوانید بیشتر از 5 کتاب امانت بگیرید'
 RENT_REMAIN = 'تعداد انتخاب های باقیمانده ی شما: '
-
+ERROR_TO_CODE = {
+    "user with this phone already exists.": 0,
+    PHONE_HELP_TEXT: 2
+}
 """ Register Confirmation """
 REGISTER_SUCCESS = 'ثبت نام شما با موفقیت انجام شد'
 

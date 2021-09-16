@@ -14,6 +14,9 @@ class CustomerUserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ['url', 'phone']
+        extra_kwargs = {
+            'description': {'error_messages': {'unique': "shit"}},
+        }
 
 
 class TokenSerializer(serializers.ModelSerializer):

@@ -1,6 +1,6 @@
 from random import choices
 import string
-from django.utils.datetime_safe import datetime
+from django.utils.datetime_safe import datetime, time
 
 """
     utils_function.py is a module for extra functions that project needed
@@ -31,4 +31,4 @@ def compute_code_expire_time():
     """ generate end_date for auth code for 2 minutes """
     timestamp = datetime.utcnow().timestamp()
     timestamp += 120
-    return datetime.fromtimestamp(timestamp)
+    return timestamp

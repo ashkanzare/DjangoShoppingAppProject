@@ -18,8 +18,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+from rest_framework_simplejwt import views as jwt_views
+
 urlpatterns = [
                   path('admin/', admin.site.urls),
+                  # apps urls
                   path('customer/', include('customer.urls')),
                   path('product/', include('product.urls')),
                   path('order/', include('order.urls')),

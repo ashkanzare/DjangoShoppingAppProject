@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% if user.is_authenticated %}
+    {{ user }}
+    <a href="{% url 'customer:logout' %}">logout</a>
+{% endif %}
+Home
+</body>
+</html>
