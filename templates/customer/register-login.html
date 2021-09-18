@@ -1,97 +1,144 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-</head>
-<body>
-{% if user.is_authenticated %}
-    {{ user }}
-    <a href="{% url 'customer:logout' %}">logout</a>
-{% endif %}
-{% if phone %}
-    <div class="text-center">
-            <h2>ثبت نام</h2>
+{% extends 'base.html' %}
+{% load customer_extras %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block title %}{% translate "ورود/ثبت نام | فروشگاه اینترنتی میشاپ" %}{% endblock %}
+{% block main %}
+    <input type="hidden" id="customer-login-url" data-url="{% url 'customer:login' 'confirm' %}">
+    <input type="hidden" id="customer-register-url" data-url="{% url 'customer:register' 'confirm' %}">
+    <input type="hidden" id="customer-home-url" data-url="{% url 'customer:home' %}">
+    <input type="hidden" id="customer-register-login-url" data-url="{% url 'customer:register-login' %}">
+    <input type="hidden" id="customer-refresh-code-url" data-url="{% url 'auth_api:refresh-code' %}">
+    <input type="hidden" id="customer-login-password-url" data-url="{% url 'auth_api:login-with-password' %}">
+    {% if login_type == 'password' %}
+
+
+        <div class="vertical-center jumbotron">
+            <div class="container text-center d-flex justify-content-center popup">
+                <span class="popuptext" id="myPopup"><p id="ajax-errors"></p><a id="dismiss-login-errors"
+                                                                                        class="float-left ml-5 dismiss-message">متوجه شدم</a></span><br>
+                <div class="panel text-right w-50 auth-panel p-4">
+                    <div>
+                        <div class="text-center">
+                            <h1 id="auth-box-title">MeShop</h1>
+                        </div>
+                    </div>
+                    <div class="panel-body text-right">
+
+                        <form id="login-password" method="post" action="{% url 'auth_api:login-with-password' %}"
+                              class="register-form" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <h4> رمز عبور را وارد کنید </h4>
+                                <h5 class="mt-4 text-secondary">رمز عبور حساب کاربری خود را وارد کنید</h5>
+                            </div>
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <div class="mt-5 mb-5">
+                                {% if not auth_by %}
+                                    <div class="mt-5 mb-4">
+                                        <a href="{% url 'customer:login' "confirm" %}?token={{ token }}&login_type={{ "onetime_code" }}"
+                                           class="links"> ورود با رمز یکبار مصرف<span class="mr-2">></span></a>
+                                    </div>
+                                {% endif %}
+                                <div>
+                                    <a href="{% url 'customer:phone-reset-password' 'confirm' %}?token={{ token }}"
+                                       class="links"> بازیابی رمزعبور<span class="mr-2">></span></a>
+                                </div>
+                            </div>
+                            <input type="submit" class="btn red w-100 submit-btn" value="ادامه">
+                        </form>
+                    </div>
+
+                </div>
+            </div>
         </div>
-        <div class="text-right">
-            <form action="{% url 'register-login' %}" method="post" enctype="multipart/form-data" id="register-login">
-                {% csrf_token %}
-                {{ form }}
-                <input type="submit" value="ثبت درخواست">
-            </form>
-        </div>
-    <script>
-        let s;
-    $("#register-login").submit(function(e) {
-
-        e.preventDefault(); // avoid to execute the actual submit of the form.
-
-        var form = $(this);
-        var url = form.attr('action');
-
-        $.ajax({
-               type: "POST",
-               url: url,
-               data: form.serialize(), // serializes the form's elements.
-               success: function(data)
-               {
-                   alert(data); // show response from the python script.
-                   if (data['status'] === 0) {
-                       let new_url = "{% url 'customer:login' %}?token="+data['token'];
-                       window.location.replace(new_url)
-                   }
-                   else if (data['status'] === 1) {
-                       let new_url = "{% url 'customer:register' %}?token="+data['token'];
-                       window.location.replace(new_url)
-                   }
-               }
-             });
 
 
-    });
-    </script>
-{% else %}
-    <div class="text-center">
-    {{ user.token }}
-            <h2>ثبت کد</h2>
-        </div>
-        <div class="text-right">
-            {% if login %}
-                <form action="{% url 'check-code' %}" method="post" enctype="multipart/form-data" id="register-login">
-            {% elif register %}
-                <form action="{% url 'check-code' %}" method="post" enctype="multipart/form-data" id="register-login">
+    {% else %}
+        {% if user.is_authenticated %}
+            <h1>Page not found</h1>
+        {% else %}
+            {% if phone %}
+
+                <div class="vertical-center jumbotron">
+                    <div class="container text-center d-flex justify-content-center popup">
+                        <span class="popuptext" id="myPopup"><p id="ajax-errors"></p><a id="dismiss-login-errors"
+                                                                                        class="float-left ml-5 dismiss-message">متوجه شدم</a></span><br>
+                        <div class="panel text-right w-50 auth-panel p-4">
+                            <div>
+                                <div class="text-center">
+                                    <h1 id="auth-box-title">MeShop</h1>
+                                </div>
+                            </div>
+                            <div class="panel-body text-right">
+                                <form id="register-login" method="post" action="{% url 'auth_api:register-login' %}"
+                                      class="register-form" enctype="multipart/form-data">
+                                    <div class="form-group">
+                                        <h4>ورود <span class="slash">/</span> ثبت نام</h4>
+                                        <h5 class="mt-4 text-secondary">شماره تلفن یا ایمیل خود را وارد کنید</h5>
+                                    </div>
+                                    {% csrf_token %}
+                                    {{ form|crispy }}
+                                    <input type="submit" class="btn red w-100 submit-btn" value="ورود به میشاپ">
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            {% else %}
+                <div class="vertical-center jumbotron">
+                    <div class="container text-center d-flex justify-content-center flex-row popup">
+                        <span class="popuptext" id="myPopup"><p id="ajax-errors"></p><a id="dismiss-login-errors"
+                                                                                        class="float-left ml-5 dismiss-message">متوجه شدم</a></span><br>
+                        <div class="panel text-right w-50 auth-panel p-4">
+                            <div>
+                                <div class="text-center">
+                                    <h1 id="auth-box-title">MeShop</h1>
+                                </div>
+                            </div>
+                            <div class="panel-body text-right">
+                                {% if login %}
+                                    <form action="{% url 'auth_api:check-code' %}" method="post"
+                                          enctype="multipart/form-data"
+                                          id="user-code">
+                                {% elif register %}
+                                    <form action="{% url 'auth_api:check-code' %}" method="post"
+                                          enctype="multipart/form-data"
+                                          id="user-code">
+                                {% endif %}
+                                <div class="form-group">
+                                    <h4>کد تایید را وارد نمایید</h4>
+                                    <h5 class="mt-4 text-secondary">کد تایید برای شماره موبایل
+                                        ۰{{ phone_number|en_to_fa }} ارسال گردید</h5>
+
+                                </div>
+                                {% csrf_token %}
+                                {{ form|crispy }}
+                                {% if login %}
+                                    <div class="mt-2 mb-5">
+                                        <a href="{% url 'customer:login' "confirm" %}?token={{ token }}&login_type={{ "password" }}"
+                                           class="links"> ورود با رمزعبور<span class="mr-2">></span></a>
+                                    </div>
+
+                                {% endif %}
+                                <div class="text-center mb-5" id="counter-parent">
+                                    <span>ارسال مجدد کد تا</span>
+                                    <span id="counter">۰۲:۰۰</span>
+                                    <span>دیگر</span>
+                                </div>
+                                <input type="submit" class="btn red w-100 submit-btn" value="ثبت درخواست">
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
             {% endif %}
-                {% csrf_token %}
-                {{ form }}
-                <input type="submit" value="ثبت درخواست">
-            </form>
-        </div>
-    <script>
-
-    $("#register-login").submit(function(e) {
-
-        e.preventDefault(); // avoid to execute the actual submit of the form.
-
-        var form = $(this);
-        var url = form.attr('action');
-        var token = window.location.href.split('?')[1].substring(6,)
-        console.log(token, $('#id_code').val())
-        $.ajax({
-               type: "POST",
-               url: url,
-               data:{'token': token, 'code': $('#id_code').val()}, // serializes the form's elements.
-               success: function(data)
-               {
-                   console.log(data); // show response from the python script.
-                   let new_url = "{% url 'customer:register-login' %}";
-                   window.location.replace(new_url)
-               }
-             });
-
-
-    });
-    </script>
-{% endif %}
-</body>
-</html>
+        {% endif %}
+    {% endif %}
+{% endblock %}

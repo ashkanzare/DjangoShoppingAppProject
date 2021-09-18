@@ -14,7 +14,7 @@ class ShopUserAdmin(UserAdmin):
     list_display = ['phone']
     readonly_fields = ('date_joined', 'last_login')
     fieldsets = (
-        (_("User Details"), {'fields': ('phone', 'password')}),
+        (_("User Details"), {'fields': ('phone', 'password', 'email')}),
         (_("Account Details"), {'fields': ('date_joined', 'last_login')}),
         (_("Permission"), {'fields': ('is_active', 'is_staff', 'is_customer', 'is_manager')}),
         (_("Group"), {'fields': ('groups',)}),
