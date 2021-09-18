@@ -1,9 +1,6 @@
 from django.shortcuts import render
-from django.views import generic
 from django.views.generic import ListView
 from rest_framework.authtoken.models import Token
-
-from product.models import Product
 from .forms import UserRegisterLogin, UserCode, UserPassword, ResetPassword
 
 # Create your views here.
@@ -138,4 +135,16 @@ class CustomerProfileListView(ListView):
     view for see profile of a user
     """
     model = Customer
-    queryset = ''
+    template_name = 'customer/profile/customer_profile.html'
+    context_object_name = 'customer_object'
+
+    def get_queryset(self):
+        logged_in_user = self.request.user
+        return Customer.objects.get(user=logged_in_user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context[
+            'last_three_orders'] = None  # [{'order_id': 'MESH34-3', 'date': datetime.now(), 'payment_amount': 0,
+                                         #   "total_amount": '350,000', 'payment_type': 'نقدی'}]  # later will fill with order query
+        return context

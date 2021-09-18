@@ -13,6 +13,9 @@
     src: url("../fonts/Mj_Digital Arabia LT_0.ttf");
 }
 
+body {
+    background-color: rgb(245, 245, 245) !important;
+}
 
 * {
     font-family: iransans, serif;
@@ -21,22 +24,22 @@
 
 
 #auth-box-title {
-    font-family: digifont, serif!important;
-    color: #d51b1b!important;
-    min-font-size: 100rem!important;
-    max-font-size: 1rem!important;
+    font-family: digifont, serif !important;
+    color: #d51b1b !important;
+    min-font-size: 100rem !important;
+    max-font-size: 1rem !important;
 }
 
 
 .vertical-center {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
 }
 
 
 .auth-panel {
-    border-radius: 3.5rem!important;
+    border-radius: 3.5rem !important;
 }
 
 .red {
@@ -45,8 +48,8 @@
 }
 
 .panel {
-    max-width: 40rem!important;
-    min-width: 35rem!important;
+    max-width: 40rem !important;
+    min-width: 35rem !important;
 }
 
 .slash {
@@ -54,7 +57,7 @@
 }
 
 .links span {
-     font-size: 80%!important;
+    font-size: 80% !important;
 }
 
 .links:hover {
@@ -63,57 +66,155 @@
 
 /* Popup container - can be anything you want */
 .popup {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 /* The actual popup */
 .popup .popuptext {
-  visibility: hidden;
-  width: 40%;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px 0;
-  position: absolute;
-  z-index: 1;
-  font-size: 50%!important;
-  bottom: 125%;
+    visibility: hidden;
+    width: 40%;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    position: absolute;
+    z-index: 1;
+    font-size: 50% !important;
+    bottom: 125%;
 }
 
 /* Toggle this class - hide and show the popup */
 .popup .show {
-  visibility: visible;
-  -webkit-animation: fadeIn 1s;
-  animation: fadeIn 1s;
+    visibility: visible;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s;
 }
 
 /* Add animation (fade in the popup) */
 @-webkit-keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity:1 ;}
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 .dismiss-message {
-    font-size: 165%!important;
-    color: deepskyblue!important;
+    font-size: 165% !important;
+    color: deepskyblue !important;
 }
 
 .submit-btn:hover, .submit-btn {
-    outline: none!important;
+    outline: none !important;
 }
 
 .panel-body > form > div > h5 {
-    font-size: 80%!important;
+    font-size: 80% !important;
+}
+
+
+#side-main-div {
+    max-width: 80% !important;
+    margin: 0 auto !important;
+}
+
+.sidebar {
+    min-width: 19% !important;
+}
+
+.main {
+    min-width: 79% !important;
+}
+
+@media screen and (max-width: 900px) {
+    .sidebar, .main {
+        min-width: 100% !important;
+    }
+
+    .side-main-div-container {
+        flex-direction: column;
+
+    }
+}
+
+.underline-dashed {
+    border-bottom: #1e2c7f 2px dashed!important;
+    width: auto!important;
+}
+
+.info-values {
+    color: rgba(0, 0, 0, 0.63) !important;
+}
+
+.rounded {
+    border-radius: 7px!important;
+}
+
+.ad-div {
+    height: 7rem!important;
+    background-image: url("../img/invite-friends-label.jpg");
+    background-size: cover;
+}
+
+
+.public-profile-pic {
+    height: 5.5rem!important;
+    background-image: url("../img/public-profile.svg");
+    background-size: 5.5rem;
+    background-repeat: no-repeat;
+    background-position: right;
+}
+
+.sidebar-main {
+    min-height: 20rem!important;
+}
+
+.sep-border {
+    width: 90%!important;
+    border-bottom: 1px rgba(0, 0, 0, 0.14) solid!important;
+    display: block!important;
+    margin: auto!important;
+}
+
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: 0.5rem;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+.my-order {
+    border: none!important;
+
+}
+
+.border {
+    border: 1px rgba(0, 0, 0, 0.15) solid!important;
+}
+
+#order-info > div {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    min-height: 5rem;
+    background-color: #1479e7;
+    color: white;
 }

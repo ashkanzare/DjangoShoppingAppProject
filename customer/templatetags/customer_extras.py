@@ -39,7 +39,29 @@ def date_delta(date_time):
 @register.filter(name='convert_date')
 def convert_date(date):
     """ get christian year and convert to jalali date """
-    j_date = jdatetime.date.fromgregorian(day=date.day, month=date.month, year=date.year)
-    month = j_date.j_months_fa[j_date.month - 1]
-    return f"{en_to_fa(j_date.day)} {month} {en_to_fa(j_date.year)}"
+    if date:
+        j_date = jdatetime.date.fromgregorian(day=date.day, month=date.month, year=date.year)
+        month = j_date.j_months_fa[j_date.month - 1]
+        return f"{en_to_fa(j_date.day)} {month} {en_to_fa(j_date.year)}"
+    return None
 
+
+@register.filter(name='return_full_name')
+def return_full_name(customer_obj):
+    """ return fullname of a customer """
+    return f"{customer_obj.first_name} {customer_obj.last_name}" if (
+                customer_obj.first_name or customer_obj.last_name) else '-'
+
+
+@register.filter(name='return_empty_if_none')
+def return_empty_if_none(obj):
+    """ return - if obj is none """
+    return f"{obj}" if obj else '-'
+
+
+@register.filter(name='get_fullname_or_return_phone')
+def get_fullname_or_return_phone(customer_obj):
+    """ return fullname of a customer if exists or their phone """
+    if customer_obj.first_name and customer_obj.last_name:
+        return f"{customer_obj.first_name} {customer_obj.last_name}"
+    return f"۰{en_to_fa(customer_obj.user.phone)}"

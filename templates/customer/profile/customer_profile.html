@@ -1,0 +1,159 @@
+{% extends 'home/home_base.html' %}
+{% load customer_extras %}
+{% block title %}پروفایل {% if customer_object.first_name and customer_object.last_name %}{{ customer.first_name }}
+    {{ customer.last_name }}{% else %}{{ user.phone }}{% endif %}{% endblock %}
+{% block content %}
+    <div class="vh-100 w-100 text-center">
+        <div class="text-center" id="side-main-div">
+            <div class="d-flex justify-content-between side-main-div-container">
+                <div class="sidebar">
+                    <div class="mb-3 rounded ad-div"></div>
+                    <div class="bg-white rounded sidebar-main text-center">
+                        <div>
+                            <div class="pb-2"></div>
+                            <div class="public-profile-pic m-3 mr-5">
+                                <div class="pt-2">
+                                    <h5>{{ customer_object|get_fullname_or_return_phone }}</h5>
+                                    <p>{% if not customer_object|return_full_name == '-' %}۰
+                                        {{ user.phone|en_to_fa }}{% endif %}</p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <span class="sep-border"></span>
+                        <div>
+                            <div class="position-sticky">
+                                <div class="list-group list-group-flush mx-3 mt-4">
+                                    <a href="#"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>سفارش های من</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                    <a href="#"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>نظرات</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                    <a href="#"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>نشانی ها</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                    <a href="#"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>کارت های هدیه</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                    <a href="#"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>اطلاعات حساب</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+
+
+                                </div>
+                            </div>
+                            <span class="sep-border"></span>
+                            <div class="position-sticky">
+                                <div class="list-group list-group-flush mx-3 mt-4 pb-4">
+                                    <a href="{% url 'customer:logout' %}"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order ">
+                                        <div>خروج</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="main">
+                    <div>
+                        <div class="row">
+                            <h5 class="float-right mr-5">اطلاعات کاربری</h5>
+                        </div>
+                        <div class="row bg-white">
+                            <div class="col-md-6 col-12 text-right border">
+                                <div><h5 class="text-secondary">نام و نام خانوادگی:</h5></div>
+                                <div><h3 class="info-values">{{ customer_object|return_full_name }}</h3></div>
+                            </div>
+                            <div class="col-md-6 col-12 text-right border">
+                                <div><h5 class="text-secondary">شماره تلفن همراه:</h5></div>
+                                <div><h3 class="info-values">۰{{ user.phone|en_to_fa }}</h3></div>
+                            </div>
+                        </div>
+                        <div class="row bg-white">
+                            <div class="col-md-6 col-12 text-right border">
+                                <div><h5 class="text-secondary">پست الکترونیک :</h5></div>
+                                <div><h3 class="info-values">{{ user.email|return_empty_if_none }}</h3></div>
+                            </div>
+                            <div class="col-md-6 col-12 text-right border">
+                                <div><h5 class="text-secondary">کد ملی:</h5></div>
+                                <div><h3
+                                        class="info-values">{{ customer_object.personal_id|return_empty_if_none|en_to_fa }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row bg-white">
+                            <div class="col-md-6 col-12 text-right border">
+                                <div><h5 class="text-secondary">تاریخ تولد:</h5></div>
+                                <div><h3
+                                        class="info-values">{{ customer_object.birthday|convert_date|return_empty_if_none|en_to_fa }}</h3>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12 text-right border">
+                                <div><h5 class="text-secondary">تاریخ عضویت:</h5></div>
+                                <div><h3 class="info-values">{{ customer_object.date|convert_date|en_to_fa }}</h3></div>
+                            </div>
+                        </div>
+                        <div class="row bg-white">
+                            <div class="col-12 mt-3 pb-5">
+                                <a href="" class="text-decoration-underline links "><span class="underline-dashed">ویرایش اطلاعات کاربری</span></a>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="mt-5" id="orders-in-desktop">
+                        <div class="row">
+                            <h5 class="float-right mr-5">آخرین سفارش ها</h5>
+                        </div>
+                        <div class="row rounded bg-white">
+                            <div class="col-12">
+                                <div class="row" id="order-info">
+                                    <div class="col">#</div>
+                                    <div class="col">شماره سفارش</div>
+                                    <div class="col">تاریخ ثبت سفارش</div>
+                                    <div class="col">مبلغ قابل پرداخت</div>
+                                    <div class="col">مبلغ کل</div>
+                                    <div class="col">عملیات پرداخت</div>
+                                    <div class="col">جزییات</div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                {% if last_three_orders %}
+                                    {% for order in last_three_orders %}
+                                        <div class="row bg-white mt-5 mb-5">
+                                            <div class="col">{{ forloop.counter|en_to_fa }}</div>
+                                            <div class="col">{{ order.order_id }}</div>
+                                            <div class="col">{{ order.date|convert_date|en_to_fa }}</div>
+                                            <div class="col">{{ order.payment_amount|en_to_fa }}</div>
+                                            <div class="col">{{ order.total_amount|en_to_fa }}</div>
+                                            <div class="col">{{ order.payment_type }}</div>
+                                            <div class="col"><a href=""><i class="fa fa-angle-left" aria-hidden="true" style="font-size: 200%"></i></a></div>
+                                        </div>
+
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="row pt-5 pb-5">
+                                       <h4 class="text-secondary m-auto"><i>سفارشی موجود نیست</i></h4>
+                                    </div>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

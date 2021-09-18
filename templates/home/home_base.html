@@ -11,4 +11,6 @@
             <a href="{% url 'customer:logout' %}"><h5>logout</h5></a>
         {% endif %}
     </div>
+    {% block content %}
+    {% endblock %}
 {% endblock %}

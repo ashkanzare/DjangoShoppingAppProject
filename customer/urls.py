@@ -8,6 +8,7 @@ from .views import (
     confirm_code_for_reset_password,
     phone_reset_password,
     reset_password,
+    CustomerProfileListView
 )
 
 app_name = 'customer'
@@ -20,6 +21,6 @@ urlpatterns = [
     path('confirm-code-reset-password/<str:token>', confirm_code_for_reset_password, name="confirm-code-reset-password"),
     path('phone-reset-password/<str:token>', phone_reset_password, name="phone-reset-password"),
     path('reset-password/<str:token>', reset_password, name="reset-password"),
-
+    path('profile', CustomerProfileListView.as_view(), name="profile"),
     # path('courses-api/<str:text>', CourseViewSet.as_view(), name='courses-api')
 ]
