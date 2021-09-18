@@ -27,6 +27,7 @@ def user_login(request, token):
     """
     token = request.GET.get('token')
     check_login_type = request.GET.get('login_type')
+    auth_by = request.GET.get('by')
     try:
         check_token = Token.objects.get(key=token)
 
@@ -41,7 +42,8 @@ def user_login(request, token):
             'login': True,
             'phone_number': check_token.user.phone,
             'token': token,
-            'login_type': check_login_type
+            'login_type': check_login_type,
+            'auth_by': auth_by
         }
         return render(request, 'customer/register-login.html', context=context)
     except Token.DoesNotExist:

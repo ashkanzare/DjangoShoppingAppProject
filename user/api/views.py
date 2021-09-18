@@ -1,4 +1,7 @@
+import re
+
 from django.contrib.auth import login, authenticate
+from django.core.mail import send_mail
 from rest_framework import viewsets, status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
@@ -35,22 +38,46 @@ def register_login_view(request):
         data = {}
         if serializer.is_valid():
             # user does not exist -> register
-            user = serializer.save()
-            user.is_customer = True
-            user.is_active = False
-            data = {
-                'response': 'user created successfully',
-                'phone': user.phone,
-                'token': Token.objects.get(user=user).key,
-                'active': user.is_active,
-                'status': 1
-            }
-            send_sms(
-                str(UserAuthCode.objects.get(user=user).code),
-                '+12065550100',
-                [f'+98{user.phone}'],
-                fail_silently=False
-            )
+            phone_or_email = request.data['phone']
+            if re.search(r'^9\d{9}$', phone_or_email):
+                user = serializer.save()
+                user.is_customer = True
+                user.is_active = False
+                data = {
+                    'response': 'user created successfully',
+                    'phone': user.phone,
+                    'token': Token.objects.get(user=user).key,
+                    'active': user.is_active,
+                    'status': 1
+                }
+                send_sms(
+                    str(UserAuthCode.objects.get(user=user).code),
+                    '+12065550100',
+                    [f'+98{user.phone}'],
+                    fail_silently=False
+                )
+            elif re.search(r'^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$', phone_or_email):
+                user_with_given_email = User.objects.filter(email__iexact=phone_or_email)
+                print(user_with_given_email)
+                print(phone_or_email)
+                if user_with_given_email:
+                    user = user_with_given_email[0]
+                    data = {
+                        'response': 'user exists',
+                        'token': Token.objects.get(user=user).key,
+                        'status': 3
+                    }
+                else:
+                    data = {
+                        'response': 'user does not exist exists',
+                        'status': 4
+                    }
+            else:
+                data = {
+                    'response': 'invalid input',
+                    'status': 5
+                }
+
         else:
             try:
                 user = User.objects.get(phone=request.data['phone'])
@@ -175,27 +202,56 @@ def reset_password_get_code(request):
     if request.method == 'POST':
         data = {}
         serializer = CustomerUserSerializer(data=request.data)
-        if not serializer.is_valid():
-            try:
-                user = User.objects.get(phone=request.data['phone'])
-                # user exists -> login
+
+        if not serializer.is_valid() or serializer.is_valid():
+
+            phone_or_email = request.data['phone']
+
+            if re.search(r'^9\d{9}$', phone_or_email):
+
+                try:
+                    user = User.objects.get(phone=phone_or_email)
+                    # user exists -> login
+                    data = {
+                        'response': 'user exists',
+                        'phone': request.data['phone'],
+                        'token': Token.objects.get(user=user).key,
+                        'status': 0
+                    }
+                    send_sms(
+                        str(UserAuthCode.create_or_get_and_delete(user).code),
+                        '+12065550100',
+                        [f'+98{phone_or_email}'],
+                        fail_silently=False
+                    )
+                except User.DoesNotExist:
+                    data = {
+                        'error': serializer.errors,
+                        status: 2
+                    }
+            elif re.search(r'^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$', phone_or_email):
+
+                user = User.objects.get(email__iexact=phone_or_email)
+                token = Token.objects.get(user=user).key
                 data = {
                     'response': 'user exists',
-                    'phone': request.data['phone'],
-                    'token': Token.objects.get(user=user).key,
-                    'status': 0
+                    'email': phone_or_email,
+                    'token': token,
+                    'status': 3
                 }
-                send_sms(
-                    str(UserAuthCode.create_or_get_and_delete(user).code),
-                    '+12065550100',
-                    [f'+98{request.data["phone"]}'],
+                send_mail(
+                    'بازیابی رمزعبور',
+                    f'به این لینک مراجعه کنید:\n http://127.0.0.1:8000/customer/reset-password/confirm?token={token} ',
+                    'MeShopKala@info.org',
+                    [phone_or_email],
                     fail_silently=False
                 )
-            except User.DoesNotExist:
+            else:
                 data = {
-                    'error': serializer.errors,
-                    status: 2
+                    'response': 'invalid input',
+                    'status': 5
                 }
+        print(serializer.error_messages)
         return Response(data)
 
 

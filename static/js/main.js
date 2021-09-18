@@ -41,9 +41,26 @@ $(document).ready(function () {
                 if (data['status'] === 0) {
                     let new_url = $("#customer-check-code-reset-password-url").attr('data-url') + "?token=" + data['token'];
                     window.location.replace(new_url)
-                } else {
+                } else if (data['status'] === 2) {
                     $('#ajax-errors').html('<p style=\'font-size: 70%!important;\'>درخواست شما با خطا مواجه شد لطفا صفحه را مجدد بارگذاری کنید</p>')
                     message_pop_up()
+                } else if (data['status'] === 3) {
+                    let parent = $('.jumbotron')
+                    let email_message_info = `
+                    <div class="container text-center d-flex justify-content-center popup">
+                  
+                            <div class="panel text-right w-50 auth-panel p-4">
+                                <div>
+                                    <div class="text-center">
+                                        <h1 id="auth-box-title">MeShop</h1>
+                                    </div>
+                                    <h5>لینک بازنشانی رمزعبور شما به ایمیلتان ارسال شد</h5>
+                                </div>
+                            </div>
+                    </div>
+                    
+                    `
+                    parent.html(email_message_info)
 
                 }
             }
@@ -121,11 +138,10 @@ $(document).ready(function () {
                 if (response_status_code === 10) {
                     let new_url = $('#customer-login-url').attr('data-url') + "?token=" + token + "&login_type=password";
                     window.location.replace(new_url)
-                    $('#ajax-errors').html("<p style='font-size: 70%!important;'>رمز شما با موفقیت بازنشانی شذ</p>")
+                    $('#ajax-errors').html("<p style='font-size: 70%!important;'>رمز شما با موفقیت بازنشانی شد</p>")
                     message_pop_up()
                 } else if (response_status_code === 20) {
                     $('form div > input').val('')
-                    console.log('ssssssssssssssssssssss')
                     $('#ajax-errors').html("<p style='font-size: 70%!important;'>رمز ها باهم تطابق ندارند</p>")
                     message_pop_up()
 
@@ -164,12 +180,25 @@ $(document).ready(function () {
             url: url,
             data: form.serialize(), // serializes the form's elements.
             success: function (data) {
+                console.log(data)
                 if (data['status'] === 0) {
                     let new_url = $('#customer-login-url').attr('data-url') + "?token=" + data['token'] + '&login_type=onetime_code';
                     window.location.replace(new_url)
                 } else if (data['status'] === 1) {
                     let new_url = $('#customer-register-url').attr('data-url') + "?token=" + data['token'];
                     window.location.replace(new_url)
+                } else if (data['status'] === 3) {
+                    let new_url = $('#customer-login-url').attr('data-url') + "?token=" + data['token'] + '&login_type=password&by=email';
+                    window.location.replace(new_url)
+
+                } else if (data['status'] === 4) {
+                    $('#ajax-errors').html('<p style=\'font-size: 70%!important;\'>کاربری با این ایمیل در سیستم موجود نمیباشد</p>')
+                    message_pop_up()
+
+                } else if (data['status'] === 5) {
+                    $('#ajax-errors').html('<p style=\'font-size: 70%!important;\'>ورودی داده شده اشتباه است</p>')
+                    message_pop_up()
+
                 }
             }
         });

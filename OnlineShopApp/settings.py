@@ -175,3 +175,6 @@ AUTH_USER_MODEL = 'user.User'
 SESSION_COOKIE_SECURE = False
 # SMS Backend configure
 SMS_BACKEND = 'sms.backends.console.SmsBackend'
+
+# Email backend configure
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
