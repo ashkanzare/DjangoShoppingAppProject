@@ -40,7 +40,7 @@
                                        class="links"> ورود با رمز یکبار مصرف<span class="mr-2">></span></a>
                                 </div>
                                 <div>
-                                    <a href="{% url 'customer:login' "confirm" %}?token={{ token }}&login_type={{ "onetime_code" }}"
+                                    <a href="{% url 'customer:phone-reset-password' 'confirm' %}?token={{ token }}"
                                        class="links"> بازیابی رمزعبور<span class="mr-2">></span></a>
                                 </div>
                             </div>

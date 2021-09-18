@@ -2,10 +2,10 @@ from django import forms
 from user.models import User, UserAuthCode
 
 
-class UserLogin(forms.ModelForm):
+class UserRegisterLogin(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(UserLogin, self).__init__(*args, **kwargs)
+        super(UserRegisterLogin, self).__init__(*args, **kwargs)
         self.fields['phone'].label = ""
 
     class Meta:
@@ -18,7 +18,7 @@ class UserCode(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(UserCode, self).__init__(*args, **kwargs)
         self.fields['code'].label = ""
-        self.fields['code']. initial = ""
+        self.fields['code'].initial = ""
 
     class Meta:
         model = UserAuthCode
@@ -34,3 +34,9 @@ class UserPassword(forms.ModelForm):
     class Meta:
         model = User
         fields = ['password']
+
+
+class ResetPassword(forms.Form):
+    password1 = forms.CharField(max_length=1000, min_length=6, label='رمز عبور جدید', widget=forms.PasswordInput())
+    password2 = forms.CharField(max_length=1000, min_length=6, label='تکرار رمز عبور جدید',
+                                widget=forms.PasswordInput())

@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from sms import send_sms
 
 from user.api.serializers import UserSerializer, CustomerUserSerializer, UserAuthCodeSerializer, \
-    UserPasswordSerializer
+    UserPasswordSerializer, ResetPasswordSerializer
 from user.models import User, UserAuthCode
 
 
@@ -98,8 +98,7 @@ def check_user_code(request):
                     else:
                         data['status'] = 'invalid code', 20
                 else:
-                    user_code.delete()
-                    new_code = UserAuthCode.objects.create(user=user)
+                    new_code = UserAuthCode.create_or_get_and_delete(user=user)
                     data['status'] = 'time is up', 30
                     send_sms(
                         str(new_code.code),
@@ -123,9 +122,8 @@ def refresh_code(request):
             try:
                 token = Token.objects.get(key=request.data['token'])
                 user = token.user
-                user_code = UserAuthCode.objects.get(user=user)
-                user_code.delete()
-                new_code = UserAuthCode.objects.create(user=user)
+
+                new_code = UserAuthCode.create_or_get_and_delete(user=user)
                 data['status'] = 'ok', 20
                 send_sms(
                     str(new_code.code),
@@ -133,6 +131,7 @@ def refresh_code(request):
                     [f'+98{new_code.user.phone}'],
                     fail_silently=False
                 )
+
             except (UserAuthCode.DoesNotExist, Token.DoesNotExist):
                 data['status'] = 'invalid input', 40
 
@@ -168,4 +167,101 @@ def login_with_password(request):
         else:
             data['error'] = serializer.errors
             return Response(data)
+        return Response(data)
+
+
+@api_view(['POST', ])
+def reset_password_get_code(request):
+    if request.method == 'POST':
+        data = {}
+        serializer = CustomerUserSerializer(data=request.data)
+        if not serializer.is_valid():
+            try:
+                user = User.objects.get(phone=request.data['phone'])
+                # user exists -> login
+                data = {
+                    'response': 'user exists',
+                    'phone': request.data['phone'],
+                    'token': Token.objects.get(user=user).key,
+                    'status': 0
+                }
+                send_sms(
+                    str(UserAuthCode.create_or_get_and_delete(user).code),
+                    '+12065550100',
+                    [f'+98{request.data["phone"]}'],
+                    fail_silently=False
+                )
+            except User.DoesNotExist:
+                data = {
+                    'error': serializer.errors,
+                    status: 2
+                }
+        return Response(data)
+
+
+@api_view(['POST', ])
+def check_code_for_reset_password(request):
+    if request.method == 'POST':
+        serializer = UserAuthCodeSerializer(data=request.data)
+        data = {}
+        if serializer.is_valid():
+            try:
+                token = Token.objects.get(key=request.data['token'])
+                user = token.user
+                user_code = UserAuthCode.objects.get(user=user)
+
+                if user_code.check_expire_time():
+
+                    if user_code.code == request.data['code']:
+                        data['status'] = 'ok', 10
+                        token.delete()
+                        new_token = Token.objects.create(user=user)
+                        data = {
+                            'status': ['ok', 10],
+                            'token': new_token.key}
+                    else:
+                        data['status'] = 'invalid code', 20
+                else:
+                    user_code.delete()
+                    new_code = UserAuthCode.objects.create(user=user)
+                    data['status'] = 'time is up', 30
+                    send_sms(
+                        str(new_code.code),
+                        '+12065550100',
+                        [f'+98{new_code.user.phone}'],
+                        fail_silently=False
+                    )
+            except (UserAuthCode.DoesNotExist, Token.DoesNotExist):
+                data['status'] = 'invalid input', 40
+        else:
+            data['error'] = serializer.errors
+        return Response(data)
+
+
+@api_view(['POST', ])
+def change_password(request):
+    if request.method == 'POST':
+        serializer = ResetPasswordSerializer(data=request.data)
+        data = {}
+        if serializer.is_valid():
+            try:
+                token = Token.objects.get(key=request.data['token'])
+                user = token.user
+
+                if request.data['password1'] == request.data['password2']:
+                    get_user = User.objects.get(id=user.id)
+                    get_user.set_password(request.data['password1'])
+                    get_user.save()
+                    data = {
+                        'status': ['ok', 10]
+                    }
+
+                else:
+                    data = {
+                        'status': ['not equal passwords', 20]
+                    }
+            except Token.DoesNotExist:
+                data['status'] = 'invalid input', 30
+        else:
+            data['error'] = serializer.errors
         return Response(data)

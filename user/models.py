@@ -78,7 +78,7 @@ class UserAuthCode(models.Model):
     def check_expire_time(self):
         now = int(datetime.utcnow().timestamp()) - 5
         remaining_time = self.exp_time - now
-        return 0 < remaining_time <= 120
+        return 0 < remaining_time <= 125
 
     @classmethod
     def create_or_get_and_delete(cls, user):

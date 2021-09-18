@@ -3,7 +3,7 @@ from django.views import generic
 from rest_framework.authtoken.models import Token
 
 from product.models import Product
-from .forms import UserLogin, UserCode, UserPassword
+from .forms import UserRegisterLogin, UserCode, UserPassword, ResetPassword
 
 
 # Create your views here.
@@ -12,7 +12,7 @@ def user_register_login(request):
     check if user is registered before or not and redirect to proper url (with ajax)
 
     """
-    form = UserLogin()
+    form = UserRegisterLogin()
     context = {
         'phone': True,
         'form': form,
@@ -64,6 +64,66 @@ def user_register(request, token):
             'phone_number': check_token.user.phone
         }
         return render(request, 'customer/register-login.html', context=context)
+    except Token.DoesNotExist:
+        return render(request, 'page_not_found/page_not_found.html', context={})
+
+
+def phone_reset_password(request, token):
+    """
+    view for reset password for a user
+
+    """
+    token = request.GET.get('token')
+    try:
+        Token.objects.get(key=token)
+        form = UserRegisterLogin()
+        context = {
+            'form': form,
+            'phone': True,
+        }
+        return render(request, 'customer/auth/restore-password.html', context=context)
+    except Token.DoesNotExist:
+        return render(request, 'page_not_found/page_not_found.html', context={})
+
+
+def confirm_code_for_reset_password(request, token):
+    """
+    view for confirm code for reset password for a user
+
+    """
+    token = request.GET.get('token')
+    try:
+        check_token = Token.objects.get(key=token)
+        form = UserCode()
+        context = {
+            'code': True,
+            'form': form,
+            'register': True,
+            'phone_number': check_token.user.phone
+        }
+        return render(request, 'customer/auth/restore-password.html', context=context)
+    except Token.DoesNotExist:
+        return render(request, 'page_not_found/page_not_found.html', context={})
+
+
+def reset_password(request, token):
+    """
+    view for reset password
+
+    """
+
+    token = request.GET.get('token')
+    try:
+        check_token = Token.objects.get(key=token)
+        user = check_token.user
+        form = ResetPassword()
+        context = {
+            'reset': True,
+            'form': form,
+            'token': token
+        }
+
+        return render(request, 'customer/auth/restore-password.html', context=context)
     except Token.DoesNotExist:
         return render(request, 'page_not_found/page_not_found.html', context={})
 

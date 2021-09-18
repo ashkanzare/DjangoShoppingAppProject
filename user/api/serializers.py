@@ -11,12 +11,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CustomerUserSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = User
         fields = ['url', 'phone']
-        extra_kwargs = {
-            'description': {'error_messages': {'unique': "shit"}},
-        }
 
 
 class TokenSerializer(serializers.ModelSerializer):
@@ -36,3 +34,7 @@ class UserPasswordSerializer(serializers.ModelSerializer):
         model = User
         fields = ['password']
 
+
+class ResetPasswordSerializer(serializers.Serializer):
+    password1 = serializers.CharField(max_length=1000, min_length=6)
+    password2 = serializers.CharField(max_length=1000, min_length=6)
