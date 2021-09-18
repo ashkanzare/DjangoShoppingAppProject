@@ -17,7 +17,12 @@ function refresh_code(token) {
 $(document).ready(function () {
 
     // refresh code ajax
-    if (window.location.href.includes('token') && window.location.href.includes('login_type=onetime_code') || window.location.href.includes('register/confirm?token') || window.location.href.includes('confirm-code-reset-password')) {
+    if (document.referrer.includes('customer/register-login/')) {
+        if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
+            refresh_code(window.location.href.split(`?`)[1].substring(6,).split('&')[0])
+        }
+    }
+    else if (window.location.href.includes('token') && window.location.href.includes('login_type=onetime_code') || window.location.href.includes('register/confirm?token') || window.location.href.includes('confirm-code-reset-password')) {
         refresh_code(window.location.href.split(`?`)[1].substring(6,).split('&')[0])
     } else if (performance.navigation.type === performance.navigation.TYPE_RELOAD && !(window.location.href.includes('token', 'login_type=password'))) {
         if (window.location.href.split(`?`)[1] !== undefined) {
@@ -105,6 +110,7 @@ $(document).ready(function () {
                     }, 5000);
                     refresh_code(window.location.href.split(`?`)[1].substring(6,))
                     message_pop_up()
+
 
                 } else {
                     $('#ajax-errors').html('<p style=\'font-size: 70%!important;\'>درخواست شما با خطا مواجه شد لطفا صفحه را مجدد بارگذاری کنید</p>')
