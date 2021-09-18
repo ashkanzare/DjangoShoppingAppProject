@@ -1,14 +1,13 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from rest_framework import viewsets, status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from sms import send_sms
 
-from user.api.serializers import UserSerializer, CustomerUserSerializer, UserAuthCodeSerializer
+from user.api.serializers import UserSerializer, CustomerUserSerializer, UserAuthCodeSerializer, \
+    UserPasswordSerializer
 from user.models import User, UserAuthCode
-
-import constants.vars as const
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -62,8 +61,9 @@ def register_login_view(request):
                     'token': Token.objects.get(user=user).key,
                     'status': 0
                 }
+
                 send_sms(
-                    str(UserAuthCode.objects.create(user=user).code),
+                    str(UserAuthCode.create_or_get_and_delete(user).code),
                     '+12065550100',
                     [f'+98{request.data["phone"]}'],
                     fail_silently=False
@@ -99,7 +99,14 @@ def check_user_code(request):
                         data['status'] = 'invalid code', 20
                 else:
                     user_code.delete()
+                    new_code = UserAuthCode.objects.create(user=user)
                     data['status'] = 'time is up', 30
+                    send_sms(
+                        str(new_code.code),
+                        '+12065550100',
+                        [f'+98{new_code.user.phone}'],
+                        fail_silently=False
+                    )
             except (UserAuthCode.DoesNotExist, Token.DoesNotExist):
                 data['status'] = 'invalid input', 40
         else:
@@ -107,3 +114,58 @@ def check_user_code(request):
         return Response(data)
 
 
+@api_view(['POST', ])
+def refresh_code(request):
+    if request.method == 'POST':
+        serializer = UserAuthCodeSerializer(data=request.data)
+        data = {}
+        if serializer.is_valid():
+            try:
+                token = Token.objects.get(key=request.data['token'])
+                user = token.user
+                user_code = UserAuthCode.objects.get(user=user)
+                user_code.delete()
+                new_code = UserAuthCode.objects.create(user=user)
+                data['status'] = 'ok', 20
+                send_sms(
+                    str(new_code.code),
+                    '+12065550100',
+                    [f'+98{new_code.user.phone}'],
+                    fail_silently=False
+                )
+            except (UserAuthCode.DoesNotExist, Token.DoesNotExist):
+                data['status'] = 'invalid input', 40
+
+        else:
+            data['error'] = serializer.errors
+            return Response(data)
+        return Response(data)
+
+
+@api_view(['POST', ])
+def login_with_password(request):
+    if request.method == 'POST':
+        serializer = UserPasswordSerializer(data=request.data)
+        data = {}
+        user = None
+        if serializer.is_valid():
+            try:
+                token = Token.objects.get(key=request.data['token'])
+                user = token.user
+                UserAuthCode.objects.get(user=user).delete()
+
+            except (UserAuthCode.DoesNotExist, Token.DoesNotExist):
+                data['status'] = 'invalid input', 40
+
+            finally:
+                authed_user = authenticate(phone=user.phone, password=request.data['password'])
+                if authed_user:
+                    login(request, user)
+                    data['status'] = 'login successfully', 20
+                else:
+                    data['status'] = 'login failed', 50
+
+        else:
+            data['error'] = serializer.errors
+            return Response(data)
+        return Response(data)

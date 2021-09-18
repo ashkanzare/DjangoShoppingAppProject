@@ -1,0 +1,119 @@
+@font-face {
+    font-family: digifont;
+    src: url('../fonts/digifont2.otf');
+}
+
+@font-face {
+    font-family: iransans;
+    src: url("../fonts/FontsFree-Net-ir_sans.ttf");
+}
+
+@font-face {
+    font-family: digital;
+    src: url("../fonts/Mj_Digital Arabia LT_0.ttf");
+}
+
+
+* {
+    font-family: iransans, serif;
+    direction: rtl;
+}
+
+
+#auth-box-title {
+    font-family: digifont, serif!important;
+    color: #d51b1b!important;
+    min-font-size: 100rem!important;
+    max-font-size: 1rem!important;
+}
+
+
+.vertical-center {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+
+.auth-panel {
+    border-radius: 3.5rem!important;
+}
+
+.red {
+    background-color: #d51b1b !important;
+    color: white;
+}
+
+.panel {
+    max-width: 40rem!important;
+    min-width: 35rem!important;
+}
+
+.slash {
+    font-size: 130%;
+}
+
+.links span {
+     font-size: 80%!important;
+}
+
+.links:hover {
+    text-decoration: none;
+}
+
+/* Popup container - can be anything you want */
+.popup {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* The actual popup */
+.popup .popuptext {
+  visibility: hidden;
+  width: 40%;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  font-size: 50%!important;
+  bottom: 125%;
+}
+
+/* Toggle this class - hide and show the popup */
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+}
+
+.dismiss-message {
+    font-size: 165%!important;
+    color: deepskyblue!important;
+}
+
+.submit-btn:hover, .submit-btn {
+    outline: none!important;
+}
+
+.panel-body > form > div > h5 {
+    font-size: 80%!important;
+}

@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.datetime_safe import datetime
+from django.utils.translation import gettext as _
 
 import constants.vars as const
 from utils.utils_functions import generate_random_code, compute_code_expire_time
@@ -51,11 +52,10 @@ class User(AbstractUser):
     """ User model """
 
     username = None
-    email = models.EmailField(blank=True, null=True)
-    phone_regex = RegexValidator(regex=r'^9\d{9}$', message=const.PHONE_HELP_TEXT)
-    phone = models.CharField(validators=[phone_regex], max_length=10, unique=True)
-    is_customer = models.BooleanField(default=False)
-    is_manager = models.BooleanField(default=False)
+    phone_regex = RegexValidator(regex=r'^9\d{9}$', message=_(const.PHONE_HELP_TEXT))
+    phone = models.CharField(validators=[phone_regex], max_length=10, unique=True, verbose_name=_(const.PHONE))
+    is_customer = models.BooleanField(default=False, verbose_name=_(const.CUSTOMER))
+    is_manager = models.BooleanField(default=False, verbose_name=_(const.MANAGER))
 
     USERNAME_FIELD = 'phone'
 
@@ -68,17 +68,30 @@ class User(AbstractUser):
 
 
 class UserAuthCode(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=const.USER, unique=True)
-    code = models.CharField(max_length=5, default=generate_random_code, verbose_name=const.USER_AUTH_CODE)
-    exp_time = models.IntegerField(default=compute_code_expire_time, verbose_name=const.EXP_TIME)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=_(const.USER), unique=True)
+    code = models.CharField(max_length=5, default=generate_random_code, verbose_name=_(const.USER_AUTH_CODE))
+    exp_time = models.IntegerField(default=compute_code_expire_time, verbose_name=_(const.EXP_TIME))
 
     def __str__(self):
         return f'[ {self.user} ] -- [ {self.code} ]'
 
     def check_expire_time(self):
-        now = int(datetime.utcnow().timestamp())
+        now = int(datetime.utcnow().timestamp()) - 5
         remaining_time = self.exp_time - now
         return 0 < remaining_time <= 120
+
+    @classmethod
+    def create_or_get_and_delete(cls, user):
+        try:
+            old_user_auth_code = cls.objects.get(user=user)
+            old_user_auth_code.delete()
+
+        except cls.DoesNotExist:
+            pass
+
+        finally:
+            new_user_auth_code = cls.objects.create(user=user)
+            return new_user_auth_code
 
 
 @receiver(post_save, sender=User)

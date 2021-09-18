@@ -29,3 +29,10 @@ class UserAuthCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAuthCode
         fields = ['code']
+
+
+class UserPasswordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['password']
+

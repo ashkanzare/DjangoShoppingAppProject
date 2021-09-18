@@ -3,7 +3,7 @@ from django.views import generic
 from rest_framework.authtoken.models import Token
 
 from product.models import Product
-from .forms import UserLogin, UserCode
+from .forms import UserLogin, UserCode, UserPassword
 
 
 # Create your views here.
@@ -26,13 +26,22 @@ def user_login(request, token):
 
     """
     token = request.GET.get('token')
+    check_login_type = request.GET.get('login_type')
     try:
-        Token.objects.get(key=token)
-        form = UserCode()
+        check_token = Token.objects.get(key=token)
+
+        if check_login_type == 'password':
+            form = UserPassword()
+        else:
+            form = UserCode()
+
         context = {
             'code': True,
             'form': form,
-            'login': True
+            'login': True,
+            'phone_number': check_token.user.phone,
+            'token': token,
+            'login_type': check_login_type
         }
         return render(request, 'customer/register-login.html', context=context)
     except Token.DoesNotExist:
@@ -46,12 +55,13 @@ def user_register(request, token):
     """
     token = request.GET.get('token')
     try:
-        Token.objects.get(key=token)
+        check_token = Token.objects.get(key=token)
         form = UserCode()
         context = {
             'code': True,
             'form': form,
-            'register': True
+            'register': True,
+            'phone_number': check_token.user.phone
         }
         return render(request, 'customer/register-login.html', context=context)
     except Token.DoesNotExist:

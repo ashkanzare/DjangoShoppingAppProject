@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <file url="PROJECT" libraries="{@fortawesome/fontawesome-free, BKoodakBold, bootstrap, font-awesome, jquery, jquery-3.2.1.slim, jquery-3.6.0, jquery-3.6.0.slim, twitter-bootstrap}" />
+  </component>
+</project>
