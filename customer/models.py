@@ -22,11 +22,11 @@ class Customer(models.Model):
             email(optional),
             date(required)
      """
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_(USERNAME))
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=_(USERNAME))
     first_name = models.CharField(max_length=250, blank=True, null=True, verbose_name=_(FIRST_NAME))
     last_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=_(LAST_NAME))
     birthday = models.DateField(blank=True, null=True, verbose_name=_(BIRTHDAY))
-    personal_id = models.CharField(max_length=200, unique=True, blank=True, null=True, verbose_name=_(PERSONAL_ID))
+    personal_id = models.CharField(max_length=200, blank=True, null=True, verbose_name=_(PERSONAL_ID))
     email = models.EmailField(blank=True, null=True, verbose_name=_(EMAIL))
     date = models.DateField(default=current_time.now, verbose_name=_(REGISTER_DATE))
 

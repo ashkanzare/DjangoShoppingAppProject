@@ -1,12 +1,15 @@
 from django.shortcuts import render
 from django.views import generic
+from django.views.generic import ListView
 from rest_framework.authtoken.models import Token
 
 from product.models import Product
 from .forms import UserRegisterLogin, UserCode, UserPassword, ResetPassword
 
-
 # Create your views here.
+from .models import Customer
+
+
 def user_register_login(request):
     """
     check if user is registered before or not and redirect to proper url (with ajax)
@@ -130,6 +133,9 @@ def reset_password(request, token):
         return render(request, 'page_not_found/page_not_found.html', context={})
 
 
-class HomeView(generic.ListView):
-    template_name = 'home/home.html'
-    queryset = Product.objects.all()
+class CustomerProfileListView(ListView):
+    """
+    view for see profile of a user
+    """
+    model = Customer
+    queryset = ''

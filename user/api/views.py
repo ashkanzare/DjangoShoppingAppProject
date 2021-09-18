@@ -8,6 +8,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from sms import send_sms
 
+from customer.models import Customer
 from user.api.serializers import UserSerializer, CustomerUserSerializer, UserAuthCodeSerializer, \
     UserPasswordSerializer, ResetPasswordSerializer
 from user.models import User, UserAuthCode
@@ -41,6 +42,7 @@ def register_login_view(request):
             phone_or_email = request.data['phone']
             if re.search(r'^9\d{9}$', phone_or_email):
                 user = serializer.save()
+                Customer.objects.create(user=user)
                 user.is_customer = True
                 user.is_active = False
                 data = {

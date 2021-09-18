@@ -1,14 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-{% if user.is_authenticated %}
-    {{ user }}
-    <a href="{% url 'customer:logout' %}">logout</a>
-{% endif %}
-Home
-</body>
-</html>
+{% extends 'base.html' %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block title %}{% translate "فروشگاه اینترنتی میشاپ" %}{% endblock %}
+{% block main %}
+    <div class="d-flex justify-content-between w-25 m-3">
+        {% if user.is_authenticated %}
+            <h5>user: {{ user.phone }}</h5>
+            <a href="#"><h5>Profile</h5></a>
+            <a href="{% url 'customer:logout' %}"><h5>logout</h5></a>
+        {% endif %}
+    </div>
+{% endblock %}
