@@ -6,7 +6,7 @@ from django.utils.translation import gettext as _
 from constants.vars import *
 
 from user.models import User
-from utils.utils_functions import generate_random_string, validate_discount_date
+from utils.utils_functions import generate_random_string, validate_discount_date, check_personal_code_is_valid
 
 """ Customer App's Models """
 
@@ -26,7 +26,8 @@ class Customer(models.Model):
     first_name = models.CharField(max_length=250, blank=True, null=True, verbose_name=_(FIRST_NAME))
     last_name = models.CharField(max_length=200, blank=True, null=True, verbose_name=_(LAST_NAME))
     birthday = models.DateField(blank=True, null=True, verbose_name=_(BIRTHDAY))
-    personal_id = models.CharField(max_length=200, blank=True, null=True, verbose_name=_(PERSONAL_ID))
+    personal_id = models.CharField(max_length=200, blank=True, null=True, verbose_name=_(PERSONAL_ID),
+                                   validators=[check_personal_code_is_valid])
     email = models.EmailField(blank=True, null=True, verbose_name=_(EMAIL))
     date = models.DateField(default=current_time.now, verbose_name=_(REGISTER_DATE))
 
@@ -56,7 +57,8 @@ class DiscountCode(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name=_(CUSTOMER),
                                  help_text=_(SEARCH_FOR_USER_HELP_TEXT))
     discount_code = models.CharField(max_length=8, default=generate_random_string, verbose_name=_(DISCOUNT_CODE))
-    end_date = models.DateTimeField(default=validate_discount_date, verbose_name=_(END_DATE), help_text=_(END_DATE_HELP_TEXT))
+    end_date = models.DateTimeField(default=validate_discount_date, verbose_name=_(END_DATE),
+                                    help_text=_(END_DATE_HELP_TEXT))
 
     def __str__(self):
         return f"{self.customer.user.phone} -- {self.discount_code}"

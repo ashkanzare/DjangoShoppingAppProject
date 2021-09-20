@@ -1,7 +1,8 @@
 {% extends 'home/home_base.html' %}
 {% load customer_extras %}
-{% block title %}پروفایل {% if customer_object.first_name and customer_object.last_name %}{{ customer.first_name }}
-    {{ customer.last_name }}{% else %}{{ user.phone }}{% endif %}{% endblock %}
+{% block title %}ویرایش پروفایل
+    {% if customer_object.first_name and customer_object.last_name %}{{ customer.first_name }}
+        {{ customer.last_name }}{% else %}{{ user.phone }}{% endif %}{% endblock %}
 {% block content %}
     <div class="vh-100 w-100 text-center">
         <div class="text-center" id="side-main-div">
@@ -69,87 +70,86 @@
                 <div class="main">
                     <div>
                         <div class="row">
-                            <h5 class="float-right mr-5">اطلاعات کاربری</h5>
+                            <h5 class="float-right mr-5">اطلاعات شخصی</h5>
                         </div>
+
                         <div class="row bg-white">
                             <div class="col-md-6 col-12 text-right border">
-                                <div><h5 class="text-secondary">نام و نام خانوادگی:</h5></div>
-                                <div><h3 class="info-values">{{ customer_object|return_full_name }}</h3></div>
-                            </div>
-                            <div class="col-md-6 col-12 text-right border">
-                                <div><h5 class="text-secondary">شماره تلفن همراه:</h5></div>
-                                <div><h3 class="info-values">۰{{ user.phone|en_to_fa }}</h3></div>
-                            </div>
-                        </div>
-                        <div class="row bg-white">
-                            <div class="col-md-6 col-12 text-right border">
-                                <div><h5 class="text-secondary">پست الکترونیک :</h5></div>
-                                <div><h3 class="info-values">{{ user.email|return_empty_if_none }}</h3></div>
-                            </div>
-                            <div class="col-md-6 col-12 text-right border">
-                                <div><h5 class="text-secondary">کد ملی:</h5></div>
-                                <div><h3
-                                        class="info-values">{{ customer_object.personal_id|return_empty_if_none|en_to_fa }}</h3>
+
+                                <div class="d-inline-block">
+                                    <div><h5 class="text-secondary">نام و نام خانوادگی:</h5></div>
+                                    <div><h3 class="info-values">{{ customer_object|return_full_name }}</h3></div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row bg-white">
-                            <div class="col-md-6 col-12 text-right border">
-                                <div><h5 class="text-secondary">تاریخ تولد:</h5></div>
-                                <div><h3
-                                        class="info-values">{{ customer_object.birthday|convert_date|return_empty_if_none|en_to_fa }}</h3>
+                                <div class="float-left mt-5">
+                                    <a href="">{% if customer_object|return_full_name == "-" %}<i class="fa fa-plus" aria-hidden="true"></i>{% else %}
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>{% endif %}</a>
                                 </div>
+
                             </div>
+
                             <div class="col-md-6 col-12 text-right border">
-                                <div><h5 class="text-secondary">تاریخ عضویت:</h5></div>
-                                <div><h3 class="info-values">{{ customer_object.date|convert_date|en_to_fa }}</h3></div>
-                            </div>
-                        </div>
-                        <div class="row bg-white">
-                            <div class="col-12 mt-3 pb-5">
-                                <a href="{% url "customer:profile-edit" %}" class="text-decoration-underline links "><span class="underline-dashed">ویرایش اطلاعات کاربری</span></a>
+                                <div class="d-inline-block">
+
+                                    <div><h5 class="text-secondary">شماره تلفن همراه:</h5></div>
+                                    <div><h3 class="info-values">۰{{ user.phone|en_to_fa }}</h3></div>
+                                </div>
+
+                                <div class="float-left mt-5">
+                                    <a href=""><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                </div>
+
                             </div>
 
                         </div>
-                    </div>
-                    <div class="mt-5" id="orders-in-desktop">
-                        <div class="row">
-                            <h5 class="float-right mr-5">آخرین سفارش ها</h5>
-                        </div>
-                        <div class="row rounded bg-white">
-                            <div class="col-12">
-                                <div class="row" id="order-info">
-                                    <div class="col">#</div>
-                                    <div class="col">شماره سفارش</div>
-                                    <div class="col">تاریخ ثبت سفارش</div>
-                                    <div class="col">مبلغ قابل پرداخت</div>
-                                    <div class="col">مبلغ کل</div>
-                                    <div class="col">عملیات پرداخت</div>
-                                    <div class="col">جزییات</div>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                {% if last_three_orders %}
-                                    {% for order in last_three_orders %}
-                                        <div class="row bg-white mt-5 mb-5">
-                                            <div class="col">{{ forloop.counter|en_to_fa }}</div>
-                                            <div class="col">{{ order.order_id }}</div>
-                                            <div class="col">{{ order.date|convert_date|en_to_fa }}</div>
-                                            <div class="col">{{ order.payment_amount|en_to_fa }}</div>
-                                            <div class="col">{{ order.total_amount|en_to_fa }}</div>
-                                            <div class="col">{{ order.payment_type }}</div>
-                                            <div class="col"><a href=""><i class="fa fa-angle-left" aria-hidden="true" style="font-size: 200%"></i></a></div>
-                                        </div>
 
-                                    {% endfor %}
-                                {% else %}
-                                    <div class="row pt-5 pb-5">
-                                       <h4 class="text-secondary m-auto"><i>سفارشی موجود نیست</i></h4>
+                        <div class="row bg-white">
+                            <div class="col-md-6 col-12 text-right border">
+
+                                <div class="d-inline-block">
+                                    <div><h5 class="text-secondary">پست الکترونیک :</h5></div>
+                                    <div><h3 class="info-values">{{ user.email|return_empty_if_none }}</h3></div>
+                                </div>
+
+                                <div class="float-left mt-5">
+                                    <a href="">{% if user.email|return_empty_if_none == "-" %}<i class="fa fa-plus" aria-hidden="true"></i>{% else %}
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>{% endif %}</a>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6 col-12 text-right border">
+
+                                <div class="d-inline-block">
+                                    <div><h5 class="text-secondary">کد ملی:</h5></div>
+                                    <div><h3
+                                            class="info-values">{{ customer_object.personal_id|return_empty_if_none|en_to_fa }}</h3>
                                     </div>
-                                {% endif %}
+                                </div>
+
+                                <div class="float-left mt-5">
+                                    <a href="">{% if customer_object.personal_id|return_empty_if_none == "-" %}<i class="fa fa-plus" aria-hidden="true"></i>{% else %}
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>{% endif %}</a>
+                                </div>
 
                             </div>
+
                         </div>
+
+                        <div class="row bg-white">
+                            <div class="col-md-6 col-12 text-right border">
+                                <div class="d-inline-block">
+                                    <div><h5 class="text-secondary">تاریخ تولد:</h5></div>
+                                    <div><h3
+                                            class="info-values">{{ customer_object.birthday|convert_date|return_empty_if_none|en_to_fa }}</h3>
+                                    </div>
+                                </div>
+                                <div class="float-left mt-5">
+                                    <a href="">{% if customer_object.birthday|convert_date|return_empty_if_none == "-" %}<i class="fa fa-plus" aria-hidden="true"></i>{% else %}
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>{% endif %}</a>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

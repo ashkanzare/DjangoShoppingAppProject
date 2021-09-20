@@ -7,7 +7,7 @@
 {% block main %}
     <input type="hidden" id="customer-login-url" data-url="{% url 'customer:login' 'confirm' %}">
     <input type="hidden" id="customer-register-url" data-url="{% url 'customer:register' 'confirm' %}">
-    <input type="hidden" id="customer-home-url" data-url="{% url 'home' %}">
+    <input type="hidden" id="customer-home-url" data-url="{% url 'product:home' %}">
     <input type="hidden" id="customer-register-login-url" data-url="{% url 'customer:register-login' %}">
     <input type="hidden" id="customer-refresh-code-url" data-url="{% url 'auth_api:refresh-code' %}">
     <input type="hidden" id="customer-login-password-url" data-url="{% url 'auth_api:login-with-password' %}">

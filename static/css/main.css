@@ -143,7 +143,7 @@ body {
     min-width: 79% !important;
 }
 
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 1390px) {
     .sidebar, .main {
         min-width: 100% !important;
     }
@@ -217,4 +217,10 @@ body {
     min-height: 5rem;
     background-color: #1479e7;
     color: white;
+}
+
+.info-values {
+    font-size: 140% !important;
+    color: #444343;
+    font-weight: bold;
 }

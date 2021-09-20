@@ -1,6 +1,8 @@
 from random import choices
 import string
 from django.utils.datetime_safe import datetime, time
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 """
     utils_function.py is a module for extra functions that project needed
@@ -32,3 +34,38 @@ def compute_code_expire_time():
     timestamp = datetime.utcnow().timestamp()
     timestamp += 120
     return timestamp
+
+
+def check_personal_code_is_valid(code):
+    """ check if a personal id is valid or not """
+
+    if len(code) < 8 or len(code) > 10:
+        raise ValidationError(
+            _('%(value)s is not valid personal code'),
+            params={'value': code},
+        )
+
+    else:
+        if 8 <= len(code) < 10:
+            while len(code) < 10:
+                code = "0" + code
+
+        code_numbers_sum = 0
+        for i in range(len(code) - 1):
+            coefficient = 10 - i
+            code_numbers_sum += coefficient * int(code[i])
+
+        reminder = code_numbers_sum % 11
+
+        if reminder <= 2:
+            if reminder == int(code[-1]):
+                return True
+
+        else:
+            if 11 - reminder == int(code[-1]):
+                return True
+
+        raise ValidationError(
+            _('%(value)s is not valid personal code'),
+            params={'value': code},
+        )
