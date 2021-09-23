@@ -49,8 +49,8 @@ def convert_date(date):
 @register.filter(name='return_full_name')
 def return_full_name(customer_obj):
     """ return fullname of a customer """
-    return f"{customer_obj.first_name} {customer_obj.last_name}" if (
-                customer_obj.first_name or customer_obj.last_name) else '-'
+    return f"{customer_obj.first_name if customer_obj.first_name else ''} {customer_obj.last_name if customer_obj.last_name else ''}" if (
+            customer_obj.first_name or customer_obj.last_name) else '-'
 
 
 @register.filter(name='return_empty_if_none')
@@ -59,9 +59,20 @@ def return_empty_if_none(obj):
     return f"{obj}" if obj else '-'
 
 
+@register.filter(name='return_empty_str_if_none')
+def return_empty_str_if_none(obj):
+    """ return '' if obj is none """
+    return f"{obj}" if obj else ''
+
 @register.filter(name='get_fullname_or_return_phone')
 def get_fullname_or_return_phone(customer_obj):
     """ return fullname of a customer if exists or their phone """
     if customer_obj.first_name and customer_obj.last_name:
         return f"{customer_obj.first_name} {customer_obj.last_name}"
     return f"۰{en_to_fa(customer_obj.user.phone)}"
+
+
+@register.filter(name='month_number_to_name')
+def month_number_to_name(number):
+    """ convert month's number to it's name """
+    return jdatetime.datetime.j_months_fa[number - 1]

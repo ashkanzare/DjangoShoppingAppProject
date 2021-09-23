@@ -53,7 +53,7 @@ class User(AbstractUser):
 
     username = None
     # phone_regex = RegexValidator(regex=r'^9\d{9}$', message=_(const.PHONE_HELP_TEXT))
-    phone = models.CharField( max_length=10000, unique=True, verbose_name=_(const.PHONE))
+    phone = models.CharField(max_length=10000, unique=True, verbose_name=_(const.PHONE))
     is_customer = models.BooleanField(default=False, verbose_name=_(const.CUSTOMER))
     is_manager = models.BooleanField(default=False, verbose_name=_(const.MANAGER))
 
@@ -65,6 +65,14 @@ class User(AbstractUser):
 
     def __str__(self):
         return f'[ {self.phone} ]'
+
+    def check_if_user_has_password(self):
+        return True if self.password else False
+
+    def update_by_kwargs(self, **kwargs):
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+        self.save()
 
 
 class UserAuthCode(models.Model):

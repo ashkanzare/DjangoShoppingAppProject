@@ -1,9 +1,234 @@
 {% extends 'home/home_base.html' %}
 {% load customer_extras %}
+{% load static %}
+{% block head %}
+    <script src="{% static 'js/modals.js' %}"></script>{% endblock %}
 {% block title %}ویرایش پروفایل
     {% if customer_object.first_name and customer_object.last_name %}{{ customer.first_name }}
         {{ customer.last_name }}{% else %}{{ user.phone }}{% endif %}{% endblock %}
 {% block content %}
+
+    <!--  modals start  -->
+    <!--  first name and last name edit modal  -->
+    <div id="name-modal" class="modal fade" role="dialog" style="margin-top: 10%!important;">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header-custom p-5 rounded-top">
+                    <h4 class="modal-title">نام و نام خانودگی</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                </div>
+                <div class="modal-body">
+                    <div class="edit-errors text-danger">
+                        <p></p>
+                    </div>
+                    <form class="edit-form" action="{% url 'customer_api:customer-edit' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="text" value="{{ token }}" name="token" hidden>
+                            <label for="first_name" class="float-right">نام</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name"
+                                   value="{{ customer_object.first_name|return_empty_str_if_none }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="last_name" class="float-right">نام خانوادگی</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name"
+                                   value="{{ customer_object.last_name|return_empty_str_if_none }}">
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-5">ثبت اطلاعات</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--  phone number edit modal  -->
+    <div id="phone-modal" class="modal fade" role="dialog" style="margin-top: 10%!important;">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header-custom p-5 rounded-top">
+                    <h4 class="modal-title">شماره موبایل</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                </div>
+                <div class="modal-body">
+                    <div class="edit-errors text-danger">
+                        <p></p>
+                    </div>
+                    <form class="edit-form" action="{% url 'customer_api:customer-edit' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="text" value="{{ token }}" name="token" hidden>
+                            <input type="text" class="form-control" id="phone" name="phone"
+                                   value="{{ customer_object.user.phone }}">
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-5">دریافت کد و تغییر شماره</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!--  email edit modal  -->
+    <div id="email-modal" class="modal fade" role="dialog" style="margin-top: 10%!important;">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header-custom p-5 rounded-top">
+                    <h4 class="modal-title">پست الکترونیک :</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                </div>
+                <div class="modal-body">
+                    <div class="edit-errors text-danger">
+                        <p></p>
+                    </div>
+                    <form class="edit-form" action="{% url 'customer_api:customer-edit' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="text" value="{{ token }}" name="token" hidden>
+                            <input type="email" class="form-control" id="email" name="email"
+                                   value="{{ customer_object.user.email|return_empty_str_if_none }}">
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-5">تایید</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--  personal id edit modal  -->
+    <div id="personal-id-modal" class="modal fade" role="dialog" style="margin-top: 10%!important;">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header-custom p-5 rounded-top">
+                    <h4 class="modal-title">کد ملی :</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                </div>
+                <div class="modal-body">
+                    <div class="edit-errors text-danger">
+                        <p></p>
+                    </div>
+                    <form class="edit-form" action="{% url 'customer_api:customer-edit' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="text" value="{{ token }}" name="token" hidden>
+                            <input type="text" class="form-control" id="personal_id" name="personal_id"
+                                   value="{{ customer_object.personal_id|return_empty_str_if_none }}">
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-5">تایید</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!--  birthday edit modal  -->
+    <div id="birthday-modal" class="modal fade" role="dialog" style="margin-top: 10%!important;">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header-custom p-5 rounded-top">
+                    <h4 class="modal-title">تاریخ تولد :</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                </div>
+                <div class="modal-body">
+                    <div class="edit-errors text-danger">
+                        <p></p>
+                    </div>
+                    <form class="edit-form" id="111" action="{% url 'customer_api:customer-edit' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group row justify-content-between">
+                            <div class="col-3">
+                                <input type="text" value="{{ token }}" name="token" hidden>
+                                <label for="year" class="float-right mr-3">سال</label>
+                                <select class="selectpicker w-100" data-live-search="true" name="year" id="year">
+                                    <option value="none" selected disabled>
+                                        سال
+                                    </option>
+                                    {% for year in years %}
+                                        <option value="{{ year }}">{{ year|en_to_fa }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-4">
+                                <label for="month" class="float-right mr-3">ماه</label>
+                                <select class="selectpicker w-100" data-live-search="true" name="month" id="month">
+                                    <option disabled selected>
+                                        ماه
+                                    </option>
+                                    {% for month in months %}
+                                        <option value="{{ month }}">{{ month|month_number_to_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-3">
+                                <label for="day" class="float-right mr-3">روز</label>
+                                <select class="selectpicker w-100" data-live-search="true" name="day" id="day">
+                                    <option value="none" selected disabled>
+                                        روز
+                                    </option>
+                                    {% for day in days %}
+                                        <option value="{{ day }}">{{ day|en_to_fa }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-5">تایید</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--  password edit modal  -->
+    <div id="password-modal" class="modal fade" role="dialog" style="margin-top: 10%!important;">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header-custom p-5 rounded-top">
+                    <h4 class="modal-title">ویرایش رمز عبور :</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                </div>
+                <div class="modal-body">
+                    <div class="edit-errors text-danger">
+                        <p></p>
+                    </div>
+                    <form class="edit-form" action="{% url 'customer_api:customer-edit' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <small class="text-warning float-right mb-5">رمز عبور باید حداقل ۶ حرف باشد.</small>
+                            <input type="password" class="form-control mt-5" id="password" name="password"
+                                   placeholder="رمز عبور">
+                            <input type="password" class="form-control mt-5" id="password-confirm"
+                                   name="password-confirm"
+                                   placeholder="تکرار رمز عبور">
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-5">تایید</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--  modals end  -->
+
     <div class="vh-100 w-100 text-center">
         <div class="text-center" id="side-main-div">
             <div class="d-flex justify-content-between side-main-div-container">
@@ -81,8 +306,10 @@
                                     <div><h3 class="info-values">{{ customer_object|return_full_name }}</h3></div>
                                 </div>
                                 <div class="float-left mt-5">
-                                    <a href="">{% if customer_object|return_full_name == "-" %}<i class="fa fa-plus" aria-hidden="true"></i>{% else %}
-                                        <i class="fa fa-pencil" aria-hidden="true"></i>{% endif %}</a>
+                                    <a href="" data-toggle="modal" data-target="#name-modal">
+                                        {% if customer_object|return_full_name == "-" %}
+                                            <i class="fa fa-plus" aria-hidden="true"></i>{% else %}
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>{% endif %}</a>
                                 </div>
 
                             </div>
@@ -95,7 +322,8 @@
                                 </div>
 
                                 <div class="float-left mt-5">
-                                    <a href=""><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                    <a href="" data-toggle="modal" data-target="#phone-modal"
+                                    ><i class="fa fa-pencil" aria-hidden="true"></i></a>
                                 </div>
 
                             </div>
@@ -111,8 +339,10 @@
                                 </div>
 
                                 <div class="float-left mt-5">
-                                    <a href="">{% if user.email|return_empty_if_none == "-" %}<i class="fa fa-plus" aria-hidden="true"></i>{% else %}
-                                        <i class="fa fa-pencil" aria-hidden="true"></i>{% endif %}</a>
+                                    <a href="" data-toggle="modal" data-target="#email-modal">
+                                        {% if user.email|return_empty_if_none == "-" %}
+                                            <i class="fa fa-plus" aria-hidden="true"></i>{% else %}
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>{% endif %}</a>
                                 </div>
 
                             </div>
@@ -127,8 +357,10 @@
                                 </div>
 
                                 <div class="float-left mt-5">
-                                    <a href="">{% if customer_object.personal_id|return_empty_if_none == "-" %}<i class="fa fa-plus" aria-hidden="true"></i>{% else %}
-                                        <i class="fa fa-pencil" aria-hidden="true"></i>{% endif %}</a>
+                                    <a href="" data-toggle="modal" data-target="#personal-id-modal">
+                                        {% if customer_object.personal_id|return_empty_if_none == "-" %}
+                                            <i class="fa fa-plus" aria-hidden="true"></i>{% else %}
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>{% endif %}</a>
                                 </div>
 
                             </div>
@@ -144,12 +376,34 @@
                                     </div>
                                 </div>
                                 <div class="float-left mt-5">
-                                    <a href="">{% if customer_object.birthday|convert_date|return_empty_if_none == "-" %}<i class="fa fa-plus" aria-hidden="true"></i>{% else %}
-                                        <i class="fa fa-pencil" aria-hidden="true"></i>{% endif %}</a>
+                                    <a href="" data-toggle="modal" data-target="#birthday-modal">
+                                        {% if customer_object.birthday|convert_date|return_empty_if_none == "-" %}
+                                            <i class="fa fa-plus" aria-hidden="true"></i>{% else %}
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>{% endif %}</a>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12 text-right border">
+                                <div class="d-inline-block">
+                                    <div><h5 class="text-secondary">رمز عبور:</h5></div>
+                                    <div><h3
+                                            class="info-values">
+                                        {% if customer_object.user.check_if_user_has_password %}
+                                            <i style="font-size: 80%!important; color: rgba(0,0,0,0.51)">تنظیم شده</i>
+                                        {% else %}
+                                            -
+                                        {% endif %}
+
+                                    </h3>
+                                    </div>
+                                </div>
+                                <div class="float-left mt-5">
+                                    <a href="" data-toggle="modal" data-target="#password-modal">
+                                        {% if customer_object.user.check_if_user_has_password %}
+                                            <i class="fa fa-pencil" aria-hidden="true"></i>{% else %}
+                                            <i class="fa fa-plus" aria-hidden="true"></i>{% endif %}</a>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>

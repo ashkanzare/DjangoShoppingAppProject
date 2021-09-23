@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 import django.utils.timezone as current_time
 from django.utils.translation import gettext as _
@@ -6,7 +7,8 @@ from django.utils.translation import gettext as _
 from constants.vars import *
 
 from user.models import User
-from utils.utils_functions import generate_random_string, validate_discount_date, check_personal_code_is_valid
+from utils.utils_functions import generate_random_string, validate_discount_date, check_personal_code_is_valid, \
+    check_for_dict_values
 
 """ Customer App's Models """
 
@@ -28,11 +30,15 @@ class Customer(models.Model):
     birthday = models.DateField(blank=True, null=True, verbose_name=_(BIRTHDAY))
     personal_id = models.CharField(max_length=200, blank=True, null=True, verbose_name=_(PERSONAL_ID),
                                    validators=[check_personal_code_is_valid])
-    email = models.EmailField(blank=True, null=True, verbose_name=_(EMAIL))
+    # email = models.EmailField(blank=True, null=True, verbose_name=_(EMAIL))
     date = models.DateField(default=current_time.now, verbose_name=_(REGISTER_DATE))
 
     def __str__(self):
         return f"{self.user.phone} -- {self.last_name if self.last_name else NO_NAME}"
+
+    @classmethod
+    def get_fields(cls):
+        return set([f.name for f in cls._meta.get_fields()])
 
 
 class Address(models.Model):

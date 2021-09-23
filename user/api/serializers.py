@@ -11,7 +11,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CustomerUserSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
         model = User
         fields = ['url', 'phone']

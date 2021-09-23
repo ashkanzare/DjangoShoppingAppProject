@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import ListView
+from rest_framework import mixins, generics
 from rest_framework.authtoken.models import Token
 from .forms import UserRegisterLogin, UserCode, UserPassword, ResetPassword
 
@@ -161,3 +162,11 @@ class CustomerProfileEditListView(ListView):
     def get_queryset(self):
         logged_in_user = self.request.user
         return Customer.objects.get(user=logged_in_user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['token'] = Token.objects.get(user=self.request.user).key
+        context['days'] = [i for i in range(1, 32)]
+        context['months'] = [i for i in range(1, 13)]
+        context['years'] = [i for i in range(1310, 1384)]
+        return context

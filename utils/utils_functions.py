@@ -1,5 +1,10 @@
+import re
 from random import choices
 import string
+
+import jdatetime
+from django.contrib.auth import get_user_model
+from django.db.models import Q
 from django.utils.datetime_safe import datetime, time
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -69,3 +74,42 @@ def check_personal_code_is_valid(code):
             _('%(value)s is not valid personal code'),
             params={'value': code},
         )
+
+
+def check_for_dict_values(dic):
+    """ check if values of the given dictionary is not empty """
+    empty_values = [dic[key] for key in dic if (dic[key].strip() if isinstance(dic[key], str) else dic[key])]
+    return True if empty_values else False
+
+
+def phone_validator(phone):
+    """ validate phone number """
+    if re.search(r'^9\d{9}$', phone):
+        return True
+    return False
+
+
+def email_validator(email):
+    """ validate email """
+    if re.search(r'^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$', email):
+        return True
+    return False
+
+
+def date_validator(date_string):
+    """ validate date """
+    try:
+        datetime.strptime(date_string, "%Y-%m-%d")
+        return date_string
+    except ValueError:
+        raise ValidationError(_('Invalid value: %s') % date_string)
+
+
+def unique_phone_email_validator(phone_email):
+    """ validate uniqueness of email and phone """
+    User = get_user_model()
+    try:
+        User.objects.get(Q(email=phone_email) | Q(phone=phone_email))
+        raise ValidationError(_(f'This {"phone" if phone_email.isnumeric() else "email" } has been registered before'))
+    except User.DoesNotExist:
+        return phone_email

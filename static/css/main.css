@@ -224,3 +224,29 @@ body {
     color: #444343;
     font-weight: bold;
 }
+
+
+.modal-header-custom {
+    display: flex!important;
+    flex-direction: row!important;
+    justify-content: space-between!important;
+}
+
+.modal-content {
+    border-radius: 15px!important;
+}
+
+
+.close {
+    outline: none!important;
+}
+
+select {
+	appearance: none!important;
+    outline: none!important;
+}
+
+select:active {
+	appearance: none!important;
+    outline: none!important;
+}
