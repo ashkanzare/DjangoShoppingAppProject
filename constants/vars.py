@@ -40,6 +40,8 @@ USER_AUTH_CODE = 'کد تاییدیه'
 EXP_TIME = 'زمان انقضا'
 MANAGER = 'مدیر'
 PRICE = 'قیمت'
+DISCOUNT = 'تخفیف'
+
 """ Errors """
 INVALID_USERNAME = 'نام کاربری در سیستم موجود است'
 INVALID_PHONE = 'شماره تماس در سیستم موجود است'

@@ -56,6 +56,11 @@ class Product(models.Model):
         image = ProductImage.objects.filter(product__id=self.id).first()
         return image
 
+    def calc_final_price(self):
+        discount = ProductDiscount.objects.get(product__id=self.id)
+        if discount.percent_mode:
+            return True, discount.product.price * (1 - discount.discount_amount / 100), discount.discount_amount
+        return False, self.price - discount.discount_amount
 
 
 class ProductImage(models.Model):
@@ -90,13 +95,8 @@ class ProductDiscount(models.Model):
     """
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
     discount_amount = models.FloatField()
-    percent_mode = models.BooleanField(default=False)
+    percent_mode = models.BooleanField(default=True)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"[ {self.product.name} ] -- [ {self.discount_amount} ]"
-
-    def calc_final_price(self):
-        if self.percent_mode:
-            return self.product.price * (1 - self.discount_amount / 100)
-        return self.product.price - self.discount_amount
+        return f"[ {self.product.name} ] -- [ {self.discount_amount}{'%' if self.percent_mode else ' T'} ]"
