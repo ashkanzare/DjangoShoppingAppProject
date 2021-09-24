@@ -1,5 +1,7 @@
+let a;
 function get_products_by_category(category_id) {
     event.preventDefault()
+    let category_name = $(event.target).html()
     let url = $('#category-products-url').attr('data-url')
     $.ajax({
         type: "POST",
@@ -8,7 +10,7 @@ function get_products_by_category(category_id) {
         success: function (data) {
             console.log(data)
             $('#category-modal').modal('toggle');
-            $('.modal-title').html(`<p>محصولات مربوط به دسته ی ${data[0].category.name}</p>`)
+            $('.modal-title').html(`<p>محصولات مربوط به دسته ی ${category_name}</p>`)
             let products_html = ''
             for (let product of data) {
                 products_html += `

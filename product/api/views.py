@@ -24,9 +24,9 @@ class GetProductByCategoryView(mixins.ListModelMixin, generics.GenericAPIView):
     serializer_class = CategoryProductSerializer
 
     def post(self, request, *args, **kwargs):
+        category = self.request.data['category']
         queryset = Product.objects.filter(
-            Q(category__id=self.request.data['category']) | Q(category__parent__id=self.request.data['category']) | Q(
-                category__name__contains=self.request.data['category']) | Q(
-                category__parent__name__contains=self.request.data['category']))
+            (Q(category__id=category) | Q(category__parent__id=category)) if category.isnumeric() else
+            (Q(category__name__contains=category) | Q(category__parent__name__contains=category)))
         serialized_queryset = ProductSerializer(queryset, context={'request': request}, many=True).data
         return Response(serialized_queryset)
