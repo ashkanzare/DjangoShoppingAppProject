@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, PropertyDescription, ProductProperty, Product
+from .models import Category, PropertyDescription, ProductProperty, Product, ProductImage
 
 """ Property App's Models Register """
 
@@ -7,6 +7,11 @@ from .models import Category, PropertyDescription, ProductProperty, Product
 class PropertyDescriptionTabularInline(admin.TabularInline):
     model = PropertyDescription
     autocomplete_fields = ['property']
+
+
+class ProductImageTabularInline(admin.TabularInline):
+    model = ProductImage
+    max_num = 3
 
 
 @admin.register(Category)
@@ -18,7 +23,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     search_fields = ['category__name', 'name']
     autocomplete_fields = ['category']
-    inlines = [PropertyDescriptionTabularInline]
+    inlines = [PropertyDescriptionTabularInline, ProductImageTabularInline]
     list_filter = ['category']
 
 

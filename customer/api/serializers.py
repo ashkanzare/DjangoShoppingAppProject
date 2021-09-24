@@ -27,7 +27,8 @@ class UserPhoneSerializer(serializers.ModelSerializer):
 
 class CustomerSerializer(serializers.ModelSerializer):
     phone_regex = RegexValidator(regex=r'^9\d{9}$', message=_(const.PHONE_HELP_TEXT))
-    phone = serializers.CharField(max_length=10, validators=[phone_regex, unique_phone_email_validator], allow_null=True, allow_blank=True)
+    phone = serializers.CharField(max_length=10, validators=[phone_regex, unique_phone_email_validator],
+                                  allow_null=True, allow_blank=True)
     token = serializers.CharField(max_length=40)
     email = serializers.EmailField(allow_null=True, allow_blank=True, validators=[unique_phone_email_validator])
     birthday = serializers.CharField(allow_null=True, allow_blank=True, validators=[date_validator])
@@ -37,3 +38,5 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = ['token', 'first_name', 'last_name', 'email', 'personal_id', 'birthday', 'phone']
 
 
+class StateCitiesSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=250)

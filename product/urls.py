@@ -6,6 +6,6 @@ app_name = 'product'
 
 urlpatterns = [
     # home url
-    path('', HomeView.as_view(), name='home')
+
 
 ]

@@ -7,9 +7,12 @@
     <div class="d-flex justify-content-between w-25 m-3">
         {% if user.is_authenticated %}
             <h5>user: {{ user.phone }}</h5>
-            <a href="{% url 'customer:profile' %}"><h5>Profile</h5></a>
+            <a href="{% url 'customer:profile' %}"><h5>11Profile</h5></a>
             <a href="{% url 'customer:logout' %}"><h5>logout</h5></a>
+
         {% endif %}
+
+
     </div>
     {% block content %}
     {% endblock %}

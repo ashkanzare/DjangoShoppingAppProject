@@ -1,13 +1,19 @@
+import json
 import re
 from random import choices
 import string
 
-import jdatetime
+from hashlib import sha256
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.utils.datetime_safe import datetime, time
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+from django.contrib.staticfiles.finders import find
+from django.templatetags.static import static
+
+from constants.vars import STATES
 
 """
     utils_function.py is a module for extra functions that project needed
@@ -110,6 +116,30 @@ def unique_phone_email_validator(phone_email):
     User = get_user_model()
     try:
         User.objects.get(Q(email=phone_email) | Q(phone=phone_email))
-        raise ValidationError(_(f'This {"phone" if phone_email.isnumeric() else "email" } has been registered before'))
+        raise ValidationError(_(f'This {"phone" if phone_email.isnumeric() else "email"} has been registered before'))
     except User.DoesNotExist:
         return phone_email
+
+
+def get_static(path):
+    """ get static files path in views """
+    if settings.DEBUG:
+        return find(path)
+    else:
+        return static(path)
+
+
+def get_states_and_cities(state_name):
+    url = get_static('json/iran-states-and-cities-json/iran_cities_with_coordinates.json')
+    with open(url, 'r', encoding="utf-8") as jsonfile:
+        states = json.load(jsonfile)
+        if state_name in STATES:
+            index = STATES[state_name]
+            return {'cities': [city['name'] for city in states[index]['cities']]}
+        return {'cities': 'not found'}
+
+
+def image_path_generator(instance, filename):
+    print(instance)
+    name = filename.split('.')
+    return f"product_{instance.product.id}/{sha256(name[0].encode()).hexdigest()}.{name[-1]}"

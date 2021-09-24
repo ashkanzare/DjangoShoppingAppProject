@@ -1,11 +1,18 @@
+import json
+
 from django.core.exceptions import FieldDoesNotExist
+from django.http import FileResponse, JsonResponse
+from django.templatetags.static import static
 from rest_framework import mixins, generics, serializers
+from django.contrib.staticfiles.storage import staticfiles_storage
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
-from customer.api.serializers import CustomerSerializer
+from constants.vars import STATES
+from customer.api.serializers import CustomerSerializer, StateCitiesSerializer
 from customer.models import Customer
-from utils.utils_functions import check_for_dict_values, phone_validator, email_validator
+from utils.utils_functions import check_for_dict_values, phone_validator, email_validator, get_static, \
+    get_states_and_cities
 
 
 # class CustomerEditDetail(mixins.RetrieveModelMixin,
@@ -52,14 +59,13 @@ class CustomerEditDetail(mixins.RetrieveModelMixin,
         customer = Customer.objects.filter(user=token.user)
 
         data = {key: data[key] if
-                (key in customer[0].__dict__ and (
-                        customer[0].__dict__[key] != data[key] or customer[0].__dict__[key] == '')) or (
-                        key in token.user.__dict__ and (
-                        token.user.__dict__[key] != data[key] or token.user.__dict__[key] == '')) or (
-                        key in ['token', 'csrfmiddlewaretoken']) else '' for key in data}
+        (key in customer[0].__dict__ and (
+                customer[0].__dict__[key] != data[key] or customer[0].__dict__[key] == '')) or (
+                key in token.user.__dict__ and (
+                token.user.__dict__[key] != data[key] or token.user.__dict__[key] == '')) or (
+                key in ['token', 'csrfmiddlewaretoken']) else '' for key in data}
 
         serializer = self.get_serializer(data=data)
-        print(data)
         if serializer.is_valid():
             data.pop('token', None)
             data.pop('csrfmiddlewaretoken', None)
@@ -69,8 +75,21 @@ class CustomerEditDetail(mixins.RetrieveModelMixin,
             token.user.update_by_kwargs(**cleaned_data_user)
             customer.update(**cleaned_data_customer)
             return Response({'status': 20})
-        print(serializer.errors)
         return Response(
             {'status': 40,
              'errors': serializer.errors}
         )
+
+
+class IranStateCities(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    queryset = {}
+    serializer_class = StateCitiesSerializer
+
+    def get(self, request, *args, **kwargs):
+        return JsonResponse(STATES, safe=False, json_dumps_params={'indent': 2, 'ensure_ascii': False})
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=self.request.data)
+        if serializer.is_valid():
+            return Response(get_states_and_cities(self.request.data['name']))
+        return Response({'cities': 'not found'})

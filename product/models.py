@@ -1,6 +1,7 @@
 from django.db import models
 
 import constants.vars as const
+from utils.utils_functions import image_path_generator
 
 """ Product App's Models """
 
@@ -42,6 +43,7 @@ class Product(models.Model):
     """
     name = models.CharField(max_length=1000, verbose_name=const.NAME)
     category = models.ForeignKey(Category, on_delete=models.RESTRICT, verbose_name=const.CATEGORY)
+    price = models.FloatField(default=0, verbose_name=const.PRICE)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -49,6 +51,19 @@ class Product(models.Model):
 
     def __str__(self):
         return f"[ {self.category.name} ] -- [ {self.name} ]"
+
+    def get_first_image(self):
+        image = ProductImage.objects.filter(product__id=self.id).first()
+        return image
+
+
+
+class ProductImage(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=const.PRODUCT)
+    image = models.ImageField(upload_to=image_path_generator)
+
+    def __str__(self):
+        return f"[ {self.product.name} ]"
 
 
 class PropertyDescription(models.Model):
@@ -65,3 +80,23 @@ class PropertyDescription(models.Model):
     def __str__(self):
         return f"[ {self.product.id} ] -- [ {self.property.name} ] -- " \
                f"[ {self.description[:30] + '...' if len(self.description) >= 30 else self.description} ]"
+
+
+class ProductDiscount(models.Model):
+    """
+        ProductDiscount Model contains:
+                product(required),
+                discount(required),
+    """
+    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    discount_amount = models.FloatField()
+    percent_mode = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"[ {self.product.name} ] -- [ {self.discount_amount} ]"
+
+    def calc_final_price(self):
+        if self.percent_mode:
+            return self.product.price * (1 - self.discount_amount / 100)
+        return self.product.price - self.discount_amount

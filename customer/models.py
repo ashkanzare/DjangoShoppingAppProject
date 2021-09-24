@@ -48,10 +48,16 @@ class Address(models.Model):
             address(required)
     """
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name=_(CUSTOMER))
-    address = models.TextField(verbose_name=_(ADDRESS))
+    MY_CHOICES = (
+        ('a', 'Hola'),
+        ('b', 'Hello'),
+        ('c', 'Bonjour'),
+        ('d', 'Boas'),
+    )
+    choice = models.CharField(max_length=100, choices=MY_CHOICES, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.customer} -- {self.address[:25]}..."
+        return f"{self.customer}"
 
 
 class DiscountCode(models.Model):

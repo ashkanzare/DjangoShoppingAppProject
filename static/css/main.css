@@ -250,3 +250,31 @@ select:active {
 	appearance: none!important;
     outline: none!important;
 }
+
+.card-title, .btn {
+    font-size: 80%!important;
+}
+
+.price > p {
+    font-size: 80%!important;
+    font-weight: bolder;
+}
+
+.card {
+    border-radius: 15px!important;
+    border: none;
+    transition: transform 200ms ease-in-out, box-shadow 100ms ease-in-out;
+}
+
+.category-div {
+    background-color: white;
+    border-radius: 20px;
+}
+
+.card:hover {
+    transform: translateY(-1em);
+    transition: transform 200ms ease-in-out, box-shadow 100ms ease-in-out;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(54, 54, 54, 0.36);
+
+}
