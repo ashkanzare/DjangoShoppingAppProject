@@ -53,17 +53,40 @@ class Product(models.Model):
         return f"[ {self.category.name} ] -- [ {self.name} ]"
 
     def get_first_image(self):
+        """ get first product image for showing in main page """
         image = ProductImage.objects.filter(product__id=self.id).first()
         return image
 
     def calc_final_price(self):
+        """ calculate final price of a product with discount """
         discount = ProductDiscount.objects.get(product__id=self.id)
         if discount.percent_mode:
             return True, discount.product.price * (1 - discount.discount_amount / 100), discount.discount_amount
         return False, self.price - discount.discount_amount
 
+    @classmethod
+    def get_or_none(cls, product_id):
+        """ get a object of product if it exists else return None """
+        product = None
+        try:
+            product = Product.objects.get(pk=product_id)
+        except Product.DoesNotExist:
+            pass
+        finally:
+            return product
+
+    def get_properties(self):
+        properties = PropertyDescription.objects.filter(product__id=self.id)
+        return properties
+
 
 class ProductImage(models.Model):
+    """
+         ProductImage Model contains:
+                product(required),
+                image(required),
+
+    """
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=const.PRODUCT)
     image = models.ImageField(upload_to=image_path_generator)
 

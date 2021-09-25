@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from product.models import Product, ProductProperty, PropertyDescription, Category
+from product.models import Product, ProductProperty, PropertyDescription, Category, ProductImage
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -23,6 +23,14 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ProductByIdSerializer(serializers.ModelSerializer):
+    product_id = serializers.IntegerField(source='product.id', min_value=1)
+
+    class Meta:
+        model = Product
+        fields = ['product_id']
+
+
 class BaseProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
@@ -42,10 +50,18 @@ class CategoryProductSerializer(serializers.ModelSerializer):
 class ProductPropertySerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductProperty
-        fields = '__all__'
+        fields = ['name']
 
 
 class PropertyDescriptionSerializer(serializers.ModelSerializer):
+    property = ProductPropertySerializer()
+
     class Meta:
         model = PropertyDescription
-        fields = '__all__'
+        fields = ['property', 'description']
+
+
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = ['image']

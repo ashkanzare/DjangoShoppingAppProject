@@ -12,7 +12,7 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
 
-# Create your models here.
+
 
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
