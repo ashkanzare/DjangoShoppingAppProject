@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import FieldDoesNotExist
 from django.db import models
@@ -6,11 +7,11 @@ from django.utils.translation import gettext as _
 
 from constants.vars import *
 
-from user.models import User
 from utils.utils_functions import generate_random_string, validate_discount_date, check_personal_code_is_valid, \
     check_for_dict_values
 
 """ Customer App's Models """
+User = get_user_model()
 
 
 class Customer(models.Model):

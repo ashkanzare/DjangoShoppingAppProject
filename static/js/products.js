@@ -1,4 +1,5 @@
 let a;
+
 function get_products_by_category(category_id) {
     event.preventDefault()
     let category_name = $(event.target).html()
@@ -24,3 +25,28 @@ function get_products_by_category(category_id) {
         }
     });
 }
+
+
+$(document).ready(function () {
+
+    let url = $('#categories-url').attr('data-url')
+    $.ajax({
+        type: "GET",
+        url: url,
+        success: function (data) {
+            console.log(data)
+            let category_navbar = $('.nav-categories')
+            let categories_html = category_navbar.html()
+            for (let category of data) {
+                categories_html += `
+                    <li class="mr-5">
+                        <a href="" onclick="get_products_by_category( ${category.id} )">${category.name}</a>
+                    </li>
+`
+            }
+            category_navbar.html(categories_html)
+        }
+    });
+
+})
+

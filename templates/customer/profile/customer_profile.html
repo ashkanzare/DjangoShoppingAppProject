@@ -1,9 +1,10 @@
-{% extends 'home/home_base.html' %}
+{% extends 'home_base.html' %}
 {% load customer_extras %}
 {% block title %}پروفایل {% if customer_object.first_name and customer_object.last_name %}{{ customer.first_name }}
     {{ customer.last_name }}{% else %}{{ user.phone }}{% endif %}{% endblock %}
+{% block active_navbar_profile %}active{% endblock %}
 {% block content %}
-    <div class="vh-100 w-100 text-center">
+    <div class="vh-100 w-100 text-center under-nav ">
         <div class="text-center" id="side-main-div">
             <div class="d-flex justify-content-between side-main-div-container">
                 <div class="sidebar">
@@ -66,7 +67,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="main">
+                <div class="main" >
                     <div>
                         <div class="row">
                             <h5 class="float-right mr-5">اطلاعات کاربری</h5>

@@ -96,7 +96,7 @@ class ProductDiscount(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
     discount_amount = models.FloatField()
     percent_mode = models.BooleanField(default=True)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(auto_created=True)
 
     def __str__(self):
         return f"[ {self.product.name} ] -- [ {self.discount_amount}{'%' if self.percent_mode else ' T'} ]"

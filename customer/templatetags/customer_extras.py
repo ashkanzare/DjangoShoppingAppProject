@@ -2,6 +2,8 @@ from django import template
 import jdatetime
 from datetime import datetime
 
+from customer.models import Customer
+
 register = template.Library()
 
 
@@ -64,6 +66,7 @@ def return_empty_str_if_none(obj):
     """ return '' if obj is none """
     return f"{obj}" if obj else ''
 
+
 @register.filter(name='get_fullname_or_return_phone')
 def get_fullname_or_return_phone(customer_obj):
     """ return fullname of a customer if exists or their phone """
@@ -76,3 +79,15 @@ def get_fullname_or_return_phone(customer_obj):
 def month_number_to_name(number):
     """ convert month's number to it's name """
     return jdatetime.datetime.j_months_fa[number - 1]
+
+
+@register.filter(name='user_to_customer')
+def user_to_customer(user):
+    """ get user's customer info """
+    global customer
+    try:
+        customer = Customer.objects.get(user=user)
+    except Customer.DoesNotExist:
+        customer = None
+    finally:
+        return customer

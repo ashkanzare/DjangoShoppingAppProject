@@ -4,7 +4,8 @@ from rest_framework import mixins, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from product.api.serializers import ProductSerializer, CategoryProductSerializer, BaseProductSerializer
+from product.api.serializers import ProductSerializer, CategoryProductSerializer, BaseProductSerializer, \
+    BasicCategorySerializer
 from product.models import Product, Category
 
 
@@ -16,6 +17,15 @@ def get_all_products(request):
                                                       context={'request': request}, many=True).data} for
                 category in all_categories]
     return Response(products)
+
+
+class GetAllCategoriesView(mixins.ListModelMixin, generics.GenericAPIView):
+    """ Get all categories """
+    queryset = Category.objects.all()
+    serializer_class = BasicCategorySerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
 
 class GetProductByCategoryView(mixins.ListModelMixin, generics.GenericAPIView):

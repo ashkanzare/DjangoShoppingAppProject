@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+{% load customer_extras %}
+{% load crispy_forms_tags %}
+{% block title %}{% translate "فروشگاه اینترنتی میشاپ" %}{% endblock %}
+
+{% block main %}
+    <div id="category-modal" class="modal fade" role="dialog" style="margin-top: 10%!important;">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header-custom p-5 rounded-top">
+                    <h4 class="modal-title"></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                </div>
+                <div class="modal-body">
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <input type="hidden" id="category-products-url" data-url="{% url 'product_api:category-products-api' %}">
+    <input type="hidden" id="categories-url" data-url="{% url 'product_api:categories-api' %}">
+
+
+    <nav class="navbar navbar-inverse  navbar-expand-md  navbar-fixed-top mb-5">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">MESHOP</a>
+            </div>
+            <ul class="nav navbar-nav nav-categories">
+                <li class="{% block active_navbar_home %}{% endblock %}"><a href="{% url 'home' %}">خانه</a></li>
+
+            </ul>
+            <form class="navbar-form navbar-left">
+                <div class="d-flex">
+                    <input type="text" class="form-control ml-2" placeholder="جستجو..." name="search">
+
+                        <button class="btn btn-default" type="submit">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </button>
+
+                </div>
+            </form>
+            <div>
+                <ul class="nav navbar-nav">
+                    {% if user.is_authenticated %}
+                        {% with user_customer=user|user_to_customer %}
+                            {% if user_customer and user_customer.first_name and user_customer.last_name %}
+                                <li><a><h5>{{ user_customer.first_name }} {{ user_customer.last_name }}</h5></a></li>
+                            {% else %}
+                                <li><a><h5>۰{{ user.phone|en_to_fa }}</h5></a></li>
+                            {% endif %}
+                        {% endwith %}
+
+                        <li class="{% block active_navbar_profile %}{% endblock %}"><a href="{% url 'customer:profile' %}" ><h5>پروفایل</h5></a></li>
+                        <li><a href="{% url 'customer:logout' %}"><h5>خروج</h5></a></li>
+
+                    {% else %}
+                        <li><a href="{% url 'customer:register-login' %}"><h5>ورود/ثبت نام</h5></a></li>
+
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Navbar -->
+    {% block content %}
+    {% endblock %}
+{% endblock %}

@@ -1,44 +1,14 @@
-{% extends 'base.html' %}
+{% extends 'home_base.html' %}
 {% load crispy_forms_filters %}
 {% load i18n %}
 {% load product_extras %}
 {% load crispy_forms_tags %}
 {% block title %}{% translate "فروشگاه اینترنتی میشاپ" %}{% endblock %}
-{% block main %}
-    <input type="hidden" id="category-products-url" data-url="{% url 'product_api:category-products-api' %}">
-    <div id="category-modal" class="modal fade" role="dialog" style="margin-top: 10%!important;">
-        <div class="modal-dialog">
+{% block content %}
 
-            <div class="modal-content">
-                <div class="modal-header-custom p-5 rounded-top">
-                    <h4 class="modal-title"></h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
 
-                </div>
-                <div class="modal-body">
-
-                </div>
-            </div>
-
-        </div>
-    </div>
-    <div class="d-flex w-25 m-3">
-        <div class="d-flex justify-content-between" style="min-width: 50rem">
-            {% if user.is_authenticated %}
-                <h5>user: {{ user.phone }}</h5>
-                <a href="{% url 'customer:profile' %}"><h5>Profile</h5></a>
-                <a href="{% url 'customer:logout' %}"><h5>logout</h5></a>
-            {% endif %}
-        </div>
-        <ul class="d-flex justify-content-between">
-            {% for category in categories %}
-                <li class="mr-5">
-                    <a href="" onclick="get_products_by_category({{ category.id }})">{{ category.name }}</a>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-    <div class="container">
+    {% block active_navbar_home %}active{% endblock %}
+    <div class="container vh-100 under-nav ">
         {% for category in object_list %}
             {% if category.products %}
                 <div class="category-div">
