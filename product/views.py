@@ -1,6 +1,6 @@
 from django.views import generic
 
-from product.models import Product, Category
+from product.models import Product, Category, PropertyDescription
 
 
 class HomeView(generic.ListView):
@@ -23,4 +23,5 @@ class ProductView(generic.DetailView):
     model = Product
     template_name = 'product/product.html'
     pk_url_kwarg = 'product_id'
+
 

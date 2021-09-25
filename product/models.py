@@ -76,8 +76,25 @@ class Product(models.Model):
             return product
 
     def get_properties(self):
+        """ get all properties of a product """
         properties = PropertyDescription.objects.filter(product__id=self.id)
         return properties
+
+    def get_all_info(self):
+        """ get all info of a product """
+        data = {
+            'product': self,
+            'properties': self.get_properties(),
+            'images': self.productimage_set.all()
+        }
+
+        return data
+
+    def check_for_guarantee(self):
+        try:
+            return self.propertydescription_set.get(property__name='گارانتی')
+        except PropertyDescription.DoesNotExist:
+            return None
 
 
 class ProductImage(models.Model):

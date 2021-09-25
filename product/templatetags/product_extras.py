@@ -22,11 +22,18 @@ def price_format(price):
     return en_to_fa(str(int_price))
 
 
+@register.filter(name='list_range')
+def list_range(list_obj, range_str):
+    start, end = range_str.split('-')
+    return list_obj[int(start):int(end)]
+
+
 @register.filter(name='short_description')
 def short_description(text):
     if len(text) > 40:
         return f'{text[:40]}...'
     return text
+
 
 @register.filter(name='date_delta')
 def date_delta(date_time):

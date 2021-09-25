@@ -1,10 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1></h1>
-</body>
-</html>
+{% extends 'home_base.html' %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+{% load product_extras %}
+{% load crispy_forms_tags %}
+{% block title %}{% translate "فروشگاه اینترنتی میشاپ" %}{% endblock %}
+{% block content %}
+{% with product_data=product.get_all_info %}
+<div class="row under-nav justify-content-center" id="test">
+
+    <div class="col-10">
+        <div class="row">
+            <div class="col-4 bg-warning text-center" style="width: 20rem;">
+                <img class="p-2" src="{{ product_data.images.0.image.url }}" alt="" style="object-fit: scale-down; height: 100%; width: 70%;">
+            </div>
+            <div class="col-8 bg-success">
+                <div class="row bg-secondary">{{ product_data.product.name }}</div>
+                <div class="row">
+                    <div class="col-8 bg-primary">
+                        <ul class="text-right">
+                            {% for property in product_data.properties|list_range:'0-3' %}
+
+                                <li>{{ property.property.name }}: {{ property.description }}</li>
+
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-4 bg-danger">
+                        {% with guarantee=product.check_for_guarantee %}
+                            {% if guarantee %}
+                                {{ guarantee.property.name }}
+                                {{ guarantee.description }}
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+
+{% endwith %}
+{% endblock %}
