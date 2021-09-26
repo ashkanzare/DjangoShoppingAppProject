@@ -1,5 +1,13 @@
 from django.contrib import admin
-from product.models import Category, PropertyDescription, ProductProperty, Product, ProductImage, ProductDiscount
+from product.models import (
+    Category,
+    PropertyDescription,
+    ProductProperty,
+    Product,
+    ProductImage,
+    ProductDiscount,
+    ProductFactorProperty
+)
 
 """ Property App's Models Register """
 
@@ -7,6 +15,10 @@ from product.models import Category, PropertyDescription, ProductProperty, Produ
 class PropertyDescriptionTabularInline(admin.TabularInline):
     model = PropertyDescription
     autocomplete_fields = ['property']
+
+
+class ProductFactorPropertyInline(admin.TabularInline):
+    model = ProductFactorProperty
 
 
 class ProductImageTabularInline(admin.TabularInline):
@@ -28,7 +40,11 @@ class CategoryAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     search_fields = ['category__name', 'name']
     autocomplete_fields = ['category']
-    inlines = [PropertyDescriptionTabularInline, ProductImageTabularInline, DiscountProductTabularInline]
+    inlines = [PropertyDescriptionTabularInline,
+               ProductImageTabularInline,
+               DiscountProductTabularInline,
+               ProductFactorPropertyInline,
+               ]
     list_filter = ['category']
 
 

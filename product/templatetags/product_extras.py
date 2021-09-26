@@ -96,3 +96,9 @@ def get_fullname_or_return_phone(customer_obj):
 def month_number_to_name(number):
     """ convert month's number to it's name """
     return jdatetime.datetime.j_months_fa[number - 1]
+
+
+@register.filter(name='get_price_by_factor_property')
+def get_price_by_factor_property(product_obj, property_id):
+    factor_price = product_obj.productfactorproperty_set.get(pk=property_id).price_impact
+    return product_obj.price + factor_price

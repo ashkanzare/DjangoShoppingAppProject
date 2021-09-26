@@ -2,6 +2,7 @@ from django.db import models
 
 import constants.vars as const
 from utils.utils_functions import image_path_generator
+from django.contrib.postgres.fields import ArrayField
 
 """ Product App's Models """
 
@@ -44,6 +45,7 @@ class Product(models.Model):
     name = models.CharField(max_length=1000, verbose_name=const.NAME)
     category = models.ForeignKey(Category, on_delete=models.RESTRICT, verbose_name=const.CATEGORY)
     price = models.FloatField(default=0, verbose_name=const.PRICE)
+    quantity = models.IntegerField(default=0, verbose_name=const.QUANTITY, help_text=const.QUANTITY_HELP_TEXT)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -95,6 +97,40 @@ class Product(models.Model):
             return self.propertydescription_set.get(property__name='گارانتی')
         except PropertyDescription.DoesNotExist:
             return None
+
+    def check_quantity(self):
+        if self.quantity == 0:
+            factor_quantity = self.productfactorproperty_set.filter(quantity__gt=1)
+            print(factor_quantity)
+            return factor_quantity if factor_quantity else 0
+        return self.quantity
+
+    def default_price(self):
+        factor_quantity = self.productfactorproperty_set.filter(quantity__gt=1)
+        if factor_quantity:
+            impact_price = factor_quantity.first().price_impact
+            return self.price + impact_price
+        return self.price
+
+
+
+class ProductFactorProperty(models.Model):
+    """
+        ProductFactorProperty Model contains:
+                product(required),
+                property(required),
+                value(required),
+                price_impact(optional),
+                quantity(optional),
+    """
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=const.PRODUCT)
+    property = models.ForeignKey(ProductProperty, on_delete=models.CASCADE, verbose_name=const.FACTOR_PROPERTY)
+    value = models.CharField(max_length=500, verbose_name=const.VALUE)
+    price_impact = models.FloatField(default=0, verbose_name=const.PRICE_IMPACT)
+    quantity = models.PositiveIntegerField(default=0, verbose_name=const.QUANTITY)
+
+    def __str__(self):
+        return f"[ {self.product.id} ] -- [ {self.property.name} ] -- [ {self.value} ] -- [ {self.quantity} ]"
 
 
 class ProductImage(models.Model):

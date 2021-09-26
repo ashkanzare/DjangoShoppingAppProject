@@ -41,7 +41,11 @@ EXP_TIME = 'زمان انقضا'
 MANAGER = 'مدیر'
 PRICE = 'قیمت'
 DISCOUNT = 'تخفیف'
-
+FACTOR_PROPERTY = 'ویژگی کلیدی'
+VALUE = 'مقدار'
+QUANTITY = 'موجودی'
+PRICE_IMPACT = 'تاثیر بر قیمت'
+QUANTITY_HELP_TEXT = 'در صورت صفر بودن تعداد محصول از طریق تعداد در ویژگی های کلیدی محاسبه میشود'
 """ Errors """
 INVALID_USERNAME = 'نام کاربری در سیستم موجود است'
 INVALID_PHONE = 'شماره تماس در سیستم موجود است'
