@@ -2,6 +2,7 @@
     vars.py is a python file that contain constants for using in project
 
 """
+import webcolors
 
 """ Variables """
 USER = 'کاربر'
@@ -43,9 +44,11 @@ PRICE = 'قیمت'
 DISCOUNT = 'تخفیف'
 FACTOR_PROPERTY = 'ویژگی کلیدی'
 VALUE = 'مقدار'
+FACTOR_PROPERTY_VALUES = 'مقادیر ویژگی های کلیدی'
 QUANTITY = 'موجودی'
 PRICE_IMPACT = 'تاثیر بر قیمت'
 QUANTITY_HELP_TEXT = 'در صورت صفر بودن تعداد محصول از طریق تعداد در ویژگی های کلیدی محاسبه میشود'
+COLOR = 'رنگ'
 """ Errors """
 INVALID_USERNAME = 'نام کاربری در سیستم موجود است'
 INVALID_PHONE = 'شماره تماس در سیستم موجود است'
@@ -118,3 +121,9 @@ STATES = {
     "همدان": 29,
     "يزد": 30
 }
+
+""" factor_property choices """
+
+COLOR_CHOICES = [(v, k) for k, v in webcolors.HTML4_NAMES_TO_HEX.items()]
+
+SIZES = [(k, k) for k in ['XS', 'S', 'L', 'XL', 'XXL', 'XXXL']]

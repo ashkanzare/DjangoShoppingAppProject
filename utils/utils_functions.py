@@ -140,6 +140,5 @@ def get_states_and_cities(state_name):
 
 
 def image_path_generator(instance, filename):
-    print(instance)
     name = filename.split('.')
     return f"product_{instance.product.id}/{sha256(name[0].encode()).hexdigest()}.{name[-1]}"

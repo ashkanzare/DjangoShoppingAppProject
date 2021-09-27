@@ -1,6 +1,9 @@
 from django import template
 import jdatetime
 from datetime import datetime
+import webcolors
+
+from product.models import Product, ProductDiscount
 
 register = template.Library()
 
@@ -25,6 +28,10 @@ def price_format(price):
 @register.filter(name='list_range')
 def list_range(list_obj, range_str):
     start, end = range_str.split('-')
+    if start == '':
+        return list_obj[:int(end)]
+    elif end == '':
+        return list_obj[int(start):]
     return list_obj[int(start):int(end)]
 
 
@@ -102,3 +109,16 @@ def month_number_to_name(number):
 def get_price_by_factor_property(product_obj, property_id):
     factor_price = product_obj.productfactorproperty_set.get(pk=property_id).price_impact
     return product_obj.price + factor_price
+
+
+@register.filter(name='get_final_price_for_a_product')
+def get_final_price_for_a_product(price, product_id):
+    product_discount = ProductDiscount.get_or_none(product_id)
+    if product_discount:
+        return price - product_discount.discount_amount * price / 100
+    return price
+
+
+@register.filter(name='convert_hex_to_name')
+def convert_hex_to_name(color_hex):
+    return webcolors.hex_to_name(color_hex)

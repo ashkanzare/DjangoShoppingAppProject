@@ -31,6 +31,20 @@ class ProductByIdSerializer(serializers.ModelSerializer):
         fields = ['product_id']
 
 
+class PropertyByIdSerializer(serializers.ModelSerializer):
+    property_id = serializers.IntegerField(source='propertydescription.id', min_value=1)
+
+    class Meta:
+        model = Product
+        fields = ['property_id']
+
+
+class ColorAndPropertyByIdSerializer(serializers.Serializer):
+    property_id = serializers.IntegerField(min_value=1)
+    color_id = serializers.IntegerField(min_value=1)
+    product_id = serializers.IntegerField(min_value=1)
+
+
 class BaseProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
@@ -45,6 +59,15 @@ class CategoryProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
+
+
+class CategoryAndProductSerializer(serializers.ModelSerializer):
+    category = serializers.CharField(source='category.name')
+    product = serializers.IntegerField(source='product.id')
+
+    class Meta:
+        model = Product
+        fields = ['category', 'product']
 
 
 class ProductPropertySerializer(serializers.ModelSerializer):

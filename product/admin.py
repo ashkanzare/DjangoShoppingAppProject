@@ -6,7 +6,8 @@ from product.models import (
     Product,
     ProductImage,
     ProductDiscount,
-    ProductFactorProperty
+    ProductFactorProperty,
+    ProductColor
 )
 
 """ Property App's Models Register """
@@ -15,6 +16,10 @@ from product.models import (
 class PropertyDescriptionTabularInline(admin.TabularInline):
     model = PropertyDescription
     autocomplete_fields = ['property']
+
+
+class ProductColorTabularInline(admin.TabularInline):
+    model = ProductColor
 
 
 class ProductFactorPropertyInline(admin.TabularInline):
@@ -43,6 +48,7 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [PropertyDescriptionTabularInline,
                ProductImageTabularInline,
                DiscountProductTabularInline,
+               ProductColorTabularInline,
                ProductFactorPropertyInline,
                ]
     list_filter = ['category']

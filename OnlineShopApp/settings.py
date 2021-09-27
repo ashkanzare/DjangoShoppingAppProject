@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     # bootstrap forms
     'crispy_forms',
+    'easy_thumbnails',
 
     # Applications
     'customer.apps.CustomerConfig',
@@ -57,8 +58,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ]
 }
-
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -164,7 +163,6 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # configure the media
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
 
 AUTH_USER_MODEL = 'user.User'
 #

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.views import generic
 
 from product.models import Product, Category, PropertyDescription
@@ -24,4 +25,11 @@ class ProductView(generic.DetailView):
     template_name = 'product/product.html'
     pk_url_kwarg = 'product_id'
 
-
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = context['object']
+        category = context['object'].category.id
+        context['other-products'] = Product.objects.filter(
+            (Q(category__id=category) | Q(category__parent__id=category)) if category else
+            (Q(category__name__contains=category) | Q(category__parent__name__contains=category))).exclude(id=product.id)
+        return context
