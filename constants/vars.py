@@ -49,6 +49,17 @@ QUANTITY = 'موجودی'
 PRICE_IMPACT = 'تاثیر بر قیمت'
 QUANTITY_HELP_TEXT = 'در صورت صفر بودن تعداد محصول از طریق تعداد در ویژگی های کلیدی محاسبه میشود'
 COLOR = 'رنگ'
+CART = 'سبد خرید'
+AVENUE = 'کوچه'
+STREET = 'خیابان'
+BUILDING_NUMBER = 'پلاک خانه'
+BUILDING_UNIT = 'واحد'
+CITY = 'شهر'
+STATE = 'استان'
+POSTAL_CODE = 'کد پستی'
+STATUS = 'وضعیت'
+NUMBER = 'تعداد'
+
 """ Errors """
 INVALID_USERNAME = 'نام کاربری در سیستم موجود است'
 INVALID_PHONE = 'شماره تماس در سیستم موجود است'
@@ -87,6 +98,17 @@ USER_TYPE_REVERSE = {
     'مشتری': 'customer',
 }
 
+ORDER_STATUS = [
+    ('PENDING', 'pending'),
+    ('SENT', 'sent'),
+    ('CANCELED', 'canceled')
+]
+
+CART_STATUS = [
+    ('active', 'active'),
+    ('saved', 'saved')
+]
+
 """ States name """
 STATES = {
     "آذربايجان شرقي": 0,
@@ -121,6 +143,8 @@ STATES = {
     "همدان": 29,
     "يزد": 30
 }
+
+STATES_TUPLE = [(v, k) for k, v in STATES.items()]
 
 """ factor_property choices """
 

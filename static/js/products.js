@@ -34,10 +34,12 @@ function get_products_by_category(category_id) {
             let products_html = ''
             for (let product of data) {
                 products_html += `
+                <a href="http://127.0.0.1:8000/product/product-detail/${product.id}">  
                     <div class="d-flex justify-content-between mb-3 p-2" style="border-radius: 15px; background-color: whitesmoke">
                         <div>${product.name.slice(0, 40)}...</div>
                         <div>${product.price}</div>
                     </div>
+                </a>  
 `
             }
             $('.modal-body').html(products_html)
@@ -140,8 +142,9 @@ function get_price_base_of_color_and_property(property, color, product_id) {
         url: url,
         data: {'property_id': property, 'color_id': color, 'product_id': product_id}, // serializes the form's elements.
         success: function (data) {
+            let unit = '<span class="m-2 mr-3"\n style="font-size: 70%!important;">تومان</span>'
             if (data !== {}) {
-                $('#price-with-discount').html(data.price_with_discount)
+                $('#price-with-discount').html(data.price_with_discount + unit)
                 $('#base-price').html(data.price)
             }
         }

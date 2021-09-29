@@ -49,16 +49,17 @@ class Address(models.Model):
             address(required)
     """
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name=_(CUSTOMER))
-    MY_CHOICES = (
-        ('a', 'Hola'),
-        ('b', 'Hello'),
-        ('c', 'Bonjour'),
-        ('d', 'Boas'),
-    )
-    choice = models.CharField(max_length=100, choices=MY_CHOICES, null=True, blank=True)
+    state = models.CharField(max_length=100, choices=STATES_TUPLE, verbose_name=STATE)
+    city = models.CharField(max_length=100, verbose_name=CITY)
+    street = models.CharField(max_length=200, verbose_name=STREET)
+    avenue = models.CharField(max_length=200, verbose_name=AVENUE, blank=True, null=True)
+    postal_code = models.CharField(max_length=10, verbose_name=POSTAL_CODE)
+    phone = models.CharField(max_length=12, verbose_name=PHONE)
+    building_number = models.CharField(max_length=10, verbose_name=BUILDING_NUMBER)
+    building_unit = models.PositiveIntegerField(verbose_name=BUILDING_UNIT)
 
     def __str__(self):
-        return f"{self.customer}"
+        return f"[ {self.customer} ] -- [ {self.state} -- {self.city} -- {self.street} ] "
 
 
 class DiscountCode(models.Model):

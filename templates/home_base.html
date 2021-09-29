@@ -25,7 +25,6 @@
     <input type="hidden" id="category-products-url" data-url="{% url 'product_api:category-products-api' %}">
     <input type="hidden" id="categories-url" data-url="{% url 'product_api:categories-api' %}">
 
-
     <nav class="navbar navbar-inverse  navbar-expand-md  navbar-fixed-top mb-5">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -55,12 +54,14 @@
                                 <li><a><h5>۰{{ user.phone|en_to_fa }}</h5></a></li>
                             {% endif %}
                         {% endwith %}
+                        <li><a href=""><i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a></li>
 
                         <li class="{% block active_navbar_profile %}{% endblock %}"><a
                                 href="{% url 'customer:profile' %}"><h5>پروفایل</h5></a></li>
                         <li><a href="{% url 'customer:logout' %}"><h5>خروج</h5></a></li>
 
                     {% else %}
+                        <li><a href=""><i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a></li>
                         <li><a href="{% url 'customer:register-login' %}"><h5>ورود/ثبت نام</h5></a></li>
 
                     {% endif %}

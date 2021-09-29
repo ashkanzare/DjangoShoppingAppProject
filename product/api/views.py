@@ -8,7 +8,7 @@ from product.api.serializers import ProductSerializer, CategoryProductSerializer
     BasicCategorySerializer, ProductByIdSerializer, PropertyDescriptionSerializer, ProductImageSerializer, \
     PropertyByIdSerializer, ColorAndPropertyByIdSerializer, CategoryAndProductSerializer
 from product.models import Product, Category, PropertyDescription, ProductFactorProperty, ProductColor
-from product.templatetags.product_extras import get_final_price_for_a_product
+from product.templatetags.product_extras import get_final_price_for_a_product, price_format
 
 
 @api_view(['GET', ])
@@ -143,6 +143,6 @@ class GetPriceByColorAndFactorPropertyView(mixins.ListModelMixin, generics.Gener
         product = Product.get_or_none(product_id)
         if product:
             price = product.calc_price_base_of_color_and_factor_property(property_id, color_id)
-            return Response({'price': price,
-                             'price_with_discount': get_final_price_for_a_product(price, product.id)})
+            return Response({'price': price_format(price),
+                             'price_with_discount': price_format(get_final_price_for_a_product(price, product.id))})
         return Response({})

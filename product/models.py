@@ -1,3 +1,4 @@
+import webcolors
 from django.db import models
 
 import constants.vars as const
@@ -216,7 +217,7 @@ class ProductColor(models.Model):
     quantity = models.PositiveIntegerField(default=0, verbose_name=const.QUANTITY)
 
     def __str__(self):
-        return f"[ {self.product.name} ] -- [ {self.color} ] "
+        return f"[ {self.product.name} ] -- [ {webcolors.hex_to_name(self.color)} ] "
 
     @classmethod
     def get_price_base_of_color(cls, color_id):

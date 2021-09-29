@@ -103,7 +103,7 @@
                                                     <li>
                                                         <ul class="non-style-list">
                                                             {% for quantity in quantities.1 %}
-                                                                <li>
+                                                                <li class="m-3">
                                                                     <a href="" class="properties"
                                                                        {% if forloop.counter == 1 %}id="property-active"{% endif %}
                                                                        onclick="get_price_base_of_color_and_property($(this), $('#color-active'), {{ product.id }})"
@@ -124,16 +124,22 @@
 
                                     {% endfor %}
                                 </ul>
-                                <div class="meshop-warnings mt-5">
+                                {% if product.category.name == 'تلفن همراه' %}
+                                    <div class="meshop-warnings mt-5">
 
-                                    <p>
-                                        <span><i class="fa fa-exclamation-circle text-secondary" aria-hidden="true"></i></span>
-                                        هشدار سامانه همتا: در صورت انجام معامله، از فروشنده کد فعالسازی را گرفته و حتما
-                                        در حضور ایشان، دستگاه را از طریق #7777*، برای سیمکارت خود فعالسازی نمایید. آموزش
-                                        تصویری در آدرس اینترنتی hmti.ir/06
-                                        امکان برگشت کالا در گروه موبایل با دلیل "انصراف از خرید" تنها در صورتی مورد قبول
-                                        است که پلمپ کالا باز نشده باشد.</p>
-                                </div>
+                                        <p>
+                                            <span><i class="fa fa-exclamation-circle text-secondary"
+                                                     aria-hidden="true"></i></span>
+                                            هشدار سامانه همتا: در صورت انجام معامله، از فروشنده کد فعالسازی را گرفته و
+                                            حتما
+                                            در حضور ایشان، دستگاه را از طریق #7777*، برای سیمکارت خود فعالسازی نمایید.
+                                            آموزش
+                                            تصویری در آدرس اینترنتی hmti.ir/06
+                                            امکان برگشت کالا در گروه موبایل با دلیل "انصراف از خرید" تنها در صورتی مورد
+                                            قبول
+                                            است که پلمپ کالا باز نشده باشد.</p>
+                                    </div>
+                                {% endif %}
                             </div>
 
                             <div class="col-4 price-side rounded">
@@ -174,12 +180,12 @@
                                                         {% if product.productdiscount %}
                                                             <div class="d-flex justify-content-end"><strike
                                                                     style="font-size: 85%"><h4 id="base-price">
-                                                                {{ product_price.0|price_format }}</h4></strike>
+                                                                {{ product.calc_final_price_with_default_properties.3|price_format }}</h4></strike>
                                                                 <p class="p-2 m-2"
-                                                                   style="font-size: 90%; background-color: red; color: white; border-radius: 20px;">{{ product.calc_final_price.2|en_to_fa }}%</p>
+                                                                   style="font-size: 90%; background-color: red; color: white; border-radius: 20px;">{{ product.calc_final_price_with_default_properties.2|en_to_fa }}%</p>
                                                             </div>
                                                             <div>
-                                                                <h3 id="price-with-discount"> {{ product_price.0|get_final_price_for_a_product:product.id|price_format }}<span
+                                                                <h3 id="price-with-discount"> {{ product.calc_final_price_with_default_properties.1|price_format }}<span
                                                                         class="m-2 mr-3"
                                                                         style="font-size: 70%!important;">تومان</span>
                                                                 </h3>
@@ -243,12 +249,77 @@
 
 
     {% endwith %}
-    <div class="bg-danger row" style="margin-top: 5%">
+    <div class="justify-content-center row" style="margin-top: 5%">
 
-        {% if other-products %}
-            {% for product in other-products %}
-            {% endfor %}
-        {% endif %}
+        <div class="col-10 bg-danger rounded">
+            <div class="text-right text-white">
+                <h5>محصولات مرتبط</h5>
+            </div>
+
+            {% if other_products %}
+
+                <div class="d-flex justify-content-center">
+                    {% for product in other_products %}
+                        <a class="product-a-container" href="{% url 'product:product-detail' product.id %}">
+                            <div class="card text-right m-3" style="width: 17rem">
+                                <div style="height: 15rem;" class="text-center">
+                                    <img class="card-img-top" src="{{ product.get_first_image.image.url }}"
+                                         style="object-fit: scale-down; height: 100%; width: 100%" alt="product image">
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-title">{{ product.name|short_description }}</p>
+                                    <div class="text-left price">
+                                        {% if product.calc_final_price_with_default_properties.0 %}
+                                            <div class="d-flex justify-content-end">
+                                                <strike class="card-text m-2"
+                                                        style="font-size: 85%">{{ product.calc_final_price_with_default_properties.3|price_format }} </strike>
+                                                <p class="p-2"
+                                                   style="font-size: 90%; background-color: red; color: white; border-radius: 20px;">{{ product.calc_final_price_with_default_properties.2|en_to_fa }}%</p>
+                                            </div>
+                                            <p class="card-text">{{ product.calc_final_price_with_default_properties.1|price_format }}
+                                                تومان </p>
+                                        {% else %}
+
+                                            <p class="card-text m-2">{{ product.calc_final_price_with_default_properties.1|price_format }}
+                                                تومان </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
+
+                </div>
+                <div class="text-center">
+                    {% if other_products.has_other_pages %}
+                        <div class="pagination d-flex justify-content-between">
+
+                            {% if other_products.has_previous %}
+                                <div><a class="btn-white rounded"
+                                        style="text-decoration: none; font-size: 220%!important; background-color: white!important;"
+                                        href="?page={{ other_products.previous_page_number }}">&laquo;</a></div>
+                            {% else %}
+                                <div class="btn-white rounded disabled"><span class="rounded"
+                                                                              style="font-size: 220%!important; background-color: #a79e9e!important;">&laquo;</span>
+                                </div>
+                            {% endif %}
+                            {% if other_products.has_next %}
+                                <div>
+                                    <a style="font-size: 220%!important; background-color: white!important; text-decoration: none"
+                                       class="btn-white rounded" href="?page={{ other_products.next_page_number }}">&raquo;</a>
+                                </div>
+                            {% else %}
+                                <div class="btn-white rounded disabled"><span class="rounded"
+                                                                              style="font-size: 220%!important; background-color: #a7a3a3!important;">&raquo;</span>
+                                </div>
+                            {% endif %}
+
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
 
     </div>
 {% endblock %}
+

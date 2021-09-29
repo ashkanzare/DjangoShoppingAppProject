@@ -8,6 +8,8 @@
     src: url("../fonts/FontsFree-Net-ir_sans.ttf");
 }
 
+
+
 @font-face {
     font-family: digital;
     src: url("../fonts/Mj_Digital Arabia LT_0.ttf");
@@ -353,4 +355,24 @@ select:active {
 
 .product-properties {
     font-size: 95%;
+}
+
+#color-active > .circle {
+    height: 30px;
+    width: 30px;
+    border: 3px #b4b4b4 solid;
+
+}
+
+#property-active {
+
+    padding-right: 0.5%;
+    padding-left: 0.5%;
+    border-radius: 25px;
+    border: 2px solid black;
+
+}
+
+.properties {
+    text-decoration: none!important;
 }

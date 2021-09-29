@@ -1,11 +1,40 @@
 from django.db import models
+from django.utils.datetime_safe import datetime
 
-# Create your models here.
+from constants import vars as const
+from customer.models import Customer
+from product.models import Product, PropertyDescription, ProductColor
+
+
+class Cart(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name=const.CUSTOMER)
+    creation_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=const.CART_STATUS, verbose_name=const.STATUS)
+
+    def __str__(self):
+        return f"[ {self.customer.id} ] -- [ {self.creation_date} ]"
+
+    def check_date(self):
+        current_date = datetime.now()
+        time_diff = current_date - self.creation_date
+        return time_diff.seconds / 3600 < 3
+
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name=const.CART)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name=const.PRODUCT)
+    product_color = models.ForeignKey(ProductColor, on_delete=models.CASCADE, verbose_name=const.COLOR)
+    product_property = models.ForeignKey(PropertyDescription, on_delete=models.CASCADE, verbose_name=const.PROPERTY)
+    number = models.PositiveIntegerField(verbose_name=const.NUMBER)
+
+    def __str__(self):
+        return f"[ {self.product.name} ] -- [ {self.number} ]"
 
 
 class Order(models.Model):
-    pass
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name=const.CART)
+    status = models.CharField(max_length=100, choices=const.ORDER_STATUS)
+    date = models.DateTimeField(auto_now=True)
 
-
-class OrderHistory(models.Model):
-    pass
+    def __str__(self):
+        return f"[ {self.cart.id} ] -- [ {self.status} ] -- [ {self.date} ]"

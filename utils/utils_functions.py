@@ -135,6 +135,7 @@ def get_states_and_cities(state_name):
         states = json.load(jsonfile)
         if state_name in STATES:
             index = STATES[state_name]
+            print({'cities': [city['name'] for city in states[index]['cities']]})
             return {'cities': [city['name'] for city in states[index]['cities']]}
         return {'cities': 'not found'}
 
