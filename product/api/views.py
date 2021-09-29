@@ -139,7 +139,6 @@ class GetPriceByColorAndFactorPropertyView(mixins.ListModelMixin, generics.Gener
         property_id = self.request.data['property_id']
         color_id = self.request.data['color_id']
         product_id = self.request.data['product_id']
-
         product = Product.get_or_none(product_id)
         if product:
             price = product.calc_price_base_of_color_and_factor_property(property_id, color_id)

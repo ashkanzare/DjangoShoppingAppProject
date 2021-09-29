@@ -12,8 +12,6 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
 
-
-
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
 
@@ -73,6 +71,19 @@ class User(AbstractUser):
         for k, v in kwargs.items():
             setattr(self, k, v)
         self.save()
+
+    def get_token(self):
+        token = Token.objects.get(user=self)
+        return token
+
+    @classmethod
+    def get_user_by_token(cls, token):
+        user = None
+        try:
+            user = Token.objects.get(key=token).user
+        except Token.DoesNotExist:
+            pass
+        return user
 
 
 class UserAuthCode(models.Model):

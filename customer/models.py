@@ -41,6 +41,15 @@ class Customer(models.Model):
     def get_fields(cls):
         return set([f.name for f in cls._meta.get_fields()])
 
+    @classmethod
+    def get_by_token(cls, token):
+
+        user = User.get_user_by_token(token)
+        customer = None
+        if user:
+            customer = Customer.objects.get(user=user)
+        return customer
+
 
 class Address(models.Model):
     """

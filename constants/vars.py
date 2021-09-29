@@ -59,7 +59,7 @@ STATE = 'استان'
 POSTAL_CODE = 'کد پستی'
 STATUS = 'وضعیت'
 NUMBER = 'تعداد'
-
+ACTIVE = 'فعال'
 """ Errors """
 INVALID_USERNAME = 'نام کاربری در سیستم موجود است'
 INVALID_PHONE = 'شماره تماس در سیستم موجود است'
@@ -74,6 +74,7 @@ ERROR_TO_CODE = {
     "user with this phone already exists.": 0,
     PHONE_HELP_TEXT: 2
 }
+ADD_PRODUCT_ERROR = 'لطفا ویژگی انتخاب شده مربوط به محصول را درست انتخاب کنید'
 """ Register Confirmation """
 REGISTER_SUCCESS = 'ثبت نام شما با موفقیت انجام شد'
 

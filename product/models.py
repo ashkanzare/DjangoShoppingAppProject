@@ -55,7 +55,7 @@ class Product(models.Model):
         self.__dict__.update(kwargs)
 
     def __str__(self):
-        return f"[ {self.category.name} ] -- [ {self.name} ]"
+        return f"[ {self.id} ] -- [ {self.category.name} ] -- [ {self.name} ]"
 
     def get_first_image(self):
         """ get first product image for showing in main page """
@@ -82,7 +82,6 @@ class Product(models.Model):
             if discount.percent_mode:
                 return True, total_price * (1 - discount.discount_amount / 100), discount.discount_amount, total_price
             return False, total_price - discount.discount_amount, total_price
-        print(price_with_properties, product_color, total_price, self.price)
         return None, total_price
 
     @classmethod
@@ -217,7 +216,7 @@ class ProductColor(models.Model):
     quantity = models.PositiveIntegerField(default=0, verbose_name=const.QUANTITY)
 
     def __str__(self):
-        return f"[ {self.product.name} ] -- [ {webcolors.hex_to_name(self.color)} ] "
+        return f"[ {self.product.id} ] -- [ {self.product.name} ] -- [ {webcolors.hex_to_name(self.color)} ] "
 
     @classmethod
     def get_price_base_of_color(cls, color_id):

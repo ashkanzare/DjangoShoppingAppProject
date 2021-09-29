@@ -59,10 +59,10 @@ class CustomerEditDetail(mixins.RetrieveModelMixin,
         customer = Customer.objects.filter(user=token.user)
 
         data = {key: data[key] if
-        (key in customer[0].__dict__ and (
-                customer[0].__dict__[key] != data[key] or customer[0].__dict__[key] == '')) or (
+                (key in customer[0].__dict__ and (
+                    customer[0].__dict__[key] != data[key] or customer[0].__dict__[key] == '')) or (
                 key in token.user.__dict__ and (
-                token.user.__dict__[key] != data[key] or token.user.__dict__[key] == '')) or (
+                    token.user.__dict__[key] != data[key] or token.user.__dict__[key] == '')) or (
                 key in ['token', 'csrfmiddlewaretoken']) else '' for key in data}
 
         serializer = self.get_serializer(data=data)

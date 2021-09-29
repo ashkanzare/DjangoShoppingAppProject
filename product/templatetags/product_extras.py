@@ -115,6 +115,7 @@ def get_price_by_factor_property(product_obj, property_id):
 def get_final_price_for_a_product(price, product_id):
     product_discount = ProductDiscount.get_or_none(product_id)
     if product_discount:
+        print('22222222', price)
         return price - product_discount.discount_amount * price / 100
     return price
 

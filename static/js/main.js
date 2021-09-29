@@ -21,8 +21,7 @@ $(document).ready(function () {
         if (performance.navigation.type === performance.navigation.TYPE_RELOAD) {
             refresh_code(window.location.href.split(`?`)[1].substring(6,).split('&')[0])
         }
-    }
-    else if (window.location.href.includes('token') && window.location.href.includes('login_type=onetime_code') || window.location.href.includes('register/confirm?token') || window.location.href.includes('confirm-code-reset-password')) {
+    } else if (window.location.href.includes('token') && window.location.href.includes('login_type=onetime_code') || window.location.href.includes('register/confirm?token') || window.location.href.includes('confirm-code-reset-password')) {
         refresh_code(window.location.href.split(`?`)[1].substring(6,).split('&')[0])
     } else if (performance.navigation.type === performance.navigation.TYPE_RELOAD && !(window.location.href.includes('token', 'login_type=password'))) {
         if (window.location.href.split(`?`)[1] !== undefined) {
@@ -349,3 +348,57 @@ $(document).ready(function () {
         }
     }, 1000);
 });
+
+// set null if undefined
+function set_null(obj) {
+    if (obj === undefined) {
+        return null
+    } else {
+        return obj
+    }
+}
+
+// add to local storage
+function add_to_cart_on_local(product) {
+    let cart = 'meshop'
+    let local_storage_cart = localStorage.getItem(cart)
+    if (local_storage_cart) {
+        let cart_obj = JSON.parse(local_storage_cart)
+        let new_product = {
+            'product': product,
+            'color': set_null($('#color-active').data('key')),
+            'property': set_null($('#property-active').data('key')),
+            'quantity': 1
+        }
+        let check = false;
+        for (let obj of cart_obj) {
+            if (new_product.product === obj.product && new_product.color === obj.color && new_product.property === obj.property) {
+                obj.quantity += 1
+                check = true
+            }
+        }
+        if (check === false) {
+            cart_obj.push(new_product)
+        }
+        localStorage.setItem(cart, JSON.stringify(cart_obj))
+    } else {
+        let cart_obj = [{
+            'product': product,
+            'color': set_null($('#color-active').data('key')),
+            'property': set_null($('#property-active').data('key')),
+            'quantity': 1
+        }]
+        localStorage.setItem(cart, JSON.stringify(cart_obj))
+    }
+
+
+}
+
+
+function add_cart_to_database(product) {
+    let cart = 'meshop'
+    let local_storage_cart = localStorage.getItem(cart)
+    if (local_storage_cart) {
+
+    }
+}

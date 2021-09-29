@@ -9,6 +9,7 @@
 
     {% block active_navbar_home %}active{% endblock %}
     <div class="container vh-100 under-nav ">
+    {{ user.get_token }}
         {% for category in object_list %}
             {% if category.products %}
                 <div class="category-div">

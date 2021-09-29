@@ -176,3 +176,6 @@ SMS_BACKEND = 'sms.backends.console.SmsBackend'
 
 # Email backend configure
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# login url
+LOGIN_REDIRECT_URL = 'customer:register-login'
