@@ -14,6 +14,49 @@ function refresh_code(token) {
     });
 }
 
+// get cart from local storage
+function get_cart() {
+    let cart = 'meshop'
+    let local_storage_cart = localStorage.getItem(cart)
+    if (local_storage_cart) {
+        let cart_obj = JSON.parse(local_storage_cart)
+        let cart_length = Object.keys(cart_obj).length
+        $('#cart-counter').html(cart_length)
+        return {
+            'cart': cart_obj,
+            'cart_length': cart_length
+        }
+    }
+    return null
+}
+
+
+// add local storage cart items to current active cart
+function add_from_local_to_server(token) {
+    let cart = 'meshop'
+    let local_storage_cart = localStorage.getItem(cart)
+    if (local_storage_cart) {
+        let url = $('#add-to-cart-url').data('url')
+        let cart_obj = JSON.parse(local_storage_cart)
+
+        for (let obj of cart_obj) {
+            console.log(Object.assign({'token': token}, obj))
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: Object.assign({'token': token}, obj), // serializes the form's elements.
+                success: function (data) {
+
+                    $('#cart-counter').html(data.cart_count)
+
+                }
+            });
+        }
+        localStorage.removeItem(cart)
+    }
+}
+
+
 $(document).ready(function () {
 
     // refresh code ajax
@@ -347,6 +390,7 @@ $(document).ready(function () {
             document.getElementById("counter-parent").innerHTML = "<a class='links' href='' onclick='refresh_code(window.location.href.split(`?`)[1].substring(6,))'>ارسال مجدد کد</a>";
         }
     }, 1000);
+
 });
 
 // set null if undefined
@@ -366,14 +410,14 @@ function add_to_cart_on_local(product) {
         let cart_obj = JSON.parse(local_storage_cart)
         let new_product = {
             'product': product,
-            'color': set_null($('#color-active').data('key')),
-            'property': set_null($('#property-active').data('key')),
-            'quantity': 1
+            'product_color': set_null($('#color-active').data('key')),
+            'product_property': set_null($('#property-active').data('key')),
+            'number': 1
         }
         let check = false;
         for (let obj of cart_obj) {
-            if (new_product.product === obj.product && new_product.color === obj.color && new_product.property === obj.property) {
-                obj.quantity += 1
+            if (new_product.product === obj.product && new_product.product_color === obj.product_color && new_product.product_property === obj.product_property) {
+                obj.number += 1
                 check = true
             }
         }
@@ -384,21 +428,35 @@ function add_to_cart_on_local(product) {
     } else {
         let cart_obj = [{
             'product': product,
-            'color': set_null($('#color-active').data('key')),
-            'property': set_null($('#property-active').data('key')),
-            'quantity': 1
+            'product_color': set_null($('#color-active').data('key')),
+            'product_property': set_null($('#property-active').data('key')),
+            'number': 1
         }]
         localStorage.setItem(cart, JSON.stringify(cart_obj))
     }
 
-
+    get_cart()
 }
 
 
-function add_cart_to_database(product) {
-    let cart = 'meshop'
-    let local_storage_cart = localStorage.getItem(cart)
-    if (local_storage_cart) {
+function add_cart_to_database(token, product) {
 
+    let url = $('#add-to-cart-url').data('url')
+    const data = {
+        'token': token,
+        'product': product,
+        'product_color': set_null($('#color-active').data('key')),
+        'product_property': set_null($('#property-active').data('key')),
+        'number': 1
     }
+    console.log(data)
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data, // serializes the form's elements.
+        success: function (data) {
+            $('#cart-counter').html(data.cart_count)
+        }
+    });
+
 }

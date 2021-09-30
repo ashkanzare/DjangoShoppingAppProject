@@ -376,3 +376,10 @@ select:active {
 .properties {
     text-decoration: none!important;
 }
+
+#cart-counter {
+    border-radius: 30px;
+    font-size: 80%!important;
+    background-color: #d51b1b;
+    color: white;
+}

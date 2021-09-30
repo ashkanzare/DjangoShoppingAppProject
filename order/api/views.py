@@ -1,31 +1,18 @@
-import json
-
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import FieldDoesNotExist
-from django.http import FileResponse, JsonResponse
-from django.templatetags.static import static
-from django.utils.decorators import method_decorator
-from rest_framework import mixins, generics, serializers
-from django.contrib.staticfiles.storage import staticfiles_storage
-from rest_framework.authtoken.models import Token
+
+from rest_framework import mixins, generics
 from rest_framework.response import Response
 
-from constants.vars import STATES
-from customer.api.serializers import CustomerSerializer, StateCitiesSerializer
 from customer.models import Customer
 from order.api.serializers import CartItemSerializer
 from order.models import Cart
 from product.models import Product
 from product.templatetags.product_extras import get_final_price_for_a_product
-from utils.utils_functions import check_for_dict_values, phone_validator, email_validator, get_static, \
-    get_states_and_cities
 
 User = get_user_model()
 
 
-class TestView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+class AddToCartView(mixins.RetrieveModelMixin, generics.GenericAPIView):
     queryset = {}
     serializer_class = CartItemSerializer
 
@@ -35,10 +22,15 @@ class TestView(mixins.RetrieveModelMixin, generics.GenericAPIView):
         if serializer.is_valid():
 
             token = serializer.data['token']
-            product, product_property, product_color, number = serializer.data['product'], serializer.data[
-                'product_property'], serializer.data['product_color'], serializer.data['number']
+            product, product_property, product_color, number = list(map(lambda x: int(x) if x else None, [
+                serializer.data['product'],
+                serializer.data['product_property'],
+                serializer.data['product_color'],
+                serializer.data['number']]))
 
+            cart = None
             if token:
+
                 customer = Customer.get_by_token(token)
                 cart = Cart.objects.get_or_create(customer=customer, status='active')[0]
                 cart.add_item(product=product,
@@ -57,8 +49,9 @@ class TestView(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
                 return Response({'price': cart_item_price * int(number),
                                  'price_with_discount': get_final_price_for_a_product(
-                                     cart_item_price * number, product.id)})
+                                     cart_item_price * number, product.id),
+                                 'cart_count': len(cart.cartitem_set.all()) if cart else None})
 
             return Response({'ok': 1})
-
+        print(serializer.errors)
         return Response(serializer.data)

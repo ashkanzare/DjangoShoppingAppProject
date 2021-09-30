@@ -3,7 +3,7 @@ import jdatetime
 from datetime import datetime
 import webcolors
 
-from product.models import Product, ProductDiscount
+from product.models import ProductDiscount
 
 register = template.Library()
 
@@ -75,7 +75,8 @@ def convert_date(date):
 @register.filter(name='return_full_name')
 def return_full_name(customer_obj):
     """ return fullname of a customer """
-    return f"{customer_obj.first_name if customer_obj.first_name else ''} {customer_obj.last_name if customer_obj.last_name else ''}" if (
+    return f"{customer_obj.first_name if customer_obj.first_name else ''}" \
+           f" {customer_obj.last_name if customer_obj.last_name else ''}" if (
             customer_obj.first_name or customer_obj.last_name) else '-'
 
 
@@ -115,7 +116,6 @@ def get_price_by_factor_property(product_obj, property_id):
 def get_final_price_for_a_product(price, product_id):
     product_discount = ProductDiscount.get_or_none(product_id)
     if product_discount:
-        print('22222222', price)
         return price - product_discount.discount_amount * price / 100
     return price
 

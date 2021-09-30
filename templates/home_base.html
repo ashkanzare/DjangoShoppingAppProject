@@ -24,6 +24,7 @@
     </div>
     <input type="hidden" id="category-products-url" data-url="{% url 'product_api:category-products-api' %}">
     <input type="hidden" id="categories-url" data-url="{% url 'product_api:categories-api' %}">
+    <input type="hidden" id="add-to-cart-url" data-url="{% url 'order_api:add-to-cart' %}">
 
     <nav class="navbar navbar-inverse  navbar-expand-md  navbar-fixed-top mb-5">
         <div class="container-fluid">
@@ -47,6 +48,9 @@
             <div>
                 <ul class="nav navbar-nav">
                     {% if user.is_authenticated %}
+                        <script>
+                            add_from_local_to_server("{{ user.get_token }}")
+                        </script>
                         {% with user_customer=user|user_to_customer %}
                             {% if user_customer and user_customer.first_name and user_customer.last_name %}
                                 <li><a><h5>{{ user_customer.first_name }} {{ user_customer.last_name }}</h5></a></li>
@@ -54,14 +58,19 @@
                                 <li><a><h5>۰{{ user.phone|en_to_fa }}</h5></a></li>
                             {% endif %}
                         {% endwith %}
-                        <li><a href=""><i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a></li>
+                        <li><a href=""><span class="m-2 pr-2 pl-2" id="cart-counter">{{ user.customer.get_cart|length }}</span><i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a>
+                        </li>
 
                         <li class="{% block active_navbar_profile %}{% endblock %}"><a
                                 href="{% url 'customer:profile' %}"><h5>پروفایل</h5></a></li>
                         <li><a href="{% url 'customer:logout' %}"><h5>خروج</h5></a></li>
 
                     {% else %}
-                        <li><a href=""><i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a></li>
+
+                        <li><a href=""><span class="m-2 pr-2 pl-2" id="cart-counter">
+                        <script>get_cart()</script>
+                        </span><i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a>
+                        </li>
                         <li><a href="{% url 'customer:register-login' %}"><h5>ورود/ثبت نام</h5></a></li>
 
                     {% endif %}

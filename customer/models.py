@@ -1,14 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 import django.utils.timezone as current_time
 from django.utils.translation import gettext as _
 
 from constants.vars import *
 
-from utils.utils_functions import generate_random_string, validate_discount_date, check_personal_code_is_valid, \
-    check_for_dict_values
+from utils.utils_functions import generate_random_string, validate_discount_date, check_personal_code_is_valid
 
 """ Customer App's Models """
 User = get_user_model()
@@ -49,6 +47,10 @@ class Customer(models.Model):
         if user:
             customer = Customer.objects.get(user=user)
         return customer
+
+    def get_cart(self):
+        cart = self.cart_set.filter(status='active')
+        return cart[0].cartitem_set.all() if cart else None
 
 
 class Address(models.Model):
