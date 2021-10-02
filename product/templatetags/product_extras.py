@@ -122,4 +122,4 @@ def get_final_price_for_a_product(price, product_id):
 
 @register.filter(name='convert_hex_to_name')
 def convert_hex_to_name(color_hex):
-    return webcolors.hex_to_name(color_hex)
+    return webcolors.hex_to_name(str(color_hex))

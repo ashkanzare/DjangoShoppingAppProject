@@ -9,7 +9,6 @@
 }
 
 
-
 @font-face {
     font-family: digital;
     src: url("../fonts/Mj_Digital Arabia LT_0.ttf");
@@ -40,7 +39,7 @@ body {
 }
 
 .non-style-list {
-    list-style-type: none!important;
+    list-style-type: none !important;
 }
 
 .auth-panel {
@@ -329,16 +328,35 @@ select:active {
 }
 
 .circle {
-  height: 25px;
-  width: 25px;
-  border-radius: 50%;
-  display: inline-block;
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+    display: inline-block;
 }
 
 
+.circle-small {
+    height: 13px;
+    width: 13px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 1%;
+    margin-top: 0.5%;
+}
+
+.text-after-cart-items {
+    margin-right: 3%;
+    font-size: 80%
+}
+
+
+.cart-icons {
+    font-size: 110% !important;
+}
+
 .product-a-container {
-    text-decoration: none!important;
-    color: black!important;
+    text-decoration: none !important;
+    color: black !important;
 }
 
 
@@ -375,19 +393,19 @@ select:active {
 }
 
 .properties {
-    text-decoration: none!important;
+    text-decoration: none !important;
 }
 
 #cart-counter {
     border-radius: 30px;
-    font-size: 80%!important;
+    font-size: 80% !important;
     background-color: #d51b1b;
     color: white;
 }
 
 
 .cart-item-container {
-    height: 18rem!important;
+    height: 18rem !important;
     margin-top: 5%;
     margin-right: 2%;
 }

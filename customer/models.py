@@ -31,6 +31,11 @@ class Customer(models.Model):
                                    validators=[check_personal_code_is_valid])
     # email = models.EmailField(blank=True, null=True, verbose_name=_(EMAIL))
     date = models.DateField(default=current_time.now, verbose_name=_(REGISTER_DATE))
+    LANGUAGE_CHOICES = (
+        ('en-us', 'English'),
+        ('nl', 'Persian'),
+    )
+    language = models.CharField(default='fa-ir', choices=LANGUAGE_CHOICES, max_length=5)
 
     def __str__(self):
         return f"{self.user.phone} -- {self.last_name if self.last_name else NO_NAME}"

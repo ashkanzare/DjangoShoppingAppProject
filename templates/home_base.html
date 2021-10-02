@@ -58,7 +58,7 @@
                                 <li><a><h5>۰{{ user.phone|en_to_fa }}</h5></a></li>
                             {% endif %}
                         {% endwith %}
-                        <li><a href=""><span class="m-2 pr-2 pl-2" id="cart-counter">{{ user.customer.get_cart|length }}</span><i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a>
+                        <li><a href="{% url 'order:cart' %}"><span class="m-2 pr-2 pl-2" id="cart-counter">{{ user.customer.get_cart|length }}</span><i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a>
                         </li>
 
                         <li class="{% block active_navbar_profile %}{% endblock %}"><a
@@ -67,7 +67,7 @@
 
                     {% else %}
 
-                        <li><a href=""><span class="m-2 pr-2 pl-2" id="cart-counter">
+                        <li><a href="{% url 'order:cart' %}"><span class="m-2 pr-2 pl-2" id="cart-counter">
                         <script>get_cart()</script>
                         </span><i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a>
                         </li>

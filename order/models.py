@@ -24,7 +24,7 @@ class Cart(models.Model):
         try:
             cart_item = CartItem.objects.get(cart=self, product_id=product, product_color_id=product_color,
                                              product_property_id=product_property)
-            cart_item.number = number
+            cart_item.number += number
             cart_item.save()
 
         except CartItem.DoesNotExist:
@@ -71,6 +71,30 @@ class CartItem(models.Model):
             self.clean()
 
         super().save(*args, **kwargs)
+
+    def check_product_with_properties_exist(self):
+        property_set = self.product.productfactorproperty_set
+        color_set = self.product.productcolor_set
+
+        product_color = self.product_color
+        product_property = self.product_property
+
+        if product_color and product_property:
+            if color_set.filter(pk=product_color.id) and property_set.filter(pk=product_property.id):
+                return True
+            return False
+
+        elif product_color or self.product_property:
+            if color_set.filter(pk=product_color.id if product_color else None) or property_set.filter(
+                    pk=product_property.id if product_property else None):
+                return True
+            return False
+
+        elif self.product.quantity != 0:
+            return True
+
+        else:
+            return False
 
 
 class Order(models.Model):
