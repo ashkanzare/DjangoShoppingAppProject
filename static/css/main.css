@@ -325,6 +325,7 @@ select:active {
     border: 1px solid #ddd; /* Gray border */
     border-radius: 4px; /* Rounded border */
     padding: 5px; /* Some padding */
+    width: 15%;
 }
 
 .circle {
@@ -382,4 +383,11 @@ select:active {
     font-size: 80%!important;
     background-color: #d51b1b;
     color: white;
+}
+
+
+.cart-item-container {
+    height: 18rem!important;
+    margin-top: 5%;
+    margin-right: 2%;
 }

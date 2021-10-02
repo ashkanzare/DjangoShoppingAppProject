@@ -1,0 +1,48 @@
+{% extends 'home_base.html' %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+{% load product_extras %}
+{% load crispy_forms_tags %}
+{% block title %}{% translate "فروشگاه اینترنتی میشاپ" %}{% endblock %}
+{% block head %}
+
+    <style>
+
+    </style>
+
+{% endblock %}
+{% block content %}
+
+    <div class="row under-nav justify-content-center">
+        <div class="col-9">
+            <div class="row justify-content-between">
+                <div class="col-8 bg-white">
+                    {% for item in object_list %}
+                        <div class="bg-white text-right cart-item-container">
+                            <div class="row">
+                                <div class="col-2">
+                                    <img src="{{ item.product.get_images_thumbnail.0 }}" alt="product image">
+                                </div>
+                                <div class="col-10 text-dark">
+                                    <h5>{{ item.product.name }}</h5>
+                                    {% if item.product_color %}
+                                        <div>
+
+                                            <span class="circle"
+                                                  style="background-color: {{ item.product_color.color }};">   </span>
+                                        </div>
+                                    {% endif %}
+                                    <p>{{ item.product_property.value }}</p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <span class="sep-border"></span>
+                    {% endfor %}
+                </div>
+                <div class="col-3 bg-success">1</div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

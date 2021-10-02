@@ -31,6 +31,16 @@ class Cart(models.Model):
             CartItem.objects.create(cart=self, product_id=product, product_color_id=product_color,
                                     product_property_id=product_property, number=number)
 
+    @classmethod
+    def get_or_none(cls, user):
+        cart = None
+        try:
+            cart = Cart.objects.get(customer__user=user, status='active')
+        except Cart.DoesNotExist:
+            pass
+        finally:
+            return cart
+
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name=const.CART)

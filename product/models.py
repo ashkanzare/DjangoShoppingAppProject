@@ -155,8 +155,8 @@ class Product(models.Model):
 
     def get_images_thumbnail(self):
         """ return thumbnail images url of the product """
-        options = {'size': (60, 60), 'crop': True}
-        return [get_thumbnailer(p.image).get_thumbnail(options).url for p in self.productimage_set.all()][1:]
+        options = {'size': (120, 120), 'crop': True}
+        return [get_thumbnailer(p.image).get_thumbnail(options).url for p in self.productimage_set.all()]
 
     def check_all_quantity(self):
         """ check product quantity base of factor property or color """
