@@ -62,7 +62,7 @@
                                             </div>
                                         {% endif %}
                                     {% endwith %}
-                                    {% with quantity_check=item.check_product_with_properties_exist %}
+                                    {% with quantity_check=item.check_product_with_properties_exist.0 %}
                                         {% if quantity_check %}
                                             <div>
                                                 <div class="float-right">

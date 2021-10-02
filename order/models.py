@@ -24,12 +24,23 @@ class Cart(models.Model):
         try:
             cart_item = CartItem.objects.get(cart=self, product_id=product, product_color_id=product_color,
                                              product_property_id=product_property)
+
+            quantity_check, quantity_number = cart_item.check_product_with_properties_exist()
+
             cart_item.number += number
-            cart_item.save()
+
+            if quantity_check and cart_item.number <= quantity_number:
+                cart_item.save()
 
         except CartItem.DoesNotExist:
-            CartItem.objects.create(cart=self, product_id=product, product_color_id=product_color,
-                                    product_property_id=product_property, number=number)
+
+            cart_item = CartItem(cart=self, product_id=product, product_color_id=product_color,
+                                 product_property_id=product_property, number=number)
+
+            quantity_check, quantity_number = cart_item.check_product_with_properties_exist()
+
+            if quantity_check and cart_item.number <= quantity_number:
+                cart_item.save()
 
     @classmethod
     def get_or_none(cls, user):
@@ -79,22 +90,27 @@ class CartItem(models.Model):
         product_color = self.product_color
         product_property = self.product_property
 
+        filtered_color_set = color_set.filter(pk=product_color.id if product_color else None)
+        filtered_property_set = property_set.filter(pk=product_property.id if product_property else None)
+
+        color_set_len = len(filtered_color_set)
+        property_set_len = len(filtered_property_set)
+
         if product_color and product_property:
-            if color_set.filter(pk=product_color.id) and property_set.filter(pk=product_property.id):
-                return True
-            return False
+            if filtered_color_set and filtered_property_set:
+                return True, color_set_len if color_set_len >= property_set_len else property_set_len
+            return False, 0
 
         elif product_color or self.product_property:
-            if color_set.filter(pk=product_color.id if product_color else None) or property_set.filter(
-                    pk=product_property.id if product_property else None):
-                return True
-            return False
+            if filtered_color_set or filtered_property_set:
+                return True, color_set_len if color_set_len >= property_set_len else property_set_len
+            return False, 0
 
         elif self.product.quantity != 0:
-            return True
+            return True, self.product.quantity
 
         else:
-            return False
+            return False, 0
 
 
 class Order(models.Model):
