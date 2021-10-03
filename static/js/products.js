@@ -144,8 +144,13 @@ function get_price_base_of_color_and_property(property, color, product_id) {
         success: function (data) {
             let unit = '<span class="m-2 mr-3"\n style="font-size: 70%!important;">تومان</span>'
             if (data !== {}) {
-                $('#price-with-discount').html(data.price_with_discount + unit)
-                $('#base-price').html(data.price)
+                if (data.price_with_discount !== data.price) {
+                    $('#price-with-discount').html(data.price_with_discount + unit)
+                    $('#base-price').html(data.price)
+                }
+                else {
+                    $('#base-price').html(data.price + unit)
+                }
             }
         }
     });

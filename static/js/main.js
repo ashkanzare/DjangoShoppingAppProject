@@ -14,6 +14,22 @@ function refresh_code(token) {
     });
 }
 
+//convert persian numbers to english
+function convert_fa_to_en(str) {
+    return str.replace(/([۰-۹])/g, function (token) {
+        return String.fromCharCode(token.charCodeAt(0) - 1728);
+    });
+}
+
+//convert english numbers to persian
+function toFarsiNumber(n) {
+    const farsiDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+
+    return n
+        .toString()
+        .replace(/\d/g, x => farsiDigits[x]);
+}
+
 // get cart from local storage
 function get_cart() {
     let cart = 'meshop'
@@ -21,13 +37,16 @@ function get_cart() {
     if (local_storage_cart) {
         let cart_obj = JSON.parse(local_storage_cart)
         let cart_length = Object.keys(cart_obj).length
-        $('#cart-counter').html(cart_length)
+
+        $('#cart-counter').html(cart_length).css('visibility', 'visible')
         return {
             'cart': cart_obj,
             'cart_length': cart_length
         }
     }
+    $("#cart-counter").css('visibility', 'hidden')
     return null
+
 }
 
 
@@ -40,15 +59,13 @@ function add_from_local_to_server(token) {
         let cart_obj = JSON.parse(local_storage_cart)
 
         for (let obj of cart_obj) {
-            console.log(Object.assign({'token': token}, obj))
             $.ajax({
                 type: "POST",
                 url: url,
                 data: Object.assign({'token': token}, obj), // serializes the form's elements.
                 success: function (data) {
-
+                    console.log(data)
                     $('#cart-counter').html(data.cart_count)
-
                 }
             });
         }
@@ -439,7 +456,7 @@ function add_to_cart_on_local(product) {
 }
 
 
-function add_cart_to_database(token, product) {
+function add_cart_to_database(token, product, color_id = null, property_id = null, item_id = null, number = null) {
 
     let url = $('#add-to-cart-url').data('url')
     const data = {
@@ -449,6 +466,18 @@ function add_cart_to_database(token, product) {
         'product_property': set_null($('#property-active').data('key')),
         'number': 1
     }
+    if (color_id) {
+        data.product_color = color_id
+    }
+
+    if (property_id) {
+        data.product_property = property_id
+    }
+
+    if (number < 0) {
+        data.number = number
+    }
+
     console.log(data)
     $.ajax({
         type: "POST",
@@ -456,7 +485,28 @@ function add_cart_to_database(token, product) {
         data: data, // serializes the form's elements.
         success: function (data) {
             $('#cart-counter').html(data.cart_count)
+            if (data.status === 30) {
+                alert('متاسفانه امکان انتخاب بیشتر موجود نیست')
+            } else {
+
+                let item_number = $('#item-' + item_id)
+                let en_number = Number(convert_fa_to_en(item_number.html()))
+                if (number > 0) {
+                    item_number.html(toFarsiNumber(en_number + 1))
+                }
+                else {
+                    item_number.html(toFarsiNumber(en_number - 1))
+                }
+                if (item_number.html() === '۰' && number < 0) {
+                    $('#item-container-' + item_id)
+                        .animate({opacity: 0.25,}, 1000, "linear", function () {
+                            $(this).remove();
+                        })
+                }
+            }
         }
     });
 
+
 }
+//todo: change fading style

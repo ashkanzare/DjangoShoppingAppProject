@@ -76,7 +76,7 @@
                                         {% with quantities=product.check_quantity %}
                                             {% if colors.0 and colors.1 != 0 %}
                                                 <ul class="non-style-list mt-4">
-                                                    <li><p>رنگ ها</p></li>
+                                                    <li><b><p>رنگ ها</p></b></li>
                                                     <li>
                                                         <ul class="d-flex non-style-list">
                                                             {% for color in colors.1 %}
@@ -99,7 +99,7 @@
                                         {% with quantities=product.check_quantity %}
                                             {% if quantities.0 and quantities.1 != 0 %}
                                                 <ul class="non-style-list mt-4">
-                                                    <li><p>{{ product.factor_property.name }}</p></li>
+                                                    <li><p><b>{{ product.factor_property.name }}</b></p></li>
                                                     <li>
                                                         <ul class="non-style-list">
                                                             {% for quantity in quantities.1 %}
@@ -117,13 +117,25 @@
                                         {% endwith %}
                                     {% endwith %}
                                     </div>
-                                <ul class="text-right pt-5 product-properties">
-                                    {% for property in product.get_top_3_properties %}
+                                {% if product.get_top_3_properties %}
+                                    <div class="pt-5">
 
-                                        <li class="m-4">{{ property.property.name }}: {{ property.description }}</li>
+                                        <ul class="text-right product-properties non-style-list">
+                                            <li class="mb-3"><b>ویژگی های کالا</b></li>
+                                            <li>
+                                                <ul class="non-style-list">
+                                                    {% for property in product.get_top_3_properties %}
 
-                                    {% endfor %}
-                                </ul>
+                                                        <li class="d-flex"><p
+                                                                class="ml-2">{{ property.property.name }}: </p>
+                                                            <p>{{ property.description }}</p></li>
+
+                                                    {% endfor %}
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                {% endif %}
                                 {% if product.category.name == 'تلفن همراه' %}
                                     <div class="meshop-warnings mt-5">
 

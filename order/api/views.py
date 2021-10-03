@@ -19,6 +19,7 @@ class AddToCartView(mixins.RetrieveModelMixin, generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=self.request.data)
 
+        response = {'status': 30}
         if serializer.is_valid():
 
             token = serializer.data['token']
@@ -33,13 +34,19 @@ class AddToCartView(mixins.RetrieveModelMixin, generics.GenericAPIView):
 
                 customer = Customer.get_by_token(token)
                 cart = Cart.objects.get_or_create(customer=customer, status='active')[0]
-                cart.add_item(product=product,
-                              product_property=product_property,
-                              product_color=product_color,
-                              number=number)
+                item_added, status = cart.add_item(product=product,
+                                                   product_property=product_property,
+                                                   product_color=product_color,
+                                                   number=number)
+
+                if item_added:
+                    response['status'] = 20
+
+                response['item_add_delete_status'] = status
 
             product = Product.get_or_none(product)
             if product:
+
                 cart_item_price = product.calc_price_base_of_color_and_factor_property(
                     property_id=product_property,
                     color_id=product_color)
@@ -50,8 +57,9 @@ class AddToCartView(mixins.RetrieveModelMixin, generics.GenericAPIView):
                 return Response({'price': cart_item_price * int(number),
                                  'price_with_discount': get_final_price_for_a_product(
                                      cart_item_price * number, product.id),
-                                 'cart_count': len(cart.cartitem_set.all()) if cart else None})
+                                 'cart_count': len(cart.cartitem_set.all()) if cart else None,
+                                 'status': response['status']})
 
-            return Response({'ok': 1})
-        print(serializer.errors)
-        return Response(serializer.data)
+            return Response(response)
+
+        return Response(response)

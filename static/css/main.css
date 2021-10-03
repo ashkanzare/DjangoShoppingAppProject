@@ -405,7 +405,34 @@ select:active {
 
 
 .cart-item-container {
-    height: 18rem !important;
+    min-height: 18rem !important;
     margin-top: 5%;
     margin-right: 2%;
+    transition: opacity 500ms ease-in-out;
+}
+
+.add-delete-item {
+    border-radius: 15px;
+    padding: 2%;
+    border: 1px solid rgba(167, 167, 167, 0.52);
+
+}
+
+.add-delete-item-buttons {
+    color: #2eaac5;
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    cursor: pointer;
+    outline: none;
+
+}
+
+.add-delete-item-buttons:hover {
+    color: #0f687b;
+    outline: none;
+}
+
+.add-delete-item-buttons:focus {
+    outline: none!important;
 }

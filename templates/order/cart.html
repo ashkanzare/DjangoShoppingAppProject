@@ -18,7 +18,7 @@
             <div class="row justify-content-between">
                 <div class="col-8 bg-white">
                     {% for item in object_list %}
-                        <div class="bg-white text-right cart-item-container">
+                        <div class="bg-white text-right cart-item-container" id="item-container-{{ item.id }}">
                             <div class="row">
                                 <div class="col-2">
                                     <img src="{{ item.product.get_images_thumbnail.0 }}" alt="product image">
@@ -72,8 +72,48 @@
                                                     <p class="text-after-cart-items">موجود در انبار میشاپ</p>
                                                 </div>
                                             </div>
-                                            <div>
-                                                + {{ item.number }} -
+                                            <div class="pt-5 pb-5">
+                                                <div class="row">
+                                                    <div class="col-2 d-flex justify-content-between add-delete-item">
+                                                        <button class="add-delete-item-buttons" onclick="
+                                                                {% if not user.is_authenticated %}add_to_cart_on_local({{ item.product.id }})
+                                                                {% else %}add_cart_to_database('{{ user.get_token }}' ,{{ item.product.id }},
+                                                                    {% if item.product_color %}
+                                                                        {{ item.product_color.id }},
+                                                                    {% else %}
+                                                                        null,
+                                                                    {% endif %}
+                                                                    {% if item.product_property %}
+                                                                        {{ item.product_property.id }},
+                                                                    {% else %}
+                                                                        null,
+                                                                    {% endif %}
+                                                                    {{ item.id }},
+                                                                    1){% endif %}">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i>
+                                                        </button>
+                                                        <div id="item-{{ item.id }}">{{ item.number|en_to_fa }}</div>
+                                                        <div>
+                                                            <button class="add-delete-item-buttons" onclick="
+                                                                    {% if not user.is_authenticated %}add_to_cart_on_local({{ item.product.id }})
+                                                                    {% else %}add_cart_to_database('{{ user.get_token }}' ,{{ item.product.id }},
+                                                                        {% if item.product_color %}
+                                                                            {{ item.product_color.id }},
+                                                                        {% else %}
+                                                                            null,
+                                                                        {% endif %}
+                                                                        {% if item.product_property %}
+                                                                            {{ item.product_property.id }},
+                                                                        {% else %}
+                                                                            null,
+                                                                        {% endif %}
+                                                                        {{ item.id }},
+                                                                        -1){% endif %}">
+                                                                <i class="fa fa-minus" aria-hidden="true"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         {% else %}
                                             <div>

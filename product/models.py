@@ -196,7 +196,8 @@ class ProductFactorProperty(models.Model):
     quantity = models.PositiveIntegerField(default=0, verbose_name=const.QUANTITY)
 
     def __str__(self):
-        return f"[ {self.product.id} ] -- [ {self.product.factor_property.name if self.product.factor_property else '-'} ] " \
+        return f"[ {self.product.id} ] -- " \
+               f"[ {self.product.factor_property.name if self.product.factor_property else '-'} ] " \
                f"-- [ {self.value} ] -- [ {self.quantity} ]"
 
     @classmethod

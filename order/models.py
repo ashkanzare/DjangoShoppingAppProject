@@ -29,11 +29,23 @@ class Cart(models.Model):
 
             cart_item.number += number
 
-            if quantity_check and cart_item.number <= quantity_number:
+            if number > 0:
+                if quantity_check and cart_item.number <= quantity_number:
+                    cart_item.save()
+                    return True, 'added'
+
+            elif cart_item.number > 0:
+
                 cart_item.save()
+                return True, 'deleted-one'
+
+            elif cart_item.number == 0:
+                cart_item.delete()
+                return True, 'deleted'
+
+            return False, None
 
         except CartItem.DoesNotExist:
-
             cart_item = CartItem(cart=self, product_id=product, product_color_id=product_color,
                                  product_property_id=product_property, number=number)
 
@@ -41,6 +53,9 @@ class Cart(models.Model):
 
             if quantity_check and cart_item.number <= quantity_number:
                 cart_item.save()
+                return True, None
+
+            return False, None
 
     @classmethod
     def get_or_none(cls, user):
@@ -93,8 +108,14 @@ class CartItem(models.Model):
         filtered_color_set = color_set.filter(pk=product_color.id if product_color else None)
         filtered_property_set = property_set.filter(pk=product_property.id if product_property else None)
 
-        color_set_len = len(filtered_color_set)
-        property_set_len = len(filtered_property_set)
+        color_set_len = 0
+        property_set_len = 0
+
+        if filtered_color_set:
+            color_set_len = filtered_color_set[0].quantity
+
+        if filtered_property_set:
+            property_set_len = filtered_property_set[0].quantity
 
         if product_color and product_property:
             if filtered_color_set and filtered_property_set:
