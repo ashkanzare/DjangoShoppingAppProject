@@ -43,6 +43,7 @@ class AddToCartView(mixins.RetrieveModelMixin, generics.GenericAPIView):
                     response['status'] = 20
 
                 response['item_add_delete_status'] = status
+                response['cart-price-info'] = cart.calc_price()
 
             product = Product.get_or_none(product)
             if product:
@@ -58,7 +59,8 @@ class AddToCartView(mixins.RetrieveModelMixin, generics.GenericAPIView):
                                  'price_with_discount': get_final_price_for_a_product(
                                      cart_item_price * number, product.id),
                                  'cart_count': len(cart.cartitem_set.all()) if cart else None,
-                                 'status': response['status']})
+                                 'status': response['status'],
+                                 'cart': response.get('cart-price-info', None)})
 
             return Response(response)
 

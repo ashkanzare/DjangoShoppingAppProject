@@ -436,3 +436,20 @@ select:active {
 .add-delete-item-buttons:focus {
     outline: none!important;
 }
+
+.cart-image {
+	zoom: 1;
+	filter: alpha(opacity=50);
+	opacity: 0.5;
+    width: 20%;
+}
+
+.transparent {
+	zoom: 1;
+	filter: alpha(opacity=50);
+	opacity: 0.5;
+}
+
+.text-secondary {
+    color: rgba(85, 85, 85, 0.71)!important;
+}

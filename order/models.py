@@ -67,6 +67,27 @@ class Cart(models.Model):
         finally:
             return cart
 
+    def calc_price(self):
+        total_price = 0
+        total_price_with_discount = 0
+        for item in self.cartitem_set.all():
+            item_price = item.product.calc_price_base_of_color_and_factor_property(
+                item.product_property.id if item.product_property else None,
+                item.product_color.id if item.product_color else None)
+            if isinstance(item_price, tuple):
+                total_price += item_price[0] * item.number
+            else:
+                total_price += item_price * item.number
+
+            total_price_with_discount += item.product.calc_final_price_with_properties(
+                item.product_property.id if item.product_property else None,
+                item.product_color.id if item.product_color else None)[0] * item.number
+
+        discount = total_price - total_price_with_discount
+        discount_percentage = round(100 - (100 * total_price_with_discount / total_price), 2)
+
+        return total_price, total_price_with_discount, discount_percentage, discount
+
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name=const.CART)

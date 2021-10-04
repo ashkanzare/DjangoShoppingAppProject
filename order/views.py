@@ -16,4 +16,4 @@ class CartView(generic.ListView):
         user = self.request.user
         cart = Cart.get_or_none(user)
 
-        return cart.cartitem_set.all()
+        return cart

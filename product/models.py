@@ -71,6 +71,21 @@ class Product(models.Model):
             return False, self.price - discount.discount_amount
         return None, self.price
 
+    def calc_final_price_with_properties(self, property_id, color_id):
+        """ calculate base price of a product with discount """
+        discount = ProductDiscount.get_or_none(self.id)
+        if discount:
+            product_price = discount.product.calc_price_base_of_color_and_factor_property(property_id, color_id)
+            product_price = product_price[0] if isinstance(product_price, tuple) else product_price
+
+            if discount.percent_mode:
+                return product_price * (1 - discount.discount_amount / 100), discount.discount_amount
+            return product_price - discount.discount_amount, discount.discount_amount
+
+        product_price = discount.product.self.calc_price_base_of_color_and_factor_property(property_id, color_id)
+        product_price = product_price[0] if isinstance(product_price, tuple) else product_price
+        return product_price, 0
+
     def calc_final_price_with_default_properties(self):
         """ calculate property base price of a product with discount """
         product_property = self.productfactorproperty_set.filter(quantity__gte=1).first()

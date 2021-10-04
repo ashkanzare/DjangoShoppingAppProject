@@ -4,96 +4,73 @@
 {% load product_extras %}
 {% load crispy_forms_tags %}
 {% block title %}{% trans "فروشگاه اینترنتی میشاپ" %}{% endblock %}
-{% block head %}
-
-    <style>
-
-    </style>
-
-{% endblock %}
+{% load static %}
 {% block content %}
-
+    <input id="empty-cart-img" type="hidden" data-key="{% static 'img/empty-cart-2.png' %}">
     <div class="row under-nav justify-content-center">
         <div class="col-9">
             <div class="row justify-content-between">
-                <div class="col-8 bg-white">
-                    {% for item in object_list %}
-                        <div class="bg-white text-right cart-item-container" id="item-container-{{ item.id }}">
-                            <div class="row">
-                                <div class="col-2">
-                                    <img src="{{ item.product.get_images_thumbnail.0 }}" alt="product image">
-                                </div>
-                                <div class="col-10 text-dark">
-                                    <h5>{{ item.product.name }}</h5>
+                <div class="col-8 bg-white rounded" id="main-cart-body">
+                    {% if object_list.cartitem_set.all %}
+                        {% for item in object_list.cartitem_set.all %}
+                            <div class="bg-white text-right cart-item-container" id="item-container-{{ item.id }}">
+                                <div class="row">
+                                    <div class="col-2">
+                                        <img src="{{ item.product.get_images_thumbnail.0 }}" alt="product image">
+                                    </div>
+                                    <div class="col-10 text-dark">
+                                        <h5>{{ item.product.name }}</h5>
 
-                                    {% if item.product_color %}
-                                        <div>
-                                            <div class=" float-right">
-                                                <i class="fa fa-paint-brush cart-icons" aria-hidden="true"></i>
-                                            </div>
+                                        {% if item.product_color %}
                                             <div>
-                                                <span class="circle-small"
-                                                      style="background-color: {{ item.product_color.color }};">   </span>
-                                                <small class="mr-2 text-after-cart-items">[ رنگ ]</small>
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                    {% if item.product_property %}
-                                        <div class="mt-2">
-                                            <div class="float-right">
-                                                <i class="fa fa-cogs cart-icons" aria-hidden="true"></i>
-                                            </div>
-                                            <div>
-                                                <p class="text-after-cart-items">{{ item.product_property.value|en_to_fa }}
-                                                    <small>[ {{ item.product.factor_property.name }} ]</small></p>
-                                            </div>
-                                        </div>
-                                    {% endif %}
-                                    {% with guarantee=item.product.check_for_guarantee %}
-                                        {% if guarantee %}
-
-                                            <div>
-                                                <div class="float-right mr-1">
-                                                    <i class="fa fa-shield cart-icons" aria-hidden="true"></i>
+                                                <div class=" float-right">
+                                                    <i class="fa fa-paint-brush cart-icons" aria-hidden="true"></i>
                                                 </div>
                                                 <div>
-                                                    <p class="text-after-cart-items">{{ guarantee.description }}</p>
+                                                <span class="circle-small"
+                                                      style="background-color: {{ item.product_color.color }};">   </span>
+                                                    <small class="mr-2 text-after-cart-items">[ رنگ ]</small>
                                                 </div>
                                             </div>
                                         {% endif %}
-                                    {% endwith %}
-                                    {% with quantity_check=item.check_product_with_properties_exist.0 %}
-                                        {% if quantity_check %}
-                                            <div>
+                                        {% if item.product_property %}
+                                            <div class="mt-2">
                                                 <div class="float-right">
-                                                    <i class="fa fa-check-square-o cart-icons" aria-hidden="true"></i>
+                                                    <i class="fa fa-cogs cart-icons" aria-hidden="true"></i>
                                                 </div>
                                                 <div>
-                                                    <p class="text-after-cart-items">موجود در انبار میشاپ</p>
+                                                    <p class="text-after-cart-items">{{ item.product_property.value|en_to_fa }}
+                                                        <small>[ {{ item.product.factor_property.name }} ]</small></p>
                                                 </div>
                                             </div>
-                                            <div class="pt-5 pb-5">
-                                                <div class="row">
-                                                    <div class="col-2 d-flex justify-content-between add-delete-item">
-                                                        <button class="add-delete-item-buttons" onclick="
-                                                                {% if not user.is_authenticated %}add_to_cart_on_local({{ item.product.id }})
-                                                                {% else %}add_cart_to_database('{{ user.get_token }}' ,{{ item.product.id }},
-                                                                    {% if item.product_color %}
-                                                                        {{ item.product_color.id }},
-                                                                    {% else %}
-                                                                        null,
-                                                                    {% endif %}
-                                                                    {% if item.product_property %}
-                                                                        {{ item.product_property.id }},
-                                                                    {% else %}
-                                                                        null,
-                                                                    {% endif %}
-                                                                    {{ item.id }},
-                                                                    1){% endif %}">
-                                                            <i class="fa fa-plus" aria-hidden="true"></i>
-                                                        </button>
-                                                        <div id="item-{{ item.id }}">{{ item.number|en_to_fa }}</div>
-                                                        <div>
+                                        {% endif %}
+                                        {% with guarantee=item.product.check_for_guarantee %}
+                                            {% if guarantee %}
+
+                                                <div>
+                                                    <div class="float-right mr-1">
+                                                        <i class="fa fa-shield cart-icons" aria-hidden="true"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-after-cart-items">{{ guarantee.description }}</p>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        {% endwith %}
+                                        {% with quantity_check=item.check_product_with_properties_exist.0 %}
+                                            {% if quantity_check %}
+                                                <div>
+                                                    <div class="float-right">
+                                                        <i class="fa fa-check-square-o cart-icons"
+                                                           aria-hidden="true"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-after-cart-items">موجود در انبار میشاپ</p>
+                                                    </div>
+                                                </div>
+                                                <div class="pt-5 pb-5">
+                                                    <div class="row">
+                                                        <div class="col-2 d-flex justify-content-between add-delete-item">
                                                             <button class="add-delete-item-buttons" onclick="
                                                                     {% if not user.is_authenticated %}add_to_cart_on_local({{ item.product.id }})
                                                                     {% else %}add_cart_to_database('{{ user.get_token }}' ,{{ item.product.id }},
@@ -108,35 +85,87 @@
                                                                             null,
                                                                         {% endif %}
                                                                         {{ item.id }},
-                                                                        -1){% endif %}">
-                                                                <i class="fa fa-minus" aria-hidden="true"></i>
+                                                                        1){% endif %}">
+                                                                <i class="fa fa-plus" aria-hidden="true"></i>
                                                             </button>
+                                                            <div id="item-{{ item.id }}">{{ item.number|en_to_fa }}</div>
+                                                            <div>
+                                                                <button class="add-delete-item-buttons" onclick="
+                                                                        {% if not user.is_authenticated %}add_to_cart_on_local({{ item.product.id }})
+                                                                        {% else %}add_cart_to_database('{{ user.get_token }}' ,{{ item.product.id }},
+                                                                            {% if item.product_color %}
+                                                                                {{ item.product_color.id }},
+                                                                            {% else %}
+                                                                                null,
+                                                                            {% endif %}
+                                                                            {% if item.product_property %}
+                                                                                {{ item.product_property.id }},
+                                                                            {% else %}
+                                                                                null,
+                                                                            {% endif %}
+                                                                            {{ item.id }},
+                                                                            -1){% endif %}">
+                                                                    <i class="fa fa-minus" aria-hidden="true"></i>
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        {% else %}
-                                            <div>
-                                                <div class="float-right">
-                                                    <i class="fa fa-times-circle-o cart-icons" aria-hidden="true"></i>
-                                                </div>
+                                            {% else %}
                                                 <div>
-                                                    <p class="text-after-cart-items">عدم موجودی</p>
+                                                    <div class="float-right">
+                                                        <i class="fa fa-times-circle-o cart-icons"
+                                                           aria-hidden="true"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-after-cart-items">عدم موجودی</p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        {% endif %}
-                                    {% endwith %}
+                                            {% endif %}
+                                        {% endwith %}
 
+                                    </div>
                                 </div>
+                                <span class="sep-border"></span>
                             </div>
 
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center p-5">
+                            <img class="cart-image" src="{% static 'img/empty-cart-2.png' %}" alt="empty-cart">
+                            <h4>سبد خرید شما خالی است!</h4>
                         </div>
-                        <span class="sep-border"></span>
-                    {% endfor %}
+                    {% endif %}
                 </div>
-                <div class="col-3 bg-success">1</div>
+                <div class="col-3 text-center bg-white rounded" style="max-height: 25rem!important;">
+
+                    <div class="row pr-5 pl-5 pt-4">
+
+                        <div class="col-6 text-right text-secondary"><h5>قیمت کالاها</h5></div>
+                        <div class="col-6 text-left" id="cart-price-without-discount"><h5>{{ object_list.calc_price.0 }}</h5></div>
+
+                    </div>
+                    <div class="row pr-5 pl-5">
+
+                        <div class="col-6 text-right text-secondary"><h5>تخفیف کالاها</h5></div>
+                        <div class="col-6 text-left" id="cart-discount"><h5>{{ object_list.calc_price.2 }}% -- {{ object_list.calc_price.3 }}</h5></div>
+
+                    </div>
+                    <span class="sep-border"></span>
+                    <div class="row pr-5 pl-5">
+
+                        <div class="col-6 text-right" ><h5>جمع سبد خرید</h5></div>
+                        <div class="col-6 text-left" id="cart-total-price"><h5>{{ object_list.calc_price.1 }}</h5></div>
+
+                    </div>
+                    <div class="row pr-5 pl-5 text-right pt-3 pb-3"><small style="font-size: 65%">هزینه‌ی ارسال در ادامه بر اساس آدرس، زمان و نحوه‌ی ارسال انتخابی شما‌ محاسبه و به این مبلغ اضافه خواهد شد</small></div>
+                    <div><button class="btn btn-danger pl-5 pr-5 p-3">ادامه فرآیند خرید</button></div>
+                    
+                    
+                </div>
             </div>
         </div>
     </div>
+    
 {% endblock %}
 
