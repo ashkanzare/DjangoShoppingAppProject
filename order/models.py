@@ -14,7 +14,8 @@ class Cart(models.Model):
     status = models.CharField(max_length=10, choices=const.CART_STATUS, verbose_name=const.STATUS, default=const.ACTIVE)
 
     def __str__(self):
-        return f"[ {self.customer.id} ] -- [ {self.customer.user.phone} ] -- [ {self.creation_date} ]"
+        return f"[ {self.customer.id if self.customer else self.session} ] -- " \
+               f"[ {self.customer.user.phone if self.customer else self.session} ] -- [ {self.creation_date} ]"
 
     def check_date(self):
         current_date = datetime.now()
@@ -101,6 +102,26 @@ class Cart(models.Model):
 
             return total_price, total_price_with_discount, discount_percentage, discount
         return 0
+
+    def merge_with_session(self, other):
+        for item in other.cartitem_set.all():
+            self.add_item(item.product.id, item.product_color.id if item.product_color else None,
+                          item.product_property.id if item.product_property else None, item.number)
+
+    @classmethod
+    def sync_cart_from_session(cls, session, user):
+        cart_by_session = Cart.get_by_session_or_none(session)
+        cart_by_customer = Cart.get_or_none(user)
+
+        if (cart_by_session and cart_by_customer) and (cart_by_session != cart_by_customer):
+            cart_by_customer.merge_with_session(cart_by_session)
+            cart_by_session.delete()
+
+        elif cart_by_session and not cart_by_customer:
+            cart = cart_by_session
+            cart.customer = Customer.objects.get(user=user)
+            cart.session = None
+            cart.save()
 
 
 class CartItem(models.Model):

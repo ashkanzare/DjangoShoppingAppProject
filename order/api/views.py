@@ -4,7 +4,7 @@ from rest_framework import mixins, generics, serializers
 from rest_framework.response import Response
 
 from customer.models import Customer
-from order.api.serializers import CartItemSerializer
+from order.api.serializers import CartItemSerializer, TokenSessionSerializer
 from order.models import Cart
 from product.models import Product
 from product.templatetags.product_extras import get_final_price_for_a_product
@@ -29,21 +29,28 @@ class AddToCartView(mixins.RetrieveModelMixin, generics.GenericAPIView):
                 serializer.data['product_color'],
                 serializer.data['number']]))
 
-            cart = None
             if token:
-
                 customer = Customer.get_by_token(token)
                 cart = Cart.objects.get_or_create(customer=customer, status='active')[0]
-                item_added, status = cart.add_item(product=product,
-                                                   product_property=product_property,
-                                                   product_color=product_color,
-                                                   number=number)
+            else:
+                session = self.request.session
+                if session.is_empty():
+                    request.session.create()
 
-                if item_added:
-                    response['status'] = 20
+                session = session.session_key
+                cart = Cart.objects.get_or_create(session=session, status='active')[0]
 
-                response['item_add_delete_status'] = status
-                response['cart-price-info'] = cart.calc_price()
+                response['session'] = session
+            item_added, status = cart.add_item(product=product,
+                                               product_property=product_property,
+                                               product_color=product_color,
+                                               number=number)
+
+            if item_added:
+                response['status'] = 20
+
+            response['item_add_delete_status'] = status
+            response['cart-price-info'] = cart.calc_price()
 
             product = Product.get_or_none(product)
             if product:
@@ -60,7 +67,8 @@ class AddToCartView(mixins.RetrieveModelMixin, generics.GenericAPIView):
                                      cart_item_price * number, product.id),
                                  'cart_count': len(cart.cartitem_set.all()) if cart else None,
                                  'status': response['status'],
-                                 'cart': response.get('cart-price-info', None)})
+                                 'cart': response.get('cart-price-info', None),
+                                 'session': response.get('session', None)})
 
             return Response(response)
 
@@ -119,3 +127,19 @@ class AddToSessionBasedCartView(mixins.RetrieveModelMixin, generics.GenericAPIVi
 
         return Response(response)
 
+
+class SyncCartsView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    queryset = {}
+    serializer_class = TokenSessionSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=self.request.data)
+
+        if serializer.is_valid():
+            token = serializer.data['token']
+            session = serializer.data['session']
+
+            Cart.sync_cart_from_session(session, User.get_user_by_token(token))
+            return Response({'status': 'ok'})
+
+        return Response({'status': 'failed'})

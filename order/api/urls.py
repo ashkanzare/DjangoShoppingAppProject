@@ -1,9 +1,8 @@
-from django.urls import path, include
-from rest_framework import routers
-
+from django.urls import path
 from order.api.views import (
     AddToCartView,
     AddToSessionBasedCartView,
+    SyncCartsView
 
 )
 
@@ -12,5 +11,6 @@ app_name = 'order_api'
 urlpatterns = [
     path('', AddToCartView.as_view(), name='add-to-cart'),
     path('add-to-session-cart', AddToSessionBasedCartView.as_view(), name='add-to-session-cart'),
+    path('sync-carts', SyncCartsView.as_view(), name='sync-carts'),
 
 ]

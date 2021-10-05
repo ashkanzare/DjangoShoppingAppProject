@@ -46,7 +46,6 @@ class Customer(models.Model):
 
     @classmethod
     def get_by_token(cls, token):
-
         user = User.get_user_by_token(token)
         customer = None
         if user:
@@ -56,6 +55,7 @@ class Customer(models.Model):
     def get_cart(self):
         cart = self.cart_set.filter(status='active')
         return cart[0].cartitem_set.all() if cart else None
+
 
 
 class Address(models.Model):

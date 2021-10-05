@@ -28,28 +28,25 @@ function get_cart() {
     return null
 
 }
+//todo: cart icon counter -- fix
 
 // add local storage cart items to current active cart
 function add_from_local_to_server(token) {
-    let cart = 'meshop'
-    let local_storage_cart = localStorage.getItem(cart)
-    if (local_storage_cart) {
-        let url = $('#add-to-cart-url').data('url')
-        let cart_obj = JSON.parse(local_storage_cart)
+    localStorage.removeItem('cart_counter')
+    let session = localStorage.getItem('session')
+    localStorage.removeItem('session')
+    let url = $('#sync-carts-url').data('url')
 
-        for (let obj of cart_obj) {
-            $.ajax({
-                type: "POST",
-                url: url,
-                data: Object.assign({'token': token}, obj), // serializes the form's elements.
-                success: function (data) {
-                    console.log(data)
-                    $('#cart-counter').html(data.cart_count)
-                }
-            });
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: {'token': token, 'session': session}, // serializes the form's elements.
+        success: function (data) {
+            console.log(data)
         }
-        localStorage.removeItem(cart)
-    }
+    });
+
+
 }
 
 // set null if undefined
@@ -61,38 +58,12 @@ function set_null(obj) {
     }
 }
 
-// add to local storage
-function add_to_cart_on_local(product) {
-    let add_to_session_cart_url = $('#cart-items-for-local').data('url')
 
-    let cart_obj = {
-        'product': product,
-        'product_color': set_null($('#color-active').data('key')),
-        'product_property': set_null($('#property-active').data('key')),
-        'number': 1
-    }
-    $.ajax({
-        type: "POST",
-        url: add_to_session_cart_url,
-        data: Object.assign({'token': ''}, cart_obj), // serializes the form's elements.
-        success: function (data){
-            console.log(data)
-            $('#cart-counter').html(data.cart_count).css('visibility', 'visible')
-            localStorage.setItem('cart_counter', data.cart_count)
-        }
-    });
-
-    get_cart()
-}
-
-
-
-function add_cart_to_database(token, session=null, product, color_id = null, property_id = null, item_id = null, number = null) {
+function add_cart_to_database(token, product, color_id = null, property_id = null, item_id = null, number = null) {
 
     let url = $('#add-to-cart-url').data('url')
     const data = {
         'token': token,
-        'session': session,
         'product': product,
         'product_color': set_null($('#color-active').data('key')),
         'product_property': set_null($('#property-active').data('key')),
@@ -116,7 +87,8 @@ function add_cart_to_database(token, session=null, product, color_id = null, pro
         url: url,
         data: data, // serializes the form's elements.
         success: function (data) {
-            console.log(data)
+            localStorage.setItem('cart_counter', data.cart_count)
+            localStorage.setItem('session', data.session)
             $('#cart-counter').html(data.cart_count)
             if (data.status === 30) {
                 alert('متاسفانه امکان انتخاب بیشتر موجود نیست')

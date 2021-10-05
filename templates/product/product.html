@@ -242,8 +242,7 @@
                                             <span class="sep-border"></span>
                                             <div id="add-to-cart" class="m-5 text-center ">
                                                 <button onclick="
-                                                        {% if not user.is_authenticated %}add_to_cart_on_local({{ product.id }})
-                                                        {% else %}add_cart_to_database('{{ user.get_token }}' ,{{ product.id }}){% endif %}"
+                                                        add_cart_to_database('{{ user.get_token }}' ,{{ product.id }})"
                                                         class="btn btn-rounded btn-danger w-75 p-3">افزودن به سبد خرید
                                                 </button>
                                             </div>

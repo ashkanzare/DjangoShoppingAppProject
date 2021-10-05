@@ -18,9 +18,12 @@ class CartView(generic.ListView):
             customer = Customer.objects.get(user=user)
             translation.activate(customer.language)
             user = self.request.user
+            print(Cart.get_or_none(user))
             return Cart.get_or_none(user)
 
         else:
             session = self.request.session.session_key
-            return Cart.get_by_session_or_none(session)
-
+            print(session)
+            if session:
+                return Cart.get_by_session_or_none(session)
+            return None

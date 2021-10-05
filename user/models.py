@@ -73,7 +73,10 @@ class User(AbstractUser):
         self.save()
 
     def get_token(self):
-        token = Token.objects.get(user=self)
+        try:
+            token = Token.objects.get(user=self)
+        except Token.DoesNotExist:
+            token = ''
         return token
 
     @classmethod

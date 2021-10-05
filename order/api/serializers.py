@@ -10,8 +10,6 @@ class CartItemSerializer(serializers.ModelSerializer):
         fields = ['token', 'product', 'product_color', 'product_property', 'number']
 
 
-class test(serializers.ListSerializer):
-    product = serializers.IntegerField()
-    product_color = serializers.IntegerField()
-    product_property = serializers.IntegerField()
-    number = serializers.IntegerField()
+class TokenSessionSerializer(serializers.Serializer):
+    token = serializers.CharField(max_length=100, allow_blank=True)
+    session = serializers.CharField(max_length=100, allow_blank=True)
