@@ -415,6 +415,7 @@ select:active {
     border-radius: 15px;
     padding: 2%;
     border: 1px solid rgba(167, 167, 167, 0.52);
+    height: fit-content;
 
 }
 
@@ -426,6 +427,25 @@ select:active {
     cursor: pointer;
     outline: none;
 
+}
+
+
+
+.link-buttons {
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    cursor: pointer;
+    outline: none;
+}
+
+.link-buttons:hover {
+    color: #0f687b!important;
+    outline: none;
+}
+
+.link-buttons:focus {
+    outline: none!important;
 }
 
 .add-delete-item-buttons:hover {
@@ -452,4 +472,9 @@ select:active {
 
 .text-secondary {
     color: rgba(85, 85, 85, 0.71)!important;
+}
+
+
+.small-font {
+    font-size: 80% !important;
 }

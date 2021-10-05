@@ -91,3 +91,9 @@ def user_to_customer(user):
         customer = None
     finally:
         return customer
+
+
+@register.filter(name='equal')
+def equal(num_1, num_2):
+    """ check if two parameters are equal """
+    return num_1 == num_2

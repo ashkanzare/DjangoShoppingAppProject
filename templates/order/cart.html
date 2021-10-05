@@ -11,7 +11,7 @@
     <div class="row under-nav justify-content-center">
         <div class="col-9">
             <div class="row justify-content-between">
-                <div class="col-8 bg-white rounded" id="main-cart-body">
+                <div class="col-8 bg-white rounded" id="main-cart-body" style="height: fit-content">
                     {% if object_list.cartitem_set.all %}
                         {% for item in object_list.cartitem_set.all %}
                             <div class="bg-white text-right cart-item-container" id="item-container-{{ item.id }}">
@@ -74,6 +74,24 @@
                                                         <div class="col-2 d-flex justify-content-between add-delete-item">
                                                             <button class="add-delete-item-buttons" onclick="
                                                                     add_cart_to_database('{{ user.get_token }}' ,{{ item.product.id }},
+                                                                    {% if item.product_color %}
+                                                                        {{ item.product_color.id }},
+                                                                    {% else %}
+                                                                        null,
+                                                                    {% endif %}
+                                                                    {% if item.product_property %}
+                                                                        {{ item.product_property.id }},
+                                                                    {% else %}
+                                                                        null,
+                                                                    {% endif %}
+                                                                    {{ item.id }},
+                                                                    1)">
+                                                                <i class="fa fa-plus" aria-hidden="true"></i>
+                                                            </button>
+                                                            <div id="item-{{ item.id }}">{{ item.number|en_to_fa }}</div>
+                                                            <div>
+                                                                <button class="add-delete-item-buttons" onclick="
+                                                                        add_cart_to_database('{{ user.get_token }}' ,{{ item.product.id }},
                                                                         {% if item.product_color %}
                                                                             {{ item.product_color.id }},
                                                                         {% else %}
@@ -85,30 +103,45 @@
                                                                             null,
                                                                         {% endif %}
                                                                         {{ item.id }},
-                                                                        1)">
-                                                                <i class="fa fa-plus" aria-hidden="true"></i>
-                                                            </button>
-                                                            <div id="item-{{ item.id }}">{{ item.number|en_to_fa }}</div>
-                                                            <div>
-                                                                <button class="add-delete-item-buttons" onclick="
-                                                                        add_cart_to_database('{{ user.get_token }}' ,{{ item.product.id }},
-                                                                            {% if item.product_color %}
-                                                                                {{ item.product_color.id }},
-                                                                            {% else %}
-                                                                                null,
-                                                                            {% endif %}
-                                                                            {% if item.product_property %}
-                                                                                {{ item.product_property.id }},
-                                                                            {% else %}
-                                                                                null,
-                                                                            {% endif %}
-                                                                            {{ item.id }},
-                                                                            -1)">
+                                                                        -1)">
                                                                     <i class="fa fa-minus" aria-hidden="true"></i>
                                                                 </button>
                                                             </div>
                                                         </div>
+                                                        <div class="col-2 pt-4 pr-5">
+                                                            <button class="links text-secondary link-buttons" onclick="
+                                                                    add_cart_to_database('{{ user.get_token }}' ,{{ item.product.id }},
+                                                                    {% if item.product_color %}
+                                                                        {{ item.product_color.id }},
+                                                                    {% else %}
+                                                                        null,
+                                                                    {% endif %}
+                                                                    {% if item.product_property %}
+                                                                        {{ item.product_property.id }},
+                                                                    {% else %}
+                                                                        null,
+                                                                    {% endif %}
+                                                                    {{ item.id }},
+                                                                    'delete_all')">
+                                                                <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                                <small>حذف</small>
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-8 text-left">
+                                                            {% with item_price=item.get_item_price %}
+                                                                {% if item_price.1 != 0 %}
+
+                                                                    <p class="text-danger" id="discount-per-items" data-key="{{ item_price.2|subtract:item_price.0 }}"><span class="small-font">تخفیف</span> <span id="discount-price-value">{{ item_price.2|subtract:item_price.0|multiply:item.number|price_format }}</span> <span class="small-font">تومان</span></p>
+                                                                {% else %}
+                                                                    <p class="p-2"></p>
+                                                                {% endif %}
+
+                                                                <p id="price-per-items" data-key="{{ item_price.0 }}"> <span id="price-value">{{ item_price.0|multiply:item.number|price_format }}</span> <span class="small-font">تومان</span></p>
+
+                                                            {% endwith %}
+                                                        </div>
                                                     </div>
+
                                                 </div>
                                             {% else %}
                                                 <div>
@@ -139,37 +172,96 @@
                         </div>
                     {% endif %}
                 </div>
-                <div class="col-3 text-center bg-white rounded" style="max-height: 25rem!important;">
+                <div class="col-3">
+                    {% if object_list.cartitem_set.all %}
 
-                    <div class="row pr-5 pl-5 pt-4">
+                        <div id="cart-price-div" class="text-center bg-white rounded pb-5 mb-5"
+                             style="max-height: 25rem!important;">
 
-                        <div class="col-6 text-right text-secondary"><h5>قیمت کالاها</h5></div>
-                        <div class="col-6 text-left" id="cart-price-without-discount">
-                            <h5>{{ object_list.calc_price.0 }}</h5></div>
+                            <div class="row pr-5 pl-5 pt-4">
 
-                    </div>
-                    <div class="row pr-5 pl-5">
+                                <div class="col-6 text-right text-secondary"><h5>قیمت کالاها</h5></div>
+                                <div class="col-6 text-left" id="cart-price-without-discount">
+                                    <h5>{{ object_list.calc_price.0|price_format }}</h5>
+                                </div>
 
-                        <div class="col-6 text-right text-secondary"><h5>تخفیف کالاها</h5></div>
-                        <div class="col-6 text-left" id="cart-discount"><h5>{{ object_list.calc_price.2 }}%
-                            -- {{ object_list.calc_price.3 }}</h5></div>
+                            </div>
+                            <div class="row pr-5 pl-5">
 
-                    </div>
-                    <span class="sep-border"></span>
-                    <div class="row pr-5 pl-5">
+                                <div class="col-6 text-right text-secondary"><h5>تخفیف کالاها</h5></div>
+                                <div class="col-6 text-left" id="cart-discount">
+                                    <h5 class="text-danger d-flex justify-content-end">
+                                        <span class="ml-2">({{ object_list.calc_price.2|price_format }}%)  </span><span>{{ object_list.calc_price.3|price_format }}</span>
+                                    </h5>
+                                </div>
 
-                        <div class="col-6 text-right"><h5>جمع سبد خرید</h5></div>
-                        <div class="col-6 text-left" id="cart-total-price"><h5>{{ object_list.calc_price.1 }}</h5></div>
+                            </div>
+                            <span class="sep-border"></span>
+                            <div class="row pr-5 pl-5">
 
-                    </div>
-                    <div class="row pr-5 pl-5 text-right pt-3 pb-3"><small style="font-size: 65%">هزینه‌ی ارسال در ادامه
-                        بر اساس آدرس، زمان و نحوه‌ی ارسال انتخابی شما‌ محاسبه و به این مبلغ اضافه خواهد شد</small></div>
-                    <div>
-                        <button class="btn btn-danger pl-5 pr-5 p-3">ادامه فرآیند خرید</button>
-                    </div>
+                                <div class="col-6 text-right"><h5>جمع سبد خرید</h5></div>
+                                <div class="col-6 text-left" id="cart-total-price">
+                                    <h5>{{ object_list.calc_price.1|price_format }}</h5>
+                                </div>
+
+                            </div>
+                            <div class="row pr-5 pl-5 text-right pt-3 pb-3"><small style="font-size: 65%">هزینه‌ی ارسال
+                                در
+                                ادامه
+                                بر اساس آدرس، زمان و نحوه‌ی ارسال انتخابی شما‌ محاسبه و به این مبلغ اضافه خواهد
+                                شد</small>
+                            </div>
+                            <div>
+                                <button class="btn btn-danger pl-5 pr-5 p-3">ادامه فرآیند خرید</button>
+                            </div>
 
 
+                        </div>
+
+
+
+                    {% endif %}
+                    {% if not user.is_authenticated %}
+                        <div>
+                            <a href="{% url 'customer:register-login' %}" class="links text-dark">
+                                <div class="bg-white text-right pt-3 pb-3 pr-5 pl-5 rounded d-flex">
+                                    <div class="mt-2 pl-3">
+                                        <i class="fa fa-sign-in text-warning" aria-hidden="true"
+                                           style="font-size: 180%"></i>
+                                    </div>
+                                    <div>
+                                        <h5>ورود به حساب کاربری</h5>
+                                        <p style="font-size: 80%">برای مشاهده محصولاتی که پیشتر به سید خود اضافه کرده
+                                            اید
+                                            لطفا وارد شوید.</p>
+                                    </div>
+
+                                </div>
+                            </a>
+                        </div>
+
+                    {% else %}
+                        {% if object_list.cartitem_set.all %}
+                            <div id="cart-reserve-info" class="text-right pb-4">
+                                <p style="font-size: 80%">کالاهای موجود در سبد شما ثبت و رزرو نشده‌اند، برای ثبت سفارش
+                                    مراحل
+                                    بعدی را تکمیل کنید.</p>
+                            </div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between bg-white rounded"
+                             style="pointer-events: none;  cursor:not-allowed;  -webkit-user-select: none;">
+
+                            <div class="text-right mr-5">
+                                <h5 class="mt-4 pt-2">ارسال سفارش های رایگان</h5>
+                                <p class="text-secondary" style="font-size: 80%">سفارش های بالای ۳۰۰ هزار تومان</p>
+                            </div>
+                            <div><img class="rounded" src="{% static 'img/order-delivery-info.png' %}"
+                                      alt="order-delivery-info"></div>
+
+                        </div>
+                    {% endif %}
                 </div>
+
             </div>
         </div>
     </div>

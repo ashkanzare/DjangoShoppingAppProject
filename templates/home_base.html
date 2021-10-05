@@ -61,7 +61,11 @@
                             {% endif %}
                         {% endwith %}
                         <li><a href="{% url 'order:cart' %}">
-                            <span class="m-2 pr-2 pl-2" id="cart-counter">{{ user.customer.get_cart|length }}</span>
+
+
+                    <span class="m-2 pr-2 pl-2" id="cart-counter"
+                          style="visibility: {% if user.customer.get_cart|length != 0 %}visible{% else %}hidden{% endif %}!important;">{{ user.customer.get_cart|length|en_to_fa }}</span>
+
                             <i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a>
                         </li>
 
@@ -71,9 +75,9 @@
 
                     {% else %}
 
-                        <li><a href="{% url 'order:cart' %}"><span class="m-2 pr-2 pl-2" id="cart-counter">
-                        <script>get_cart()</script>
-                        </span><i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a>
+                        <li>
+                            <a href="{% url 'order:cart' %}"><span class="m-2 pr-2 pl-2" id="cart-counter"><script>get_cart()</script></span>
+                                <i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a>
                         </li>
                         <li><a href="{% url 'customer:register-login' %}"><h5>ورود/ثبت نام</h5></a></li>
 

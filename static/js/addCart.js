@@ -18,17 +18,23 @@ function toFarsiNumber(n) {
 function get_cart() {
     let cart = 'cart_counter'
     let local_storage_cart = localStorage.getItem(cart)
+    let cart_counter = $('#cart-counter')
     if (local_storage_cart) {
 
-        $('#cart-counter').html(local_storage_cart).css('visibility', 'visible')
+        cart_counter.html(toFarsiNumber(local_storage_cart))
+
+        if (Number(local_storage_cart) === 0) {
+            cart_counter.css('visibility', 'hidden')
+        }
         return local_storage_cart
 
+    } else {
+
+        cart_counter.html(local_storage_cart).css('visibility', 'hidden')
+        return null
     }
-    $("#cart-counter").css('visibility', 'hidden')
-    return null
 
 }
-//todo: cart icon counter -- fix
 
 // add local storage cart items to current active cart
 function add_from_local_to_server(token) {
@@ -60,7 +66,7 @@ function set_null(obj) {
 
 
 function add_cart_to_database(token, product, color_id = null, property_id = null, item_id = null, number = null) {
-
+    let delete_all = false
     let url = $('#add-to-cart-url').data('url')
     const data = {
         'token': token,
@@ -79,6 +85,10 @@ function add_cart_to_database(token, product, color_id = null, property_id = nul
 
     if (number < 0) {
         data.number = number
+    } else if (number === 'delete_all') {
+        number = -Number(convert_fa_to_en($(`#item-${item_id}`).html()))
+        data.number = number
+        delete_all = true
     }
 
     console.log(data)
@@ -89,27 +99,54 @@ function add_cart_to_database(token, product, color_id = null, property_id = nul
         success: function (data) {
             localStorage.setItem('cart_counter', data.cart_count)
             localStorage.setItem('session', data.session)
-            $('#cart-counter').html(data.cart_count)
+            if (data.cart_count !== 0) {
+                $('#cart-counter').html(toFarsiNumber(data.cart_count)).css('visibility', 'visible')
+            } else {
+                $('#cart-counter').html(data.cart_count).css('visibility', 'hidden')
+            }
             if (data.status === 30) {
                 alert('متاسفانه امکان انتخاب بیشتر موجود نیست')
             } else {
-
                 // update cart price div
                 let cart_price_with_discount = $('#cart-price-without-discount')
                 let cart_discount = $('#cart-discount')
                 let cart_total_price = $('#cart-total-price')
 
-                cart_price_with_discount.html(`<h5>${data.cart[0]}</h5>`)
-                cart_discount.html(data.cart[2])
-                cart_total_price.html(data.cart[1])
+                cart_price_with_discount.html(`<h5>${toFarsiNumber(data.cart[0].toLocaleString())}</h5>`)
+                cart_discount.html(` <h5 class="text-danger d-flex justify-content-end">
+                                        <span class="ml-2">(${toFarsiNumber(data.cart[2].toLocaleString())}%)  </span><span>${toFarsiNumber(data.cart[3].toLocaleString())}</span>
+                                    </h5>`)
+                cart_total_price.html(`<h5>${toFarsiNumber(data.cart[1].toLocaleString())}</h5>`)
 
 
                 let item_number = $('#item-' + item_id)
                 let en_number = Number(convert_fa_to_en(item_number.html()))
                 if (number > 0) {
                     item_number.html(toFarsiNumber(en_number + 1))
+                    let item_discount = $('#discount-per-items')
+                    let item_price = $('#price-per-items')
+
+                    $('#discount-price-value').html(toFarsiNumber((item_discount.data('key') * (en_number + 1)).toLocaleString()))
+                    $('#price-value').html(toFarsiNumber((item_price.data('key') * (en_number + 1)).toLocaleString()))
+
+                    get_cart()
                 } else {
-                    item_number.html(toFarsiNumber(en_number - 1))
+                    if (delete_all) {
+                        item_number.html('۰')
+
+                        let cart_reserve_info = $('#cart-reserve-info')
+                        cart_reserve_info.animate({opacity: 0}, 100,)
+                        setTimeout(function () {
+                            cart_reserve_info.remove()
+                        }, 300);
+                    } else {
+                        item_number.html(toFarsiNumber(en_number - 1))
+                        let item_discount = $('#discount-per-items')
+                        let item_price = $('#price-per-items')
+
+                        $('#discount-price-value').html(toFarsiNumber((item_discount.data('key') * (en_number - 1)).toLocaleString()))
+                        $('#price-value').html(toFarsiNumber((item_price.data('key') * (en_number - 1)).toLocaleString()))
+                    }
                 }
                 if (item_number.html() === '۰' && number < 0) {
                     let item_element = $('#item-container-' + item_id)
@@ -130,6 +167,7 @@ function add_cart_to_database(token, product, color_id = null, property_id = nul
                                     </div>                                                                                
 `
                     cart_main_div.html(empty_div)
+                    $("#cart-price-div").remove()
 
                 }
             }, 300);

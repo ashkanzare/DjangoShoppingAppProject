@@ -30,7 +30,7 @@ class Cart(models.Model):
             quantity_check, quantity_number = cart_item.check_product_with_properties_exist()
 
             cart_item.number += number
-
+            print('shot', cart_item.number, number)
             if number > 0:
                 if quantity_check and cart_item.number <= quantity_number:
                     cart_item.save()
@@ -82,26 +82,42 @@ class Cart(models.Model):
     def calc_price(self):
         total_price = 0
         total_price_with_discount = 0
+        discount = 0
+        discount_percentage = 0
+
         cart_items = self.cartitem_set.all()
         if cart_items:
             for item in cart_items:
-                item_price = item.product.calc_price_base_of_color_and_factor_property(
-                    item.product_property.id if item.product_property else None,
-                    item.product_color.id if item.product_color else None)
-                if isinstance(item_price, tuple):
-                    total_price += item_price[0] * item.number
-                else:
-                    total_price += item_price * item.number
-
-                total_price_with_discount += item.product.calc_final_price_with_properties(
-                    item.product_property.id if item.product_property else None,
-                    item.product_color.id if item.product_color else None)[0] * item.number
-
+                item_price = item.get_item_price()
+                total_price += item_price[2] * item.number
+                total_price_with_discount += item_price[0] * item.number
             discount = total_price - total_price_with_discount
             discount_percentage = round(100 - (100 * total_price_with_discount / total_price), 2)
 
-            return total_price, total_price_with_discount, discount_percentage, discount
-        return 0
+        return total_price, total_price_with_discount, discount_percentage, discount
+    # def calc_price(self):
+    #     total_price = 0
+    #     total_price_with_discount = 0
+    #     cart_items = self.cartitem_set.all()
+    #     if cart_items:
+    #         for item in cart_items:
+    #             item_price = item.product.calc_price_base_of_color_and_factor_property(
+    #                 item.product_property.id if item.product_property else None,
+    #                 item.product_color.id if item.product_color else None)
+    #             if isinstance(item_price, tuple):
+    #                 total_price += item_price[0] * item.number
+    #             else:
+    #                 total_price += item_price * item.number
+    #
+    #             total_price_with_discount += item.product.calc_final_price_with_properties(
+    #                 item.product_property.id if item.product_property else None,
+    #                 item.product_color.id if item.product_color else None)[0] * item.number
+    #
+    #         discount = total_price - total_price_with_discount
+    #         discount_percentage = round(100 - (100 * total_price_with_discount / total_price), 2)
+    #
+    #         return total_price, total_price_with_discount, discount_percentage, discount
+    #     return 0
 
     def merge_with_session(self, other):
         for item in other.cartitem_set.all():
@@ -188,6 +204,13 @@ class CartItem(models.Model):
 
         else:
             return False, 0
+
+    def get_item_price(self):
+        color_id = self.product_color.id if self.product_color else None
+        property_id = self.product_property.id if self.product_property else None
+
+        price_set = self.product.calc_final_price_with_properties(color_id, property_id)
+        return price_set
 
 
 class Order(models.Model):
