@@ -11,9 +11,16 @@ class CartView(generic.ListView):
     template_name = 'order/cart.html'
 
     def get_queryset(self):
-        customer = Customer.objects.get(user=self.request.user)
-        translation.activate(customer.language)
-        user = self.request.user
-        cart = Cart.get_or_none(user)
 
-        return cart
+        user = self.request.user
+
+        if not user.is_anonymous:
+            customer = Customer.objects.get(user=user)
+            translation.activate(customer.language)
+            user = self.request.user
+            return Cart.get_or_none(user)
+
+        else:
+            session = self.request.session.session_key
+            return Cart.get_by_session_or_none(session)
+

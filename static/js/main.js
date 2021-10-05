@@ -15,8 +15,6 @@ function refresh_code(token) {
 }
 
 
-
-
 $(document).ready(function () {
 
     // refresh code ajax
@@ -350,5 +348,5 @@ $(document).ready(function () {
             document.getElementById("counter-parent").innerHTML = "<a class='links' href='' onclick='refresh_code(window.location.href.split(`?`)[1].substring(6,))'>ارسال مجدد کد</a>";
         }
     }, 1000);
-
+    get_cart()
 });

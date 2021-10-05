@@ -8,3 +8,10 @@ class CartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ['token', 'product', 'product_color', 'product_property', 'number']
+
+
+class test(serializers.ListSerializer):
+    product = serializers.IntegerField()
+    product_color = serializers.IntegerField()
+    product_property = serializers.IntegerField()
+    number = serializers.IntegerField()

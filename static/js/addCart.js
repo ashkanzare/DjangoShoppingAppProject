@@ -14,25 +14,20 @@ function toFarsiNumber(n) {
         .replace(/\d/g, x => farsiDigits[x]);
 }
 
-// get cart from local storage
+// get cart-counter for cart icon in navbar
 function get_cart() {
-    let cart = 'meshop'
+    let cart = 'cart_counter'
     let local_storage_cart = localStorage.getItem(cart)
     if (local_storage_cart) {
-        let cart_obj = JSON.parse(local_storage_cart)
-        let cart_length = Object.keys(cart_obj).length
 
-        $('#cart-counter').html(cart_length).css('visibility', 'visible')
-        return {
-            'cart': cart_obj,
-            'cart_length': cart_length
-        }
+        $('#cart-counter').html(local_storage_cart).css('visibility', 'visible')
+        return local_storage_cart
+
     }
     $("#cart-counter").css('visibility', 'hidden')
     return null
 
 }
-
 
 // add local storage cart items to current active cart
 function add_from_local_to_server(token) {
@@ -68,46 +63,36 @@ function set_null(obj) {
 
 // add to local storage
 function add_to_cart_on_local(product) {
-    let cart = 'meshop'
-    let local_storage_cart = localStorage.getItem(cart)
-    if (local_storage_cart) {
-        let cart_obj = JSON.parse(local_storage_cart)
-        let new_product = {
-            'product': product,
-            'product_color': set_null($('#color-active').data('key')),
-            'product_property': set_null($('#property-active').data('key')),
-            'number': 1
-        }
-        let check = false;
-        for (let obj of cart_obj) {
-            if (new_product.product === obj.product && new_product.product_color === obj.product_color && new_product.product_property === obj.product_property) {
-                obj.number += 1
-                check = true
-            }
-        }
-        if (check === false) {
-            cart_obj.push(new_product)
-        }
-        localStorage.setItem(cart, JSON.stringify(cart_obj))
-    } else {
-        let cart_obj = [{
-            'product': product,
-            'product_color': set_null($('#color-active').data('key')),
-            'product_property': set_null($('#property-active').data('key')),
-            'number': 1
-        }]
-        localStorage.setItem(cart, JSON.stringify(cart_obj))
+    let add_to_session_cart_url = $('#cart-items-for-local').data('url')
+
+    let cart_obj = {
+        'product': product,
+        'product_color': set_null($('#color-active').data('key')),
+        'product_property': set_null($('#property-active').data('key')),
+        'number': 1
     }
+    $.ajax({
+        type: "POST",
+        url: add_to_session_cart_url,
+        data: Object.assign({'token': ''}, cart_obj), // serializes the form's elements.
+        success: function (data){
+            console.log(data)
+            $('#cart-counter').html(data.cart_count).css('visibility', 'visible')
+            localStorage.setItem('cart_counter', data.cart_count)
+        }
+    });
 
     get_cart()
 }
 
 
-function add_cart_to_database(token, product, color_id = null, property_id = null, item_id = null, number = null) {
+
+function add_cart_to_database(token, session=null, product, color_id = null, property_id = null, item_id = null, number = null) {
 
     let url = $('#add-to-cart-url').data('url')
     const data = {
         'token': token,
+        'session': session,
         'product': product,
         'product_color': set_null($('#color-active').data('key')),
         'product_property': set_null($('#property-active').data('key')),
@@ -142,7 +127,7 @@ function add_cart_to_database(token, product, color_id = null, property_id = nul
                 let cart_discount = $('#cart-discount')
                 let cart_total_price = $('#cart-total-price')
 
-                cart_price_with_discount.html(data.cart[0])
+                cart_price_with_discount.html(`<h5>${data.cart[0]}</h5>`)
                 cart_discount.html(data.cart[2])
                 cart_total_price.html(data.cart[1])
 
@@ -182,4 +167,25 @@ function add_cart_to_database(token, product, color_id = null, property_id = nul
     });
 
 
+}
+
+
+function show_cart_from_local() {
+    let cart = 'meshop'
+    let local_storage_cart = localStorage.getItem(cart)
+    if (local_storage_cart) {
+
+        let url = $('#cart-items-for-local').data('url')
+        let cart_obj = JSON.parse(local_storage_cart)
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: cart_obj, // serializes the form's elements.
+            success: function (data) {
+                console.log(cart_obj)
+            }
+        });
+
+
+    }
 }

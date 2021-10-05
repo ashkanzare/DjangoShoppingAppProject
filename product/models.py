@@ -82,7 +82,7 @@ class Product(models.Model):
                 return product_price * (1 - discount.discount_amount / 100), discount.discount_amount
             return product_price - discount.discount_amount, discount.discount_amount
 
-        product_price = discount.product.self.calc_price_base_of_color_and_factor_property(property_id, color_id)
+        product_price = self.calc_price_base_of_color_and_factor_property(property_id, color_id)
         product_price = product_price[0] if isinstance(product_price, tuple) else product_price
         return product_price, 0
 

@@ -7,6 +7,7 @@
 {% load static %}
 {% block content %}
     <input id="empty-cart-img" type="hidden" data-key="{% static 'img/empty-cart-2.png' %}">
+
     <div class="row under-nav justify-content-center">
         <div class="col-9">
             <div class="row justify-content-between">
@@ -131,6 +132,9 @@
 
                         {% endfor %}
                     {% else %}
+                        {% if not user.is_authenticated %}
+                            <script>show_cart_from_local()</script>
+                        {% endif %}
                         <div class="text-center p-5">
                             <img class="cart-image" src="{% static 'img/empty-cart-2.png' %}" alt="empty-cart">
                             <h4>سبد خرید شما خالی است!</h4>
@@ -142,30 +146,35 @@
                     <div class="row pr-5 pl-5 pt-4">
 
                         <div class="col-6 text-right text-secondary"><h5>قیمت کالاها</h5></div>
-                        <div class="col-6 text-left" id="cart-price-without-discount"><h5>{{ object_list.calc_price.0 }}</h5></div>
+                        <div class="col-6 text-left" id="cart-price-without-discount">
+                            <h5>{{ object_list.calc_price.0 }}</h5></div>
 
                     </div>
                     <div class="row pr-5 pl-5">
 
                         <div class="col-6 text-right text-secondary"><h5>تخفیف کالاها</h5></div>
-                        <div class="col-6 text-left" id="cart-discount"><h5>{{ object_list.calc_price.2 }}% -- {{ object_list.calc_price.3 }}</h5></div>
+                        <div class="col-6 text-left" id="cart-discount"><h5>{{ object_list.calc_price.2 }}%
+                            -- {{ object_list.calc_price.3 }}</h5></div>
 
                     </div>
                     <span class="sep-border"></span>
                     <div class="row pr-5 pl-5">
 
-                        <div class="col-6 text-right" ><h5>جمع سبد خرید</h5></div>
+                        <div class="col-6 text-right"><h5>جمع سبد خرید</h5></div>
                         <div class="col-6 text-left" id="cart-total-price"><h5>{{ object_list.calc_price.1 }}</h5></div>
 
                     </div>
-                    <div class="row pr-5 pl-5 text-right pt-3 pb-3"><small style="font-size: 65%">هزینه‌ی ارسال در ادامه بر اساس آدرس، زمان و نحوه‌ی ارسال انتخابی شما‌ محاسبه و به این مبلغ اضافه خواهد شد</small></div>
-                    <div><button class="btn btn-danger pl-5 pr-5 p-3">ادامه فرآیند خرید</button></div>
-                    
-                    
+                    <div class="row pr-5 pl-5 text-right pt-3 pb-3"><small style="font-size: 65%">هزینه‌ی ارسال در ادامه
+                        بر اساس آدرس، زمان و نحوه‌ی ارسال انتخابی شما‌ محاسبه و به این مبلغ اضافه خواهد شد</small></div>
+                    <div>
+                        <button class="btn btn-danger pl-5 pr-5 p-3">ادامه فرآیند خرید</button>
+                    </div>
+
+
                 </div>
             </div>
         </div>
     </div>
-    
+
 {% endblock %}
 

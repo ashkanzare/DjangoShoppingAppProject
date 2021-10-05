@@ -8,7 +8,8 @@ from product.models import Product, ProductFactorProperty, ProductColor
 
 
 class Cart(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name=const.CUSTOMER)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name=const.CUSTOMER, blank=True, null=True)
+    session = models.CharField(max_length=100, blank=True, null=True, default=None)
     creation_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=const.CART_STATUS, verbose_name=const.STATUS, default=const.ACTIVE)
 
@@ -67,26 +68,39 @@ class Cart(models.Model):
         finally:
             return cart
 
+    @classmethod
+    def get_by_session_or_none(cls, session):
+        cart = None
+        try:
+            cart = Cart.objects.get(session=session, status='active')
+        except Cart.DoesNotExist:
+            pass
+        finally:
+            return cart
+
     def calc_price(self):
         total_price = 0
         total_price_with_discount = 0
-        for item in self.cartitem_set.all():
-            item_price = item.product.calc_price_base_of_color_and_factor_property(
-                item.product_property.id if item.product_property else None,
-                item.product_color.id if item.product_color else None)
-            if isinstance(item_price, tuple):
-                total_price += item_price[0] * item.number
-            else:
-                total_price += item_price * item.number
+        cart_items = self.cartitem_set.all()
+        if cart_items:
+            for item in cart_items:
+                item_price = item.product.calc_price_base_of_color_and_factor_property(
+                    item.product_property.id if item.product_property else None,
+                    item.product_color.id if item.product_color else None)
+                if isinstance(item_price, tuple):
+                    total_price += item_price[0] * item.number
+                else:
+                    total_price += item_price * item.number
 
-            total_price_with_discount += item.product.calc_final_price_with_properties(
-                item.product_property.id if item.product_property else None,
-                item.product_color.id if item.product_color else None)[0] * item.number
+                total_price_with_discount += item.product.calc_final_price_with_properties(
+                    item.product_property.id if item.product_property else None,
+                    item.product_color.id if item.product_color else None)[0] * item.number
 
-        discount = total_price - total_price_with_discount
-        discount_percentage = round(100 - (100 * total_price_with_discount / total_price), 2)
+            discount = total_price - total_price_with_discount
+            discount_percentage = round(100 - (100 * total_price_with_discount / total_price), 2)
 
-        return total_price, total_price_with_discount, discount_percentage, discount
+            return total_price, total_price_with_discount, discount_percentage, discount
+        return 0
 
 
 class CartItem(models.Model):
