@@ -189,12 +189,13 @@ class Product(models.Model):
         if not (property_id or color_id):
             return self.price, self.calc_final_price()
         else:
-            factor_properties = self.productfactorproperty_set.filter(pk=property_id if property_id else None)
-            color_property = self.productcolor_set.filter(pk=color_id if color_id else None)
-            print('factor', self.productfactorproperty_set.filter(pk=property_id), 'color', color_property)
+            property_id = property_id if property_id else None
+            color_id = color_id if color_id else None
+
+            factor_properties = self.productfactorproperty_set.filter(pk=property_id)
+            color_property = self.productcolor_set.filter(pk=color_id)
             price_with_properties = self.price + (factor_properties[0].price_impact if factor_properties else 0)
             total_price = price_with_properties + (color_property[0].price_impact if color_property else 0)
-            print('total', total_price)
             return total_price
 
 

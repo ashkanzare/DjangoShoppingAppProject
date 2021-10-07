@@ -135,7 +135,6 @@ class GetPriceByColorAndFactorPropertyView(mixins.ListModelMixin, generics.Gener
     serializer_class = ColorAndPropertyByIdSerializer
 
     def post(self, request, *args, **kwargs):
-        print(self.request.data)
         property_id = self.request.data['property_id']
         color_id = self.request.data['color_id']
         product_id = self.request.data['product_id']

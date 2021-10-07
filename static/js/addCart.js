@@ -123,11 +123,11 @@ function add_cart_to_database(token, product, color_id = null, property_id = nul
                 let en_number = Number(convert_fa_to_en(item_number.html()))
                 if (number > 0) {
                     item_number.html(toFarsiNumber(en_number + 1))
-                    let item_discount = $('#discount-per-items')
-                    let item_price = $('#price-per-items')
+                    let item_discount = $('#discount-per-items-'+item_id)
+                    let item_price = $('#price-per-items-'+item_id)
 
-                    $('#discount-price-value').html(toFarsiNumber((item_discount.data('key') * (en_number + 1)).toLocaleString()))
-                    $('#price-value').html(toFarsiNumber((item_price.data('key') * (en_number + 1)).toLocaleString()))
+                    $('#discount-price-value-'+item_id).html(toFarsiNumber((item_discount.data('key') * (en_number + 1)).toLocaleString()))
+                    $('#price-value-'+item_id).html(toFarsiNumber((item_price.data('key') * (en_number + 1)).toLocaleString()))
 
                     get_cart()
                 } else {
@@ -141,11 +141,11 @@ function add_cart_to_database(token, product, color_id = null, property_id = nul
                         }, 300);
                     } else {
                         item_number.html(toFarsiNumber(en_number - 1))
-                        let item_discount = $('#discount-per-items')
-                        let item_price = $('#price-per-items')
+                        let item_discount = $('#discount-per-items-'+item_id)
+                        let item_price = $('#price-per-items-'+item_id)
 
-                        $('#discount-price-value').html(toFarsiNumber((item_discount.data('key') * (en_number - 1)).toLocaleString()))
-                        $('#price-value').html(toFarsiNumber((item_price.data('key') * (en_number - 1)).toLocaleString()))
+                        $('#discount-price-value-'+item_id).html(toFarsiNumber((item_discount.data('key') * (en_number - 1)).toLocaleString()))
+                        $('#price-value-'+item_id).html(toFarsiNumber((item_price.data('key') * (en_number - 1)).toLocaleString()))
                     }
                 }
                 if (item_number.html() === '۰' && number < 0) {
