@@ -3,10 +3,12 @@ from django.shortcuts import render
 from django.views.generic import ListView
 from rest_framework import mixins, generics
 from rest_framework.authtoken.models import Token
+
+from utils.utils_functions import convert_place_name_to_persian
 from .forms import UserRegisterLogin, UserCode, UserPassword, ResetPassword
 
 # Create your views here.
-from .models import Customer
+from .models import Customer, Address
 
 
 def user_register_login(request):
@@ -170,4 +172,22 @@ class CustomerProfileEditListView(ListView):
         context['days'] = [i for i in range(1, 32)]
         context['months'] = [i for i in range(1, 13)]
         context['years'] = [i for i in range(1310, 1384)]
+        return context
+
+
+class CustomerAddressListView(ListView):
+    """
+    view for see addresses of a user
+    """
+    model = Customer
+    template_name = 'customer/address/customer-address.html'
+    context_object_name = 'customer_object'
+
+    def get_queryset(self):
+        logged_in_user = self.request.user
+        return Customer.objects.get(user=logged_in_user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['addresses'] = Address.objects.filter(customer__user=self.request.user)
         return context

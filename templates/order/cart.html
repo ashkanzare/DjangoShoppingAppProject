@@ -180,7 +180,7 @@
 
                             <div class="row pr-5 pl-5 pt-4">
 
-                                <div class="col-6 text-right text-secondary"><h5>قیمت کالاها</h5></div>
+                                <div class="col-6 text-right text-secondary"><h5 style="font-size: 80%">قیمت کالاها</h5></div>
                                 <div class="col-6 text-left" id="cart-price-without-discount">
                                     <h5>{{ object_list.calc_price.0|price_format }}</h5>
                                 </div>
@@ -188,7 +188,7 @@
                             </div>
                             <div class="row pr-5 pl-5">
 
-                                <div class="col-6 text-right text-secondary"><h5>تخفیف کالاها</h5></div>
+                                <div class="col-6 text-right text-secondary"><h5 style="font-size: 80%">تخفیف کالاها</h5></div>
                                 <div class="col-6 text-left" id="cart-discount">
                                     <h5 class="text-danger d-flex justify-content-end">
                                         <span class="ml-2">({{ object_list.calc_price.2|price_format }}%)  </span><span>{{ object_list.calc_price.3|price_format }}</span>
@@ -199,7 +199,7 @@
                             <span class="sep-border"></span>
                             <div class="row pr-5 pl-5">
 
-                                <div class="col-6 text-right"><h5>جمع سبد خرید</h5></div>
+                                <div class="col-6 text-right"><h5 style="font-size: 80%">جمع سبد خرید</h5></div>
                                 <div class="col-6 text-left" id="cart-total-price">
                                     <h5>{{ object_list.calc_price.1|price_format }}</h5>
                                 </div>
@@ -252,8 +252,8 @@
                              style="pointer-events: none;  cursor:not-allowed;  -webkit-user-select: none;">
 
                             <div class="text-right mr-5">
-                                <h5 class="mt-4 pt-2">ارسال سفارش های رایگان</h5>
-                                <p class="text-secondary" style="font-size: 80%">سفارش های بالای ۳۰۰ هزار تومان</p>
+                                <h5 class="mt-4 pt-2" style="font-size: 80%">ارسال سفارش های رایگان</h5>
+                                <p class="text-secondary" style="font-size: 60%">سفارش های بالای ۳۰۰ هزار تومان</p>
                             </div>
                             <div><img class="rounded" src="{% static 'img/order-delivery-info.png' %}"
                                       alt="order-delivery-info"></div>

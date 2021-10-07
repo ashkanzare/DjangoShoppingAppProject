@@ -9,10 +9,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
 from constants.vars import STATES
-from customer.api.serializers import CustomerSerializer, StateCitiesSerializer
+from customer.api.serializers import CustomerSerializer, StateCitiesSerializer, StateCitiesTranslateSerializer
 from customer.models import Customer
 from utils.utils_functions import check_for_dict_values, phone_validator, email_validator, get_static, \
-    get_states_and_cities
+    get_states_and_cities, convert_place_name_to_persian
 
 
 # class CustomerEditDetail(mixins.RetrieveModelMixin,
@@ -92,4 +92,16 @@ class IranStateCities(mixins.RetrieveModelMixin, generics.GenericAPIView):
         serializer = self.get_serializer(data=self.request.data)
         if serializer.is_valid():
             return Response(get_states_and_cities(self.request.data['name']))
+        return Response({'cities': 'not found'})
+
+
+class IranStateCitiesTranslate(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    queryset = {}
+    serializer_class = StateCitiesTranslateSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=self.request.data)
+
+        if serializer.is_valid():
+            return Response(convert_place_name_to_persian(self.request.data['name'], is_city=self.request.data.get('is_city', False)))
         return Response({'cities': 'not found'})

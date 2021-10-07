@@ -284,7 +284,7 @@ select:active {
 }
 
 .under-nav {
-    margin-top: 5% !important;
+    margin-top: 8% !important;
 }
 
 
@@ -430,7 +430,6 @@ select:active {
 }
 
 
-
 .link-buttons {
     background: none !important;
     border: none;
@@ -440,12 +439,12 @@ select:active {
 }
 
 .link-buttons:hover {
-    color: #0f687b!important;
+    color: #0f687b !important;
     outline: none;
 }
 
 .link-buttons:focus {
-    outline: none!important;
+    outline: none !important;
 }
 
 .add-delete-item-buttons:hover {
@@ -454,27 +453,79 @@ select:active {
 }
 
 .add-delete-item-buttons:focus {
-    outline: none!important;
+    outline: none !important;
 }
 
 .cart-image {
-	zoom: 1;
-	filter: alpha(opacity=50);
-	opacity: 0.5;
+    zoom: 1;
+    filter: alpha(opacity=50);
+    opacity: 0.5;
     width: 20%;
 }
 
 .transparent {
-	zoom: 1;
-	filter: alpha(opacity=50);
-	opacity: 0.5;
+    zoom: 1;
+    filter: alpha(opacity=50);
+    opacity: 0.5;
 }
 
 .text-secondary {
-    color: rgba(85, 85, 85, 0.71)!important;
+    color: rgba(85, 85, 85, 0.71) !important;
 }
 
 
 .small-font {
     font-size: 80% !important;
+}
+
+.text-under-line {
+    position: relative;
+}
+
+.text-under-line::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 1px;
+    background-color: red;
+    position: absolute;
+    bottom: -.75em;
+    left: 0;
+    right: 0;
+    transition: all ease-in-out 250ms;
+}
+
+.btn-outline-danger {
+    border: #d51b1b solid 1px !important;
+}
+
+.btn-outline-danger:hover {
+    color: white !important;
+}
+
+.btn-outline-danger:active,
+.btn-outline-danger:focus {
+    outline: none !important;
+}
+
+
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+#map:after {
+    position: absolute;
+    display: block;
+    top: 48%;
+    left: 50%;
+    font: normal normal normal 30px/1 FontAwesome;
+    content: "\f041";
+    color: red;
+}
+
+#map {
+    border-radius: 20px!important;
 }

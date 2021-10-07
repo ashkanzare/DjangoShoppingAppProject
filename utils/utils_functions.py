@@ -1,5 +1,6 @@
 import json
 import re
+from difflib import SequenceMatcher
 from random import choices
 import string
 
@@ -143,3 +144,19 @@ def get_states_and_cities(state_name):
 def image_path_generator(instance, filename):
     name = filename.split('.')
     return f"product_{instance.product.id}/{sha256(name[0].encode()).hexdigest()}.{name[-1]}"
+
+
+def convert_place_name_to_persian(name, is_city=False):
+    if is_city:
+        url = get_static('json/province-cities/cities.json')
+    else:
+        url = get_static('json/province-cities/province.json')
+
+    with open(url, 'r', encoding="utf-8") as jsonfile:
+        places = json.load(jsonfile)
+        place = {place['title']: SequenceMatcher(None, place['slug'].strip().lower(), name.strip().lower()).ratio() for
+                 place in places if
+                 SequenceMatcher(None, place['slug'].strip().lower(), name.strip().lower()).ratio() > 0.3}
+        if place:
+            return max(place, key=place.get)
+        return None

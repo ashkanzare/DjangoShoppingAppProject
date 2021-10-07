@@ -9,7 +9,8 @@ from .views import (
     phone_reset_password,
     reset_password,
     CustomerProfileListView,
-    CustomerProfileEditListView
+    CustomerProfileEditListView,
+    CustomerAddressListView
 )
 
 app_name = 'customer'
@@ -25,5 +26,6 @@ urlpatterns = [
     path('reset-password/<str:token>', reset_password, name="reset-password"),
     path('profile/', CustomerProfileListView.as_view(), name="profile"),
     path('profile/edit/', CustomerProfileEditListView.as_view(), name="profile-edit"),
+    path('profile/addresses/', CustomerAddressListView.as_view(), name="profile-addresses"),
     # path('courses-api/<str:text>', CourseViewSet.as_view(), name='courses-api')
 ]

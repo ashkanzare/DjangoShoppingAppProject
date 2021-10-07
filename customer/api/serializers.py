@@ -40,3 +40,8 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 class StateCitiesSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=250)
+
+
+class StateCitiesTranslateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=250)
+    is_city = serializers.BooleanField(default=False)

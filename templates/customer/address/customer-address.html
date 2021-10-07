@@ -1,0 +1,131 @@
+{% extends 'home_base.html' %}
+{% load customer_extras %}
+{% load static %}
+{% block title %}پروفایل {% if customer_object.first_name and customer_object.last_name %}{{ customer.first_name }}
+    {{ customer.last_name }}{% else %}{{ user.phone }}{% endif %}{% endblock %}
+{% block active_navbar_profile %}active{% endblock %}
+{% block head %}
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.5.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.5.0/mapbox-gl.css' rel='stylesheet'/>
+{% endblock %}
+{% block content %}
+    <input type="hidden" id="city-province-translate-url" data-key="{% url 'customer_api:iran-cities-translate' %}">
+    <!--  modal start  -->
+    <div id="address-modal" class="modal fade" role="dialog" style="margin-top: 10%!important;">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header-custom pr-5 pl-5 pt-5 rounded-top">
+                    <p class="modal-title">آدرس جدید</p>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                </div>
+                <div class="modal-body" id="address-body">
+                    <section class="map_box_container" style="position: relative; height: 30rem">
+                        <!--MAP-->
+                        <div id='map'></div>
+                    </section>
+                    <div class="d-flex justify-content-around pt-3 mt-3" style="border-top: 1px solid black">
+                        <p class="small-font mt-2">مرسوله شما به این موقعیت ارسال خواهد شد.</p>
+                        <button style="min-width: 10rem!important;" class="btn btn-danger" onclick="get_coordinate()">ثبت و افزودن جزییات</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--  modal end  -->
+    <div class="vh-100 w-100 text-center under-nav ">
+        <div class="text-center" id="side-main-div">
+            <div class="d-flex justify-content-between side-main-div-container">
+                <div class="sidebar">
+                    <div class="mb-3 rounded ad-div"></div>
+                    <div class="bg-white rounded sidebar-main text-center">
+                        <div>
+                            <div class="pb-2"></div>
+                            <div class="public-profile-pic m-3 mr-5">
+                                <div class="pt-2">
+                                    <h5 style="font-size: 80%">{{ customer_object|get_fullname_or_return_phone }}</h5>
+                                    <p style="font-size: 80%">{% if not customer_object|return_full_name == '-' %}
+                                        ۰{{ user.phone|en_to_fa }}{% endif %}</p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <span class="sep-border"></span>
+                        <div>
+                            <div class="position-sticky">
+                                <div class="list-group list-group-flush mx-3 mt-4">
+                                    <a href="#"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>سفارش های من</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                    <a href="#"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>نظرات</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                    <a href="#"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>نشانی ها</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                    <a href="#"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>کارت های هدیه</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                    <a href="#"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>اطلاعات حساب</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+
+
+                                </div>
+                            </div>
+                            <span class="sep-border"></span>
+                            <div class="position-sticky">
+                                <div class="list-group list-group-flush mx-3 mt-4 pb-4">
+                                    <a href="{% url 'customer:logout' %}"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order ">
+                                        <div>خروج</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="main">
+                    <div>
+
+                        <div class="row">
+
+                            <div class="col-12 bg-white rounded" style="min-height: 40rem">
+                                <h5 class="text-under-line text-right small-font pt-3">نشانی ها</h5>
+                                <div>
+                                    {% if addresses %}
+                                    {% else %}
+                                        <img style="width: 20%" src="{% static 'img/address-logo.png' %}"
+                                             alt="address-logo">
+                                        <p class="mt-2 small-font">با ثبت نشانی‌های خود، روند خریدتان را سریع‌تر
+                                            کنید</p>
+                                        <button style="min-width: 20rem!important;" class="btn btn-outline-danger"
+                                                data-toggle="modal" data-target="#address-modal" onclick="show_map()">
+                                            افزودن نشانی جدید
+                                        </button>
+
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
