@@ -529,3 +529,16 @@ select:active {
 #map {
     border-radius: 20px!important;
 }
+
+
+#address-form label {
+    font-size: 80%!important;
+}
+
+sup {
+    font-size: 110%!important;
+}
+
+#address-form small {
+    font-size: 58%!important;
+}

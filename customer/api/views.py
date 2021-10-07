@@ -59,10 +59,10 @@ class CustomerEditDetail(mixins.RetrieveModelMixin,
         customer = Customer.objects.filter(user=token.user)
 
         data = {key: data[key] if
-                (key in customer[0].__dict__ and (
-                    customer[0].__dict__[key] != data[key] or customer[0].__dict__[key] == '')) or (
+        (key in customer[0].__dict__ and (
+                customer[0].__dict__[key] != data[key] or customer[0].__dict__[key] == '')) or (
                 key in token.user.__dict__ and (
-                    token.user.__dict__[key] != data[key] or token.user.__dict__[key] == '')) or (
+                token.user.__dict__[key] != data[key] or token.user.__dict__[key] == '')) or (
                 key in ['token', 'csrfmiddlewaretoken']) else '' for key in data}
 
         serializer = self.get_serializer(data=data)
@@ -103,5 +103,8 @@ class IranStateCitiesTranslate(mixins.RetrieveModelMixin, generics.GenericAPIVie
         serializer = self.get_serializer(data=self.request.data)
 
         if serializer.is_valid():
-            return Response(convert_place_name_to_persian(self.request.data['name'], is_city=self.request.data.get('is_city', False)))
-        return Response({'cities': 'not found'})
+            return Response({
+                'name': convert_place_name_to_persian(self.request.data['name'],
+                                                      is_city=self.request.data.get('is_city', False)),
+                'is_city': self.request.data.get('is_city', False)})
+        return Response({'error': 'not found'})

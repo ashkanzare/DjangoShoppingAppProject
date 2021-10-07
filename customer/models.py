@@ -57,7 +57,6 @@ class Customer(models.Model):
         return cart[0].cartitem_set.all() if cart else None
 
 
-
 class Address(models.Model):
     """
     Address Model contains:
@@ -73,6 +72,9 @@ class Address(models.Model):
     phone = models.CharField(max_length=12, verbose_name=PHONE)
     building_number = models.CharField(max_length=10, verbose_name=BUILDING_NUMBER)
     building_unit = models.PositiveIntegerField(verbose_name=BUILDING_UNIT)
+    receiver_first_name = models.CharField(max_length=250)
+    receiver_last_name = models.CharField(max_length=250)
+    receiver_phone = models.CharField(max_length=11)
 
     def __str__(self):
         return f"[ {self.customer} ] -- [ {self.state} -- {self.city} -- {self.street} ] "

@@ -1,4 +1,5 @@
 let global_map;
+let map_backup;
 
 function show_map() {
 
@@ -62,7 +63,196 @@ function show_map() {
     }, 100);
 }
 
+// get all cities and provinces
+let places_select;
+$(document).ready(function () {
+    let api_url = $('#city-province-url').data('key')
+    $.ajax({
+        type: "GET",
+        url: api_url,
+        success: function (data) {
+            console.log(data)
+            places_select = `<select class="form-control" id="provinces">`
+            for (let i in data) {
+                let option = `<option value="${i}">${i}</option>`
 
+                places_select += option
+            }
+            places_select += '</select>'
+        }
+
+    })
+
+
+})
+
+// address details modal
+function address_details(address_list, address_str) {
+    let modal_title = $('.modal-title')
+    let modal_body = $('#address-body')
+    let api_url = $('#city-province-url').data('key')
+    let select = places_select
+
+    modal_title.html('جزییات آدرس')
+    let address_form = `
+    <form class="text-right p-5" id="address-form" action="#!" style="border-top: 1px solid black">
+
+            <div class="form-row mb-4">
+                <div class="col">
+                    <!-- Province -->
+                    <label for="province">استان<sup>*</sup></label>                 
+                    ${select}
+                </div>
+                <div id="cities-div" class="col">
+                    <!-- City -->
+                    <label for="city">شهر<sup>*</sup></label>
+                    
+                </div>
+            </div>
+
+            <!-- address -->
+            <label for="address">نشانی پستی<sup>*</sup></label>
+            <input type="text" id="address" name="address" class="form-control mb-4" value="${address_str}">
+
+
+            <div class="form-row mb-4">
+                <div class="col">
+                    <!-- building number -->
+                    <label for="building_number">پلاک<sup>*</sup></label>
+                    <input type="text" id="building_number" name="building_number" class="form-control">
+                </div>
+
+                <div class="col">
+                    <!-- building unit -->
+                    <label for="building_unit">واحد<sup>*</sup></label>
+                    <input type="text" id="building_unit" name="building_unit" class="form-control">
+                </div>
+
+                <div class="col-6">
+                    <!-- postal code -->
+                    <label for="postal_code">کد پستی<sup>*</sup></label>
+                    <input type="text" id="postal_code" name="postal_code" class="form-control">
+                    <small>کدپستی باید ۱۰ رقم و بدون خط تیره باشد</small>
+                </div>
+            </div>
+
+            <hr>
+            <div class="form-check text-right pb-5">
+                <input type="checkbox" id="receiver" name="receiver" class="form-check-input">
+                <label class="form-check-label mr-5"  for="receiver">گیرنده سفارش خودم هستم</label>
+            </div>
+            <div>
+                <div class="form-row mb-4">
+                    <div class="col">
+                        <!-- receiver first name -->
+                        <label for="receiver_first_name">نام گیرنده<sup>*</sup></label>
+                        <input type="text" id="receiver_first_name" name="receiver_first_name" class="form-control">
+                    </div>
+
+                    <div class="col">
+                        <!-- receiver last name -->
+                        <label for="receiver_last_name">نام خانوادگی گیرنده<sup>*</sup></label>
+                        <input type="text" id="receiver_last_name" name="receiver_last_name" class="form-control">
+                    </div>
+
+                    <div class="col-12">
+                        <!-- receiver phone -->
+                        <label for="receiver_phone">شماره موبایل<sup>*</sup></label>
+                        <input type="text" id="receiver_phone" name="receiver_phone" class="form-control">
+                        <small>مثل: ۰۹۱۲۳۴۵۶۷۸۹</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-around pt-3 mt-3" style="border-top: 1px solid black">
+                    <button class="small-font mt-1 link-buttons text-primary" onclick="refresh_map()">اصلاح موقعیت روی نقشه</button>
+                    <button style="min-width: 10rem!important;" class="btn btn-danger">
+                       تایید و ثبت آدرس
+                    </button>
+            </div>
+        </form>
+    
+    `
+    $('#MAP').css('display', 'none')
+    modal_body.append($(address_form))
+    let select_parent = $('#provinces')
+
+    let options = select_parent.children()
+    for (let option of options) {
+        if ($(option).html().normalize() === address_list[0].normalize()) {
+            $(option).prop("selected", true)
+        }
+    }
+    let province = select_parent.val()
+
+    $.ajax({
+        type: "POST",
+        url: api_url,
+        data: {name: province.normalize()},
+        success: function (data) {
+            console.log(data)
+            let cities_select = `<select class="form-control" id="cities">`
+            for (let i of data.cities) {
+                let option = `<option value="${i}">${i}</option>`
+
+                cities_select += option
+            }
+            cities_select += '</select>'
+            $('#cities-div').append(cities_select)
+        }
+
+    })
+
+    select_parent.change(function () {
+        let new_province = select_parent.val()
+        $.ajax({
+            type: "POST",
+            url: api_url,
+            data: {name: new_province.normalize()},
+            success: function (data) {
+                console.log(data)
+                let cities_select = `<select class="form-control" id="cities">`
+                for (let i of data.cities) {
+                    let option = `<option value="${i}">${i}</option>`
+
+                    cities_select += option
+                }
+                cities_select += '</select>'
+                $('#cities').remove()
+                $('#cities-div').append(cities_select)
+            }
+
+        })
+    });
+
+    $('#receiver').click(function () {
+        let checked = $('#receiver').is(":checked");
+
+        if (checked) {
+            let receiver_first_name = $('#receiver_first_name')
+            let receiver_last_name = $('#receiver_last_name')
+
+            let first_name = $('#first_name').data('key')
+            let last_name = $('#last_name').data('key')
+
+            if (first_name !== 'None') {
+                receiver_first_name.val(first_name).prop('disabled', true)
+            }
+            if (last_name !== 'None') {
+                receiver_last_name.val(last_name).prop('disabled', true)
+            }
+            $('#receiver_phone').val(`0${$('#phone').data('key')}`).prop('disabled', true);
+        } else {
+            $('#receiver_first_name').val('').prop('disabled', false);
+            $('#receiver_last_name').val('').prop('disabled', false);
+            $('#receiver_phone').val('').prop('disabled', false);
+        }
+    });
+
+}
+
+
+// get coordinate from map and convert to address
 function get_coordinate() {
     let location = global_map.getCenter()
     let lat = location.lat
@@ -70,12 +260,17 @@ function get_coordinate() {
     console.log(location)
     let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?&access_token=pk.eyJ1IjoianNjYXN0cm8iLCJhIjoiY2s2YzB6Z25kMDVhejNrbXNpcmtjNGtpbiJ9.28ynPf1Y5Q8EyB_moOHylw`
     let translate_url = $('#city-province-translate-url').data('key')
+
+    let fa_province;
+    let fa_city;
+    let fa_section;
+    let address_list = [];
     $.ajax({
         type: "GET",
         url: url,
         success: function (data) {
+
             let location_address = data.features[0].place_name.split(',')
-            console.log(location_address)
             let province = location_address.slice(-2, -1)[0].trim()
             let city = location_address.slice(-3, -2)
             let section = location_address.slice(-4, -3)
@@ -89,22 +284,52 @@ function get_coordinate() {
             } else {
                 section = ''
             }
+            fa_section = section
+
             const province_city = [
                 {name: province},
                 {name: city, is_city: true}]
 
-            let fa_province;
-            let fa_city;
             for (let place_data of province_city) {
                 $.ajax({
                     type: "POST",
                     url: translate_url,
                     data: place_data,
                     success: function (data) {
+                        let fa_place;
+                        if ('error' in data) {
+                            fa_place = null
+                        } else {
+                            fa_place = data.name
+                        }
+
+                        if (data.is_city !== false) {
+                            fa_city = fa_place
+                            address_list.push(fa_city)
+                            address_list.push(fa_section)
+                            setTimeout(function () {
+                                address_details(address_list, address_list.slice(1).join('-'))
+                            }, 500)
+                        } else {
+                            fa_province = fa_place
+                            address_list.push(fa_province)
+                        }
 
                     }
                 })
+
             }
+
+
         }
+
     })
+
 }
+
+function refresh_map() {
+    $('#address-form').remove()
+    $('#MAP').css('display', 'block')
+
+}
+

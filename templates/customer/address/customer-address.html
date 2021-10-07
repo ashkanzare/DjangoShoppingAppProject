@@ -9,7 +9,7 @@
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.5.0/mapbox-gl.css' rel='stylesheet'/>
 {% endblock %}
 {% block content %}
-    <input type="hidden" id="city-province-translate-url" data-key="{% url 'customer_api:iran-cities-translate' %}">
+
     <!--  modal start  -->
     <div id="address-modal" class="modal fade" role="dialog" style="margin-top: 10%!important;">
         <div class="modal-dialog">
@@ -17,17 +17,22 @@
             <div class="modal-content">
                 <div class="modal-header-custom pr-5 pl-5 pt-5 rounded-top">
                     <p class="modal-title">آدرس جدید</p>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-dismiss="modal" onclick="refresh_map()">&times;</button>
 
                 </div>
                 <div class="modal-body" id="address-body">
-                    <section class="map_box_container" style="position: relative; height: 30rem">
-                        <!--MAP-->
-                        <div id='map'></div>
-                    </section>
-                    <div class="d-flex justify-content-around pt-3 mt-3" style="border-top: 1px solid black">
-                        <p class="small-font mt-2">مرسوله شما به این موقعیت ارسال خواهد شد.</p>
-                        <button style="min-width: 10rem!important;" class="btn btn-danger" onclick="get_coordinate()">ثبت و افزودن جزییات</button>
+                    <div id="MAP">
+                        <section class="map_box_container" style="position: relative; height: 30rem">
+                            <!--MAP-->
+                            <div id='map'></div>
+                        </section>
+                        <div class="d-flex justify-content-around pt-3 mt-3" style="border-top: 1px solid black">
+                            <p class="small-font mt-2">مرسوله شما به این موقعیت ارسال خواهد شد.</p>
+                            <button style="min-width: 10rem!important;" class="btn btn-danger"
+                                    onclick="get_coordinate()">
+                                ثبت و افزودن جزییات
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -128,4 +133,7 @@
             </div>
         </div>
     </div>
+    <input type="hidden" id="first_name" data-key="{{ customer_object.first_name }}">
+    <input type="hidden" id="last_name" data-key="{{ customer_object.last_name }}">
+    <input type="hidden" id="phone" data-key="{{ user.phone }}">
 {% endblock %}
