@@ -180,7 +180,7 @@ body {
 
 .public-profile-pic {
     height: 5.5rem !important;
-    background-image: url("../img/public-profile.svg");
+    background-image: url("../img/public-profile.png");
     background-size: 5.5rem;
     background-repeat: no-repeat;
     background-position: right;
@@ -541,4 +541,17 @@ sup {
 
 #address-form small {
     font-size: 58%!important;
+}
+
+#address-form input:focus {
+    box-shadow: none!important;
+    outline: none!important;
+}
+
+.error-div {
+    border: 1px rgba(255, 0, 0, 0.75) solid;
+    border-radius: 10px;
+    width: fit-content;
+    padding: 10px;
+    box-shadow: 0 0 3px 0 rgba(255, 0, 0, 0.75);
 }

@@ -43,6 +43,7 @@ $(document).ready(function () {
             url: url,
             data: form.serialize(), // serializes the form's elements.
             success: function (data) {
+                console.log(data)
                 if (data['status'] === 0) {
                     let new_url = $("#customer-check-code-reset-password-url").attr('data-url') + "?token=" + data['token'];
                     window.location.replace(new_url)
@@ -55,17 +56,22 @@ $(document).ready(function () {
                     <div class="container text-center d-flex justify-content-center popup">
                   
                             <div class="panel text-right w-50 auth-panel p-4">
-                                <div>
+                                <div class="text-center">
                                     <div class="text-center">
                                         <h1 id="auth-box-title">MeShop</h1>
                                     </div>
-                                    <h5>لینک بازنشانی رمزعبور شما به ایمیلتان ارسال شد</h5>
+                                    <h5 class="pt-5 pb-5">لینک بازنشانی رمزعبور شما به ایمیلتان ارسال شد</h5>
                                 </div>
                             </div>
                     </div>
                     
                     `
                     parent.html(email_message_info)
+
+                }
+                else if (data['status'] === 4) {
+                    $('#ajax-errors').html('<p style=\'font-size: 70%!important;\'>ایمیل وارد شده در سیستم موجود نمیباشد</p>')
+                    message_pop_up()
 
                 }
             }

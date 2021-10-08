@@ -233,21 +233,27 @@ def reset_password_get_code(request):
                     }
             elif re.search(r'^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$', phone_or_email):
 
-                user = User.objects.get(email__iexact=phone_or_email)
-                token = Token.objects.get(user=user).key
-                data = {
-                    'response': 'user exists',
-                    'email': phone_or_email,
-                    'token': token,
-                    'status': 3
-                }
-                send_mail(
-                    'بازیابی رمزعبور',
-                    f'به این لینک مراجعه کنید:\n http://127.0.0.1:8000/customer/reset-password/confirm?token={token} ',
-                    'MeShopKala@info.org',
-                    [phone_or_email],
-                    fail_silently=False
-                )
+                user = User.get_or_none(phone_or_email)
+                if user:
+                    token = Token.objects.get(user=user).key
+                    data = {
+                        'response': 'user exists',
+                        'email': phone_or_email,
+                        'token': token,
+                        'status': 3
+                    }
+                    send_mail(
+                        'بازیابی رمزعبور',
+                        f'به این لینک مراجعه کنید:\n http://127.0.0.1:8000/customer/reset-password/confirm?token={token} ',
+                        'MeShopKala@info.org',
+                        [phone_or_email],
+                        fail_silently=False
+                    )
+                else:
+                    data = {
+                        'response': 'invalid email',
+                        'status': 4
+                    }
             else:
                 data = {
                     'response': 'invalid input',

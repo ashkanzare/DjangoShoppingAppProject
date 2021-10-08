@@ -88,6 +88,19 @@ class User(AbstractUser):
             pass
         return user
 
+    @classmethod
+    def get_or_none(cls, email_or_phone):
+        user = None
+        try:
+            if email_or_phone.isnumeric():
+                user = User.objects.get(phone__exact=email_or_phone)
+            else:
+                user = User.objects.get(email__iexact=email_or_phone)
+        except User.DoesNotExist:
+            pass
+        finally:
+            return user
+
 
 class UserAuthCode(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name=_(const.USER), unique=True)
