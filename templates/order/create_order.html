@@ -1,0 +1,336 @@
+{% extends 'home_base.html' %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+{% load static %}
+{% load product_extras %}
+{% load crispy_forms_tags %}
+{% block head %}
+    <script src="{% static 'js/createOrder.js' %}"></script>
+{% endblock %}
+{% block title %}آدرس و زمان ارسال{% endblock %}
+{% block content %}
+    <input type="hidden" data-key="{% url 'order_api:create-order' %}" id="create-order-url">
+    <input type="hidden" value="{{ user.get_token }}" id="user_token">
+    <input id="empty-cart-img" type="hidden" data-key="{% static 'img/empty-cart-2.png' %}">
+
+    <div class="row under-nav justify-content-center" style="margin-top: 5%!important;">
+
+        <div class="col-6 d-flex justify-content-between" style="align-items: center;" id="purchase-info-title">
+            <div class="order-progress-bar-title progress-bar-pass-title" style="margin-right: 6%!important;">اطلاعات
+                خرید
+            </div>
+            <div class="order-progress-bar-title" id="payment-info-title">پرداخت</div>
+            <div class="order-progress-bar-title" style="margin-left: 3%!important;" id="order-done-info-title">اتمام
+                خرید و ارسال
+            </div>
+        </div>
+
+    </div>
+    <div class="row justify-content-center mb-5">
+
+        <div class="col-5 d-flex" style="align-items: center;">
+            <div class="order-progress-bar-circle progress-bar-pass" id="purchase-info"></div>
+            <div class="order-progress-bar-line"></div>
+            <div class="order-progress-bar-circle" id="payment-info"></div>
+            <div class="order-progress-bar-line"></div>
+            <div class="order-progress-bar-circle" id="order-done-info"></div>
+        </div>
+
+    </div>
+    <div class="row justify-content-center mb-5">
+        <div class="col-9">
+            <div class="row justify-content-between">
+                <div class="col-8 rounded" id="main-cart-body" style="height: fit-content">
+                    <div class="bg-white p-5 rounded" id="address-container">
+                        <div class="text-right">
+                            <p>آدرس تحویل سفارش</p>
+                        </div>
+                        {% with addresses=order_info.customer.address_set.all %}
+                            {% if addresses %}
+                                <div id="selected-address" data-key="{{ addresses.last.id }}">
+                                    <div class="row text-right">
+                                        <div class="col-12">
+                                            <p>{{ addresses.last.postal_address }}</p>
+                                        </div>
+
+                                        <div class="col-12 text-right mb-3">
+                                            <i class="fa fa-user" aria-hidden="true"></i>
+                                            <small>{{ addresses.last.receiver_first_name }} {{ addresses.last.receiver_last_name }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 text-right mt-3">
+                                        <button class="small-font edit-address-link link-buttons"
+                                                onclick="select_address()">تغییر یا ویرایش آدرس<i
+                                                class="fa fa-chevron-left mr-2 arrow-left"
+                                                aria-hidden="true"></i></button>
+                                    </div>
+                                </div>
+
+                                <div class="row justify-content-center" id="other-addresses" style="display: none">
+                                    <div class="text-right col-12">
+                                        <p>آدرس تحویل سفارش را انتخاب نمایید:</p>
+                                    </div>
+                                    {% for address in addresses %}
+
+                                        <div class="col-3 text-right address-border rounded m-2 pr-3 pl-3 pt-2 pb-2"
+                                             id="{{ address.id }}">
+                                            {{ address.id }}
+                                            <div style="min-height: 20rem">
+                                                <button class="link-buttons" onclick="change_address({{ address.id }})">
+                                                    <small>به این آدرس ارسال می شود</small></button>
+
+                                                <div class="p-2 pt-3 postal_address"
+                                                     data-key="{{ address.postal_address }}">
+                                                    <small>{{ address.postal_address }}</small>
+                                                </div>
+                                                <div class="text-right mb-3 mt-3 postal_code"
+                                                     data-key="{{ address.postal_code|en_to_fa }}">
+                                                    <i class="fa fa-envelope" aria-hidden="true"></i>
+                                                    <small>{{ address.postal_code|en_to_fa }}</small>
+                                                </div>
+                                                <div class="text-right mb-3 receiver_phone"
+                                                     data-key="{{ address.receiver_phone|en_to_fa }}">
+                                                    <i class="fa fa-phone" aria-hidden="true"></i>
+                                                    <small>{{ address.receiver_phone|en_to_fa }}</small>
+                                                </div>
+                                                <div class="text-right mb-3 receiver_name"
+                                                     data-key="{{ address.receiver_first_name }} {{ address.receiver_last_name }}">
+                                                    <i class="fa fa-user" aria-hidden="true"></i>
+                                                    <small>{{ address.receiver_first_name }} {{ address.receiver_last_name }}</small>
+                                                </div>
+                                            </div>
+                                            <div class="p-3 d-flex justify-content-end">
+                                                <a href=""><small>حذف</small></a><span class="mr-2 ml-2 text-secondary"
+                                                                                       style="font-size: 120%">|</span><a
+                                                    href=""><small>ویرایش</small></a>
+                                            </div>
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                    {% if order_info.cart %}
+
+                        <div class="bg-white p-5 rounded mr-4 mt-5">
+                            <div class="text-right"><p>مرسوله</p></div>
+                            <div class="row justify-content-around mb-5">
+                                <button class="col-5 shipping-buttons pr-2 selected-shipping" id="meshop-shipping" onclick="change_shipping(this.id)" data-key="{{ order_info.MESHOP_SHIPPING }}">
+                                    <div class="d-flex pt-2 pb-2 pr-3">
+                                        <i class="fa fa-truck m-2" style="font-size: 150%" aria-hidden="true"></i>
+                                        <p class="m-2">ارسال عادی </p>
+                                        <small class="mt-3 mr-3" style="font-size: 75%">ارسال توسط پیک میشاپ</small>
+                                    </div>
+                                </button>
+                                <button class="col-5 shipping-buttons pr-2" id="normal-shipping" onclick="change_shipping(this.id)" data-key="{{ order_info.NORMAL_SHIPPING }}">
+                                    <div class="d-flex pt-2 pb-2 pr-3">
+                                        <img class="m-2" src="{% static 'img/post-logo.png' %}" style="width: 30px" alt="post-logo">
+                                        <p class="m-3">ارسال پستی </p>
+                                    </div>
+                                </button>
+                            </div>
+                            <input type="hidden" data-key="{{ order_info.cart.id }}" id="cart_id">
+                            <div class="row">
+                                {% for item in order_info.cart.cartitem_set.all %}
+                                    <div class="bg-white text-right col-3 rounded shadow m-2"
+                                         id="item-container-{{ item.id }}">
+                                        <div class="row">
+                                            <div class="col-12 text-center mb-4">
+                                                <img src="{{ item.product.get_images_thumbnail.0 }}"
+                                                     alt="product image">
+                                            </div>
+                                            <div class="col-12 text-dark">
+                                                <div class="d-flex justify-content-start">
+                                                    {% if item.product_color %}
+
+                                                        <div class="pr-5 pl-5 pb-2 pt-2">
+                                                    <span class="circle-small"
+                                                          style="background-color: {{ item.product_color.color }};">   </span>
+                                                        </div>
+
+                                                    {% endif %}
+                                                    {% if item.product_property %}
+                                                        <div>
+                                                            <div class="pr-5 pl-5 pb-2 pt-2 d-flex">
+                                                                <i class="fa fa-cogs cart-icons ml-2"
+                                                                   aria-hidden="true"></i>
+                                                                <p class="text-after-cart-items">{{ item.product_property.value|en_to_fa }}
+
+                                                                </p>
+                                                                <small class="small-font mr-2">{{ item.product.factor_property.name }}</small>
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                        <div class="text-warning d-flex justify-content-start bg-white p-4 rounded mr-4 mt-5">
+                            <i class="fa fa-exclamation-circle ml-4 mt-2" style="font-size: 170%"
+                               aria-hidden="true"></i>
+                            <h5>
+                                شما می‌توانید فاکتور خرید را پس از تحویل سفارش از بخش جزییات سفارش در حساب کاربری خود
+                                دریافت کنید.
+                            </h5>
+                        </div>
+                    {% else %}
+                        {% if not user.is_authenticated %}
+                            <script>show_cart_from_local()</script>
+                        {% endif %}
+                        <div class="text-center p-5">
+                            <img class="cart-image" src="{% static 'img/empty-cart-2.png' %}" alt="empty-cart">
+                            <h4>سبد خرید شما خالی است!</h4>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-3">
+                    {% if  order_info.cart.cartitem_set.all %}
+
+                        <div id="cart-price-div" class="text-center bg-white rounded pb-5 mb-5"
+                             style="max-height: 30rem!important;">
+
+                            <div class="row pr-5 pl-5 pt-4">
+
+                                <div class="col-6 text-right text-secondary"><h5 style="font-size: 80%">قیمت کالاها</h5>
+                                </div>
+                                <div class="col-6 text-left" id="cart-price-without-discount">
+                                    <h5>{{ order_info.cart.calc_price.0|price_format }}<span
+                                            class="small-font"> تومان </span></h5>
+                                </div>
+
+                            </div>
+                            <div class="row pr-5 pl-5">
+
+                                <div class="col-6 text-right text-secondary"><h5 style="font-size: 80%">تخفیف
+                                    کالاها</h5></div>
+                                <div class="col-6 text-left" id="cart-discount">
+                                    <h5 class="text-danger d-flex justify-content-end">
+                                        <span class="ml-2">({{ order_info.cart.calc_price.2|price_format }}%)  </span><span>{{ order_info.cart.calc_price.3|price_format }}  </span><span
+                                            class="small-font mr-2"> تومان </span>
+                                    </h5>
+                                </div>
+
+                            </div>
+
+                            <span class="sep-border"></span>
+                            <div class="row pr-5 pl-5">
+
+                                <div class="col-6 text-right"><h5 style="font-size: 80%">جمع سبد خرید</h5></div>
+                                <div class="col-6 text-left" id="cart-total-price">
+                                    <h5>{{ order_info.cart.calc_price.1|price_format }}<span
+                                            class="small-font"> تومان </span></h5>
+                                </div>
+
+                            </div>
+
+                            <div class="row pr-5 pl-5">
+
+                                <div class="col-6 text-right text-secondary"><h5 style="font-size: 80%">هزینه ارسال</h5>
+                                </div>
+                                <div class="col-6 text-left" id="shipping-price"
+                                     data-key="{% if order_info.cart.calc_price.1 >= order_info.FREE_SHIPPING_MIN_PRICE %}free{% else %}not-free{% endif %}">
+                                    {% if not order_info.cart.calc_price.1 >= order_info.FREE_SHIPPING_MIN_PRICE %}
+                                        <h5 class="d-flex justify-content-end">
+                                            <span><span>{{ order_info.MESHOP_SHIPPING|price_format }}</span><span
+                                                    class="small-font"> تومان </span></span>
+                                        </h5>
+                                    {% else %}
+                                        <h5 class="text text-center">
+                                            <span>رایگان</span>
+                                        </h5>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                            <div class="row pr-4 pl-5 text-right pt-3 pb-3"><small style="font-size: 65%">
+                                <ul>
+                                    <li>هزینه بر اساس وزن، حجم مرسوله و زمان تحویل تعیین شده است.</li>
+                                </ul>
+
+                            </small>
+                            </div>
+                            <span class="sep-border"></span>
+                            <div class="row pr-5 pl-5">
+
+                                <div class="col-6 text-right"><h5 style="font-size: 80%">مبلغ قابل پرداخت</h5></div>
+                                <div class="col-6 text-left" id="cart-total-price">
+                                    {% if not order_info.cart.calc_price.1 >= order_info.FREE_SHIPPING_MIN_PRICE %}
+                                        <h5 data-key="{{ order_info.cart.calc_price.1 }}"
+                                            id="total_price_order">{{ order_info.cart.calc_price.1|add:order_info.MESHOP_SHIPPING|price_format }}<span
+                                                class="small-font"> تومان </span></h5>
+                                    {% else %}
+                                        <h5 data-key="{{ order_info.cart.calc_price.1 }}"
+                                            id="total_price_order">{{ order_info.cart.calc_price.1|price_format }}<span
+                                                class="small-font"> تومان </span></h5>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                            <div>
+                                <button class="btn btn-danger pl-5 pr-5 p-3" onclick="createOrder()">ادامه فرآیند خرید</button>
+                            </div>
+
+
+                        </div>
+
+
+
+                    {% endif %}
+                    {% if not user.is_authenticated %}
+                        <div>
+                            <a href="{% url 'customer:register-login' %}" class="links text-dark">
+                                <div class="bg-white text-right pt-3 pb-3 pr-5 pl-5 rounded d-flex">
+                                    <div class="mt-2 pl-3">
+                                        <i class="fa fa-sign-in text-warning" aria-hidden="true"
+                                           style="font-size: 180%"></i>
+                                    </div>
+                                    <div>
+                                        <h5>ورود به حساب کاربری</h5>
+                                        <p style="font-size: 80%">برای مشاهده محصولاتی که پیشتر به سید خود اضافه کرده
+                                            اید
+                                            لطفا وارد شوید.</p>
+                                    </div>
+
+                                </div>
+                            </a>
+                        </div>
+
+                    {% else %}
+                        {% if object_list.cartitem_set.all %}
+                            <div id="cart-reserve-info" class="text-right pb-4">
+                                <p style="font-size: 80%">کالاهای موجود در سبد شما ثبت و رزرو نشده‌اند، برای ثبت سفارش
+                                    مراحل
+                                    بعدی را تکمیل کنید.</p>
+                            </div>
+                        {% endif %}
+                        <div class="d-flex justify-content-between bg-white rounded"
+                             style="pointer-events: none;  cursor:not-allowed;  -webkit-user-select: none;">
+
+                            <div class="text-right mr-5">
+                                <h5 class="mt-4 pt-2" style="font-size: 80%">ارسال سفارش های رایگان</h5>
+                                <p class="text-secondary" style="font-size: 70%">سفارش های
+                                    بالای {{ order_info.FREE_SHIPPING_MIN_PRICE|price_format|str_split:",-0" }} هزار
+                                    تومان</p>
+                            </div>
+                            <div><img class="rounded" src="{% static 'img/order-delivery-info.png' %}"
+                                      alt="order-delivery-info"></div>
+
+                        </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

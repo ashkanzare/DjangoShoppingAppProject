@@ -21,6 +21,7 @@ def en_to_fa(text):
 
 @register.filter(name='price_format')
 def price_format(price):
+    print(price)
     int_price = format(int(price), ',')
     return en_to_fa(str(int_price))
 
@@ -130,6 +131,17 @@ def subtract(num_1, num_2):
     return num_1 - num_2
 
 
+@register.filter(name='add')
+def add(num_1, num_2):
+    return num_1 + num_2
+
+
 @register.filter(name='multiply')
 def multiply(num_1, num_2):
     return float(num_1) * float(num_2)
+
+
+@register.filter(name='str_split')
+def str_split(string, separator_index):
+    separator, index = separator_index.split('-')
+    return string.split(separator)[int(index)]

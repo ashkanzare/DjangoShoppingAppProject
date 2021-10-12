@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.datetime_safe import datetime
 
 from constants import vars as const
-from customer.models import Customer
+from customer.models import Customer, Address
 from product.models import Product, ProductFactorProperty, ProductColor
 
 
@@ -30,7 +30,6 @@ class Cart(models.Model):
             quantity_check, quantity_number = cart_item.check_product_with_properties_exist()
 
             cart_item.number += number
-            print('shot', cart_item.number, number)
             if number > 0:
                 if quantity_check and cart_item.number <= quantity_number:
                     cart_item.save()
@@ -95,7 +94,6 @@ class Cart(models.Model):
             discount_percentage = round(100 - (100 * total_price_with_discount / total_price), 2)
 
         return total_price, total_price_with_discount, discount_percentage, discount
-
 
     def merge_with_session(self, other):
         for item in other.cartitem_set.all():
@@ -188,14 +186,49 @@ class CartItem(models.Model):
         property_id = self.product_property.id if self.product_property else None
 
         price_set = self.product.calc_final_price_with_properties(property_id, color_id)
-        print(price_set)
         return price_set
 
 
 class Order(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name=const.CART)
-    status = models.CharField(max_length=100, choices=const.ORDER_STATUS)
-    date = models.DateTimeField(auto_now=True)
+    address = models.ForeignKey(Address, on_delete=models.RESTRICT, verbose_name=const.ADDRESS)
+    status = models.CharField(max_length=100, choices=const.ORDER_STATUS_CHOICES, verbose_name=const.ORDER_STATUS,
+                              default=const.WAITING_FOR_PAY)
+    shipping_type = models.CharField(max_length=50, choices=const.SHIPPING_TYPE_CHOICES,
+                                     verbose_name=const.SHIPPING_TYPE)
+    date = models.DateTimeField(auto_now=True, verbose_name=const.DATE)
 
     def __str__(self):
         return f"[ {self.cart.id} ] -- [ {self.status} ] -- [ {self.date} ]"
+
+    @property
+    def total_price(self):
+        cart_price = self.cart.calc_price()[1]
+        if cart_price >= const.FREE_SHIPPING_MIN_PRICE:
+            return cart_price
+        return cart_price + const.SHIPPING_TYPE_TO_PRICE[self.shipping_type]
+
+    @property
+    def pay_amount(self):
+        if self.status == const.WAITING_FOR_PAY:
+            return self.total_price
+        return 0
+
+    @property
+    def order_number(self):
+        return 'MESH' + f"{hash(self.date.strftime('%Y-%m-%d') + str(self.id))}"[1:6]
+
+    def save(self, *args, **kwargs):
+        self.cart.status = 'inactive'
+        self.cart.save()
+
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_by_user(cls, user):
+        order = None
+        try:
+            order = cls.objects.get(cart__customer__user=user)
+        except cls.DoesNotExist:
+            pass
+        return order

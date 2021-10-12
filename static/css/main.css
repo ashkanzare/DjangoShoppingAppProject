@@ -296,7 +296,7 @@ select:active {
 }
 
 .product_thumbnail:hover {
-    box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+    box-shadow: 0 0 2px 1px rgba(15, 154, 199, 0.5);
 }
 
 .mySlides {
@@ -411,6 +411,11 @@ select:active {
     transition: opacity 500ms ease-in-out;
 }
 
+#address-container {
+    margin-top: 0;
+    margin-right: 2%;
+}
+
 .add-delete-item {
     border-radius: 15px;
     padding: 2%;
@@ -444,6 +449,21 @@ select:active {
 }
 
 .link-buttons:focus {
+    outline: none !important;
+}
+
+
+.shipping-buttons {
+    background: none !important;
+    border: 2px black solid;
+    border-radius: 10px;
+    padding: 0 !important;
+    cursor: pointer;
+    outline: none;
+}
+
+
+.shipping-buttons:focus, .shipping-buttons:active {
     outline: none !important;
 }
 
@@ -554,4 +574,66 @@ sup {
     width: fit-content;
     padding: 10px;
     box-shadow: 0 0 3px 0 rgba(255, 0, 0, 0.75);
+}
+
+.addresses small {
+    font-size: 85%!important;
+    margin-right: 0.4%;
+    color: rgba(97, 97, 97, 0.84) !important;
+}
+
+
+
+.addresses i {
+    font-size: 135%!important;
+    color: rgba(97, 97, 97, 0.64) !important;
+}
+
+
+.addresses .arrow-left {
+    color: #1e9fc9 !important;
+}
+
+.edit-address-link {
+    text-decoration: none!important;
+    font-weight: bold!important;
+    color: #1e9fc9 !important;
+}
+
+.address-border {
+    border: 1px rgba(102, 102, 102, 0.64) solid;
+}
+
+.selected-shipping {
+    border: rgb(43, 43, 43) solid 3px;
+}
+
+.order-progress-bar-line {
+    width: 50%;
+    background-color: rgba(193, 193, 193, 0.77);
+    height: 3px;
+    clear: left
+}
+
+.order-progress-bar-circle {
+    background-color: rgba(193, 193, 193, 0.77);
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+}
+
+.order-progress-bar-title {
+    color: rgba(193, 193, 193, 0.77);
+    font-size: 80%;
+    margin-bottom: 1%;
+}
+
+.progress-bar-pass {
+    background-color: rgb(0, 190, 213)!important;
+}
+
+.progress-bar-pass-title {
+    color: rgb(0, 190, 213)!important;
 }

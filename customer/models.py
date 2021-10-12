@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
 from django.db import models
 import django.utils.timezone as current_time
 from django.utils.translation import gettext as _
@@ -11,8 +12,6 @@ from utils.utils_functions import generate_random_string, validate_discount_date
 """ Customer App's Models """
 User = get_user_model()
 
-
-# todo: email eshtebah bashe bega mire
 
 class Customer(models.Model):
     """
@@ -66,21 +65,24 @@ class Address(models.Model):
             address(required)
     """
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name=_(CUSTOMER))
-    state = models.CharField(max_length=100, choices=STATES_TUPLE, verbose_name=STATE)
+    state = models.CharField(max_length=100, verbose_name=STATE)
     city = models.CharField(max_length=100, verbose_name=CITY)
-    street = models.CharField(max_length=200, verbose_name=STREET)
-    avenue = models.CharField(max_length=200, verbose_name=AVENUE, blank=True, null=True)
-    postal_code = models.CharField(max_length=10, verbose_name=POSTAL_CODE)
-    phone = models.CharField(max_length=12, verbose_name=PHONE)
-    building_number = models.CharField(max_length=10, verbose_name=BUILDING_NUMBER)
-    building_unit = models.PositiveIntegerField(verbose_name=BUILDING_UNIT)
+    postal_address = models.TextField(verbose_name=POSTAL_ADDRESS)
 
-    # receiver_first_name = models.CharField(max_length=250)
-    # receiver_last_name = models.CharField(max_length=250)
-    # receiver_phone = models.CharField(max_length=11)
+    postal_code_regex = RegexValidator(regex=r'\d{10}', message=POSTAL_CODE_HELP_TEXT)
+    postal_code = models.CharField(max_length=10, verbose_name=POSTAL_CODE, validators=[postal_code_regex])
+
+    building_number = models.PositiveIntegerField(verbose_name=BUILDING_NUMBER)
+    building_unit = models.CharField(max_length=5, verbose_name=BUILDING_UNIT)
+
+    receiver_first_name = models.CharField(max_length=250, verbose_name=RECEIVER_FIRST_NAME)
+    receiver_last_name = models.CharField(max_length=250, verbose_name=RECEIVER_LAST_NAME)
+
+    phone_code_regex = RegexValidator(regex=r'^09\d{9}', message=PHONE_HELP_TEXT)
+    receiver_phone = models.CharField(max_length=11, verbose_name=RECEIVER_PHONE, validators=[phone_code_regex])
 
     def __str__(self):
-        return f"[ {self.customer} ] -- [ {self.state} -- {self.city} -- {self.street} ] "
+        return f"[ {self.customer} ] -- [ {self.state} -- {self.city} ] "
 
 
 class DiscountCode(models.Model):

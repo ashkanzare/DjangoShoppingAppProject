@@ -1,10 +1,10 @@
 from django.contrib.auth import get_user_model
 
-from rest_framework import mixins, generics, serializers
+from rest_framework import mixins, generics, serializers, status
 from rest_framework.response import Response
 
 from customer.models import Customer
-from order.api.serializers import CartItemSerializer, TokenSessionSerializer
+from order.api.serializers import CartItemSerializer, TokenSessionSerializer, CreateOrderSerializer
 from order.models import Cart
 from product.models import Product
 from product.templatetags.product_extras import get_final_price_for_a_product
@@ -143,3 +143,18 @@ class SyncCartsView(mixins.RetrieveModelMixin, generics.GenericAPIView):
             return Response({'status': 'ok'})
 
         return Response({'status': 'failed'})
+
+
+class CreateOrderView(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    queryset = {}
+    serializer_class = CreateOrderSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=self.request.data)
+
+        if serializer.is_valid():
+            order = serializer.save()
+            return Response({'success': 'order created',
+                             'total price': order.pay_amount}, status=status.HTTP_201_CREATED)
+
+        return Response({'failed': serializer.errors}, status=status.HTTP_404_NOT_FOUND)

@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from django.utils.translation import gettext as _
 
-from customer.models import Customer
+from customer.models import Customer, Address
 from user.models import User
 
 import constants.vars as const
@@ -36,6 +36,23 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = ['token', 'first_name', 'last_name', 'email', 'personal_id', 'birthday', 'phone']
+
+
+class CreateAddressSerializer(serializers.ModelSerializer):
+    token = serializers.CharField(max_length=40)
+
+    class Meta:
+        model = Address
+        exclude = ['customer']
+
+
+class UpdateAddressSerializer(serializers.ModelSerializer):
+    token = serializers.CharField(max_length=40)
+    id = serializers.IntegerField()
+
+    class Meta:
+        model = Address
+        exclude = ['customer']
 
 
 class StateCitiesSerializer(serializers.Serializer):

@@ -1,48 +1,21 @@
-import json
-
-from django.core.exceptions import FieldDoesNotExist
-from django.http import FileResponse, JsonResponse
-from django.templatetags.static import static
-from rest_framework import mixins, generics, serializers
-from django.contrib.staticfiles.storage import staticfiles_storage
+from django.http import JsonResponse
+from rest_framework import mixins, generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
 from constants.vars import STATES
-from customer.api.serializers import CustomerSerializer, StateCitiesSerializer, StateCitiesTranslateSerializer
+
+from customer.api.serializers import (
+    CustomerSerializer,
+    StateCitiesSerializer,
+    StateCitiesTranslateSerializer,
+    UpdateAddressSerializer,
+    CreateAddressSerializer
+)
+
 from customer.models import Customer
-from utils.utils_functions import check_for_dict_values, phone_validator, email_validator, get_static, \
-    get_states_and_cities, convert_place_name_to_persian
+from utils.utils_functions import get_states_and_cities, convert_place_name_to_persian
 
-
-# class CustomerEditDetail(mixins.RetrieveModelMixin,
-#                          mixins.UpdateModelMixin,
-#                          generics.GenericAPIView):
-#     queryset = {}
-#     serializer_class = serializers.Serializer
-#
-#     def put(self, request, *args, **kwargs):
-#         data = self.request.data
-#         if check_for_dict_values(data):
-#             try:
-#                 token = Token.objects.get(key=data['token'])
-#                 user = token.user
-#
-#                 del data['token']
-#                 response = validate_customer_profile_data(data, user, Customer)
-#
-#                 return Response(response)
-#
-#             except Token.DoesNotExist:
-#                 return Response({
-#                     'error': 'wrong token',
-#                     'code': 50
-#                 })
-#         else:
-#             return Response({
-#                 'error': 'fields must be non-empty',
-#                 'code': '30'
-#             })
 
 class CustomerEditDetail(mixins.RetrieveModelMixin,
                          mixins.UpdateModelMixin,
@@ -58,12 +31,11 @@ class CustomerEditDetail(mixins.RetrieveModelMixin,
 
         customer = Customer.objects.filter(user=token.user)
 
-        data = {key: data[key] if
-        (key in customer[0].__dict__ and (
+        data = {key: data[key] if (key in customer[0].__dict__ and (
                 customer[0].__dict__[key] != data[key] or customer[0].__dict__[key] == '')) or (
-                key in token.user.__dict__ and (
-                token.user.__dict__[key] != data[key] or token.user.__dict__[key] == '')) or (
-                key in ['token', 'csrfmiddlewaretoken']) else '' for key in data}
+                                          key in token.user.__dict__ and (token.user.__dict__[key] != data[key] or
+                                                                          token.user.__dict__[key] == '')) or (
+                                          key in ['token', 'csrfmiddlewaretoken']) else '' for key in data}
 
         serializer = self.get_serializer(data=data)
         if serializer.is_valid():
@@ -79,6 +51,58 @@ class CustomerEditDetail(mixins.RetrieveModelMixin,
             {'status': 40,
              'errors': serializer.errors}
         )
+
+
+class SetCustomerAddress(mixins.CreateModelMixin, generics.GenericAPIView):
+    queryset = {}
+    serializer_class = CreateAddressSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=self.request.data)
+        if serializer.is_valid():
+
+            token = serializer.validated_data['token']
+            customer = Customer.get_by_token(token)
+            if customer:
+                serializer.validated_data['customer'] = customer
+                del serializer.validated_data['token']
+
+                address = serializer.save()
+                return Response({'status': f'address created {address.id}'}, status=status.HTTP_201_CREATED)
+
+            return Response({'status': 'customer does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateCustomerAddress(mixins.UpdateModelMixin, generics.GenericAPIView):
+    queryset = {}
+    serializer_class = UpdateAddressSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=self.request.data)
+        if serializer.is_valid():
+
+            token = serializer.validated_data['token']
+            customer = Customer.get_by_token(token)
+            address_id = serializer.validated_data['id']
+
+            if customer:
+                serializer.validated_data['customer'] = customer
+                customer_address = customer.address_set.filter(pk=address_id)
+
+                if customer_address:
+                    del serializer.validated_data['token']
+                    del serializer.validated_data['id']
+
+                    customer_address.update(**serializer.validated_data)
+                    return Response({'status': 'address updated'}, status=status.HTTP_201_CREATED)
+
+                return Response({'status': 'address does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+            return Response({'status': 'customer does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(serializer.errors, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
 
 class IranStateCities(mixins.RetrieveModelMixin, generics.GenericAPIView):

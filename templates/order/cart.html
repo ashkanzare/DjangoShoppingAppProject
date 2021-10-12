@@ -3,12 +3,12 @@
 {% load i18n %}
 {% load product_extras %}
 {% load crispy_forms_tags %}
-{% block title %}{% trans "فروشگاه اینترنتی میشاپ" %}{% endblock %}
+{% block title %}سبد خرید{% endblock %}
 {% load static %}
 {% block content %}
     <input id="empty-cart-img" type="hidden" data-key="{% static 'img/empty-cart-2.png' %}">
 
-    <div class="row under-nav justify-content-center">
+    <div class="row under-nav justify-content-center mb-5">
         <div class="col-9">
             <div class="row justify-content-between">
                 <div class="col-8 bg-white rounded" id="main-cart-body" style="height: fit-content">
@@ -158,7 +158,10 @@
 
                                     </div>
                                 </div>
-                                <span class="sep-border"></span>
+                                {% if not forloop.counter == object_list.cartitem_set.all|length %}
+                                    <span class="sep-border"></span>
+                                {% endif %}
+
                             </div>
 
                         {% endfor %}
@@ -212,7 +215,7 @@
                                 شد</small>
                             </div>
                             <div>
-                                <button class="btn btn-danger pl-5 pr-5 p-3">ادامه فرآیند خرید</button>
+                                <a href="{% url 'order:order' %}" class="btn btn-danger pl-5 pr-5 p-3" >ادامه فرآیند خرید</a>
                             </div>
 
 

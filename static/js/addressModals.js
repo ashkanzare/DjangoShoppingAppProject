@@ -112,7 +112,7 @@ function address_details(address_list, address_str) {
 
     modal_title.html('جزییات آدرس')
     let address_form = `
-    <form class="text-right p-5" id="address-form" method="post" style="border-top: 1px solid black" onsubmit="return validateAddressForm()">
+    <form action="${$('#create-address-url').data('key')}" class="text-right p-5" id="address-form" method="post" style="border-top: 1px solid black" onsubmit="return validateAddressForm()">
             <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
             <div class="d-flex justify-content-center mb-2">
                 <div id="address-form-errors" class="text-center d-none error-div pr-5 pl-5"></div>
@@ -132,8 +132,8 @@ function address_details(address_list, address_str) {
             </div>
 
             <!-- address -->
-            <label for="address">نشانی پستی<sup>*</sup></label>
-            <input type="text" id="address" name="address" class="form-control mb-4" value="${address_str}">
+            <label for="postal_address">نشانی پستی<sup>*</sup></label>
+            <input type="text" id="postal_address" name="postal_address" class="form-control mb-4" value="${address_str}">
 
 
             <div class="form-row mb-4">
@@ -146,7 +146,7 @@ function address_details(address_list, address_str) {
                 <div class="col">
                     <!-- building unit -->
                     <label for="building_unit">واحد<sup>*</sup></label>
-                    <input type="text" id="building_unit" name="building_unit" class="form-control" maxlength="4">
+                    <input type="text" id="building_unit" name="building_unit" class="form-control" maxlength="5">
                 </div>
 
                 <div class="col-6">
@@ -274,6 +274,31 @@ function address_details(address_list, address_str) {
             $('#receiver_last_name').val('').prop('disabled', false);
             $('#receiver_phone').val('').prop('disabled', false);
         }
+    });
+
+    $("#address-form").submit(function (e) {
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+
+        let form = $(this);
+        let disabled = form.find(':input:disabled').removeAttr('disabled');
+        let serialized_form = form.serialize() + '&token=' + $('#token').data('key') + `&city=${$('#cities').val()}` + `&state=${$('#provinces').val()}`
+        disabled.attr('disabled', 'disabled');
+
+        let url = form.attr('action');
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: serialized_form,
+            success: function (data) {
+                location.reload()
+            },
+            error: function (errors) {
+                console.log(errors)
+            }
+        });
+
+
     });
 
 }
@@ -422,34 +447,97 @@ function validateAddressForm() {
         }
     }
     // check postal code length
-    if (postal_code.length !== 10) {
-            let error_div = $('#address-form-errors').attr('class', 'text-center pb-2 error-div pr-5 pl-5').css('display', 'block')
-            let error = `<i class="fa fa-exclamation-circle text-danger" aria-hidden="true"></i>
+    if (postal_code.val().length !== 10) {
+        let error_div = $('#address-form-errors').attr('class', 'text-center pb-2 error-div pr-5 pl-5').css('display', 'block')
+        let error = `<i class="fa fa-exclamation-circle text-danger" aria-hidden="true"></i>
                         <span  class="text-danger small-font"> کد پستی باید شامل ۱۰ رقم باشد </span>
                         <div class="float-left mr-5">
                             <button type="button" class="close text-danger" onclick="display_none('#address-form-errors')">&times;</button>
                         </div>
                         `
-            postal_code.css('box-shadow', '0 0 3px 0 red').css('outline', 'red 1px solid')
-            error_div.html(error)
-            return false;
+        postal_code.css('box-shadow', '0 0 3px 0 red').css('outline', 'red 1px solid')
+        error_div.html(error)
+        return false;
     }
     // check phone number
     var regex = new RegExp('^09\\d{9}$');
     let phone = $('#receiver_phone')
     var result = regex.test(phone.val());
     if (!result) {
-            let error_div = $('#address-form-errors').attr('class', 'text-center pb-2 error-div pr-5 pl-5').css('display', 'block')
-            let error = `<i class="fa fa-exclamation-circle text-danger" aria-hidden="true"></i>
+        let error_div = $('#address-form-errors').attr('class', 'text-center pb-2 error-div pr-5 pl-5').css('display', 'block')
+        let error = `<i class="fa fa-exclamation-circle text-danger" aria-hidden="true"></i>
                         <span  class="text-danger small-font"> شماره تلفن وارد شده نامعتبر است </span>
                         <div class="float-left mr-5">
                             <button type="button" class="close text-danger" onclick="display_none('#address-form-errors')">&times;</button>
                         </div>
                         `
-            phone.css('box-shadow', '0 0 3px 0 red').css('outline', 'red 1px solid')
-            error_div.html(error)
-            return false;
-        }
+        phone.css('box-shadow', '0 0 3px 0 red').css('outline', 'red 1px solid')
+        error_div.html(error)
+        return false;
+    }
 
 }
 
+// show other addresses div
+function select_address() {
+    let selected_address = $('#selected-address')
+    selected_address.html('')
+    $('#other-addresses').css('display', 'flex')
+}
+
+// change selected address
+function change_address(id) {
+    let address = $("#" + id)
+    let selected_address_html = `
+                         <div class="row text-right">
+                            <div class="col-12">
+                                <p>${$('#' + id + ' .postal_address').data('key')}</p>
+                            </div>
+                    
+                            <div class="col-12 text-right mb-3">
+                                <i class="fa fa-user" aria-hidden="true"></i>
+                                <small>${$('#' + id + ' .receiver_name').data('key')}</small>
+                            </div>
+                        </div>
+                        <div class="col-12 text-right mt-3">
+                            <button class="small-font edit-address-link link-buttons"
+                                    onclick="select_address()">تغییر یا ویرایش آدرس<i
+                                    class="fa fa-chevron-left mr-2 arrow-left"
+                                    aria-hidden="true"></i></button>
+                        </div>
+                        
+                        `
+    let selected_address = $('#selected-address')
+    selected_address.data('key', id)
+    selected_address.html(selected_address_html)
+    $('#other-addresses').css('display', 'none')
+
+}
+
+
+// move to order.js
+
+function change_shipping(shipping_id) {
+    let meshop_shipping = $('#meshop-shipping')
+    let normal_shipping = $('#normal-shipping')
+    normal_shipping.attr('class', 'col-5 shipping-buttons pr-2')
+    meshop_shipping.attr('class', 'col-5 shipping-buttons pr-2')
+
+    let selected_shipping = $("#" + shipping_id)
+    selected_shipping.attr('class', 'col-5 shipping-buttons pr-2 selected-shipping')
+
+    let shipping_price = $('#shipping-price')
+    if (shipping_price.data('key') !== 'free') {
+        shipping_price.html(
+            `<h5 class="d-flex justify-content-end">
+              <span><span>${toFarsiNumber(selected_shipping.data('key').toLocaleString())}</span><span class="small-font"> تومان </span></span>
+        </h5>`
+        )
+        let order_price_elem = $('#total_price_order')
+        let order_price = Number(order_price_elem.data('key'))
+        order_price_elem.html(toFarsiNumber(((order_price + selected_shipping.data('key')).toLocaleString() + "<span class=\"small-font\"> تومان </span>")))
+
+    }
+
+
+}

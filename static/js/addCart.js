@@ -123,11 +123,11 @@ function add_cart_to_database(token, product, color_id = null, property_id = nul
                 let en_number = Number(convert_fa_to_en(item_number.html()))
                 if (number > 0) {
                     item_number.html(toFarsiNumber(en_number + 1))
-                    let item_discount = $('#discount-per-items-'+item_id)
-                    let item_price = $('#price-per-items-'+item_id)
+                    let item_discount = $('#discount-per-items-' + item_id)
+                    let item_price = $('#price-per-items-' + item_id)
 
-                    $('#discount-price-value-'+item_id).html(toFarsiNumber((item_discount.data('key') * (en_number + 1)).toLocaleString()))
-                    $('#price-value-'+item_id).html(toFarsiNumber((item_price.data('key') * (en_number + 1)).toLocaleString()))
+                    $('#discount-price-value-' + item_id).html(toFarsiNumber((item_discount.data('key') * (en_number + 1)).toLocaleString()))
+                    $('#price-value-' + item_id).html(toFarsiNumber((item_price.data('key') * (en_number + 1)).toLocaleString()))
 
                     get_cart()
                 } else {
@@ -141,18 +141,23 @@ function add_cart_to_database(token, product, color_id = null, property_id = nul
                         }, 300);
                     } else {
                         item_number.html(toFarsiNumber(en_number - 1))
-                        let item_discount = $('#discount-per-items-'+item_id)
-                        let item_price = $('#price-per-items-'+item_id)
+                        let item_discount = $('#discount-per-items-' + item_id)
+                        let item_price = $('#price-per-items-' + item_id)
 
-                        $('#discount-price-value-'+item_id).html(toFarsiNumber((item_discount.data('key') * (en_number - 1)).toLocaleString()))
-                        $('#price-value-'+item_id).html(toFarsiNumber((item_price.data('key') * (en_number - 1)).toLocaleString()))
+                        $('#discount-price-value-' + item_id).html(toFarsiNumber((item_discount.data('key') * (en_number - 1)).toLocaleString()))
+                        $('#price-value-' + item_id).html(toFarsiNumber((item_price.data('key') * (en_number - 1)).toLocaleString()))
                     }
                 }
                 if (item_number.html() === '۰' && number < 0) {
                     let item_element = $('#item-container-' + item_id)
                     item_element.animate({opacity: 0}, 100,)
                     setTimeout(function () {
+                        let pre_div_last_child = item_element.prev('div').children().last()
+                        if (pre_div_last_child.attr('class') === 'sep-border') {
+                            pre_div_last_child.remove()
+                        }
                         item_element.remove()
+
                     }, 300);
                 }
 

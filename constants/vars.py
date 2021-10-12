@@ -21,6 +21,7 @@ ENTRY_DATE = 'تاریخ ورود'
 STUDY_FIELD = 'رشته تحصیلی'
 USERNAME_HELP_TEXT = 'حداکثر ۱۵۰ حرف و میتواند شامل حروف و اعداد و @/./+/-/_ باشد'
 PHONE_HELP_TEXT = 'شماره تلفن خود را بدون صفر وارد کنید. مانند : ۹۱۲۱۲۳۴۵۶۷'
+POSTAL_CODE_HELP_TEXT = 'کدپستی باید ۱۰ رقم و بدون خط تیره باشد'
 PHOTO_HELP_TEXT = 'انتخاب عکس اختیاری است'
 REGISTER_DATE = 'تاریخ ثبت نام'
 REGISTER_CONFIRM = 'تایید ثبت نام'
@@ -53,6 +54,10 @@ COLOR_LINK = 'لینک به رنگ'
 CART = 'سبد خرید'
 AVENUE = 'کوچه'
 STREET = 'خیابان'
+POSTAL_ADDRESS = 'آدرس پستی'
+RECEIVER_FIRST_NAME = 'نام گیرنده'
+RECEIVER_LAST_NAME = 'نام خانوادگی گیرنده'
+RECEIVER_PHONE = 'شماره گیرنده'
 BUILDING_NUMBER = 'پلاک خانه'
 BUILDING_UNIT = 'واحد'
 CITY = 'شهر'
@@ -61,6 +66,10 @@ POSTAL_CODE = 'کد پستی'
 STATUS = 'وضعیت'
 NUMBER = 'تعداد'
 ACTIVE = 'فعال'
+SHIPPING_TYPE = 'نوع ارسال'
+ORDER_STATUS = 'وضعیت سفارش'
+DATE = 'تاریخ'
+
 """ Errors """
 INVALID_USERNAME = 'نام کاربری در سیستم موجود است'
 INVALID_PHONE = 'شماره تماس در سیستم موجود است'
@@ -100,14 +109,33 @@ USER_TYPE_REVERSE = {
     'مشتری': 'customer',
 }
 
-ORDER_STATUS = [
-    ('PENDING', 'pending'),
-    ('SENT', 'sent'),
-    ('CANCELED', 'canceled')
+WAITING_FOR_PAY = 1
+PROCESSING = 2
+SENT = 3
+DELIVERED = 4
+CANCELED = 0
+
+ORDER_STATUS_CHOICES = [
+    ('WAITING_FOR_PAY', WAITING_FOR_PAY),
+    ('PROCESSING', PROCESSING),
+    ('SENT', SENT),
+    ('DELIVERED', DELIVERED),
+    ('CANCELED', CANCELED),
+
 ]
+
+
+SHIPPING_TYPE_CHOICES = [
+    ('MESHOP', 'meshop'),
+    ('POST', 'post'),
+]
+
+CART_ACTIVE = 'active'
+CART_SAVED = 'saved'
 
 CART_STATUS = [
     ('active', 'active'),
+    ('inactive', 'inactive'),
     ('saved', 'saved')
 ]
 
@@ -152,3 +180,15 @@ STATES_TUPLE = [(v, k) for k, v in STATES.items()]
 COLOR_CHOICES = [(v, k) for k, v in webcolors.HTML4_NAMES_TO_HEX.items()]
 
 SIZES = [(k, k) for k in ['XS', 'S', 'L', 'XL', 'XXL', 'XXXL']]
+
+""" shipping prices """
+MESHOP_SHIPPING = 30000
+NORMAL_SHIPPING = 20000
+
+SHIPPING_TYPE_TO_PRICE = {
+    SHIPPING_TYPE_CHOICES[0][0]: MESHOP_SHIPPING,
+    SHIPPING_TYPE_CHOICES[1][0]: NORMAL_SHIPPING
+}
+
+""" min price for free shipping """
+FREE_SHIPPING_MIN_PRICE = 300000
