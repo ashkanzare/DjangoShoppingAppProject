@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from customer.models import Customer
 from order.api.serializers import CartItemSerializer, TokenSessionSerializer, CreateOrderSerializer
-from order.models import Cart
+from order.models import Cart, Order
 from product.models import Product
 from product.templatetags.product_extras import get_final_price_for_a_product
 

@@ -73,4 +73,7 @@ class CreateOrderSerializer(serializers.ModelSerializer):
         return super(CreateOrderSerializer, self).to_internal_value(data=data_dict)
 
     def save(self, **kwargs):
-        return super(CreateOrderSerializer, self).save(**kwargs)
+        order = Order.objects.filter(cart=self.data['cart_id'])
+        if not order:
+            return super(CreateOrderSerializer, self).save(**kwargs)
+        return order[0]

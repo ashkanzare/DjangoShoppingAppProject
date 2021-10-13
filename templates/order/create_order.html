@@ -11,6 +11,7 @@
 {% block content %}
     <input type="hidden" data-key="{% url 'order_api:create-order' %}" id="create-order-url">
     <input type="hidden" value="{{ user.get_token }}" id="user_token">
+    <input type="hidden" data-key="{% url 'order:payment' %}" id="payment-url">
     <input id="empty-cart-img" type="hidden" data-key="{% static 'img/empty-cart-2.png' %}">
 
     <div class="row under-nav justify-content-center" style="margin-top: 5%!important;">
@@ -191,6 +192,10 @@
                             <h4>سبد خرید شما خالی است!</h4>
                         </div>
                     {% endif %}
+                <div class="d-flex mr-5 mt-3 back-links">
+                    <i class="fa fa-chevron-right ml-3 mt-2" aria-hidden="true"></i>
+                    <a class="mt-1" href="{% url 'order:cart' %}">بازگشت به سبد خرید</a>
+                </div>
                 </div>
                 <div class="col-3">
                     {% if  order_info.cart.cartitem_set.all %}

@@ -5,18 +5,26 @@
 {% load crispy_forms_tags %}
 {% block title %}پرداخت{% endblock %}
 {% load static %}
+{% block head %}
+    <script src="{% static 'js/payment.js' %}"></script>
+{% endblock %}
+
 {% block content %}
     <input id="empty-cart-img" type="hidden" data-key="{% static 'img/empty-cart-2.png' %}">
-    <div class="row under-nav justify-content-center"  style="margin-top: 5%!important;">
+    <div class="row under-nav justify-content-center" style="margin-top: 5%!important;">
 
         <div class="col-6 d-flex justify-content-between" style="align-items: center;" id="purchase-info-title">
-            <div class="order-progress-bar-title progress-bar-pass-title" style="margin-right: 6%!important;">اطلاعات خرید</div>
+            <div class="order-progress-bar-title progress-bar-pass-title" style="margin-right: 6%!important;">اطلاعات
+                خرید
+            </div>
             <div class="order-progress-bar-title progress-bar-pass-title" id="payment-info-title">پرداخت</div>
-            <div class="order-progress-bar-title" style="margin-left: 3%!important;" id="order-done-info-title">اتمام خرید و ارسال</div>
+            <div class="order-progress-bar-title" style="margin-left: 3%!important;" id="order-done-info-title">اتمام
+                خرید و ارسال
+            </div>
         </div>
 
     </div>
-    <div class="row justify-content-center mb-5" >
+    <div class="row justify-content-center mb-5">
 
         <div class="col-5 d-flex" style="align-items: center;">
             <div class="order-progress-bar-circle progress-bar-pass" id="purchase-info"></div>
@@ -31,20 +39,159 @@
         <div class="col-9">
             <div class="row justify-content-between">
                 <div class="col-8 rounded" id="main-cart-body" style="height: fit-content">
-                    <div class="bg-white p-5 rounded" id="address-container">
+                    <div class="bg-white p-5 rounded">
                         <div class="text-right">
                             <p>شیوه پرداخت</p>
                         </div>
                         <div>
-                            <input type="text">
-                            <input type="text">
+                            <label class="radio-container d-flex justify-content-between">
+                                <div class="d-flex">
+                                    <i class="fa fa-credit-card-alt mr-5 pr-2 icon-big-size mt-3" id="credit-card-icon"
+                                       aria-hidden="true"></i>
+                                    <span class="mr-3 text-right">
+                                        <div>
+                                            <h5>پرداخت اینترنتی</h5>
+                                            <p class="text-secondary" style="font-size: 50%!important;">آنلاین با تمامی کارت‌های بانکی</p>
+                                        </div>
+                                    </span>
+                                    <input type="radio" checked="checked" name="radio"
+                                           onclick="chang_color('#credit-card-icon')">
+                                    <span class="checkmark mt-4"></span>
+                                </div>
+
+                            </label>
+                            <hr>
+                            <label class="radio-container mt-5 d-flex justify-content-between">
+                                <div class="d-flex">
+                                    <img id="pos-icon"
+                                         style="opacity: 0.25; width: 55px; margin-right: 25px; margin-bottom: 20px"
+                                         src="{% static 'img/pos.png' %}" alt="pos image">
+                                    <span class="mr-2 text-right">
+                                        <div>
+                                            <h5>پرداخت در محل با کارت بانکی</h5>
+                                            <p class="text-secondary" style="font-size: 50%!important;">پرداخت پس از دریافت سفارش با تمامی کارتهای بانکی</p>
+                                        </div>
+                                    </span>
+                                    <input type="radio" name="radio" onclick="chang_color('#pos-icon')">
+                                    <span class="checkmark mt-4"></span>
+                                </div>
+                            </label>
+                            <hr>
+                            <div class="text-warning d-flex justify-content-start bg-white pt-4 pb-1 rounded mr-2 mt-5 text-right">
+                                <i class="fa fa-exclamation-circle ml-4 mt-4" style="font-size: 170%"
+                                   aria-hidden="true"></i>
+                                <h5 style="line-height: 1.8!important;">
+                                    برای کاستن از احتمال انتقال ویروس کرونا پیشنهاد می‌کنیم از شیوه پرداخت اینترنتی
+                                    استفاده کنید. در صورت انتخاب روش پرداخت در محل تنها امکان پرداخت با دستگاه کارتخوان
+                                    مقدور است.
+                                </h5>
+                            </div>
                         </div>
+                    </div>
+                    <div class="bg-white p-5 rounded mt-3" id="discount">
+                        <div class="d-flex justify-content-between">
+                            <h5>کد تخفیف</h5>
+                            <button class="link-buttons change-height"
+                                    onclick="open_body('#discount', '#discount-form', '4rem')"><i
+                                    class="fa fa-chevron-down" aria-hidden="true"></i></button>
+                        </div>
+
+                        <div class="drop-body" style="height: 0.5rem; transition: height 600ms ease-in-out">
+                            <div style="opacity: 0; transition: all 500ms ease-in-out" id="discount-form">
+                                <div class="custom-input-div">
+                                    <input type="text" class="custom-input" placeholder="افزودن کد تخفیف"
+                                           onkeyup="enable_button(this)">
+                                    <button disabled class="custom-button link-buttons" type="button"
+                                            onclick="check_discount()">ثبت
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="bg-white p-5 rounded mt-3 text-right" id="order-summary">
+                        <h5>خلاصه سفارش</h5>
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex w-75 justify-content-between">
+                                <div>
+                                    <h6>مرسوله</h6>
+                                    <p class="small-font text-secondary">
+                                        <span>{{ order_info.order.cart.cartitem_set.all|length|en_to_fa }}</span><span> کالا </span>
+                                    </p>
+                                </div>
+                                <div>
+                                    <h6>{{ order_info.order.shipping_type|shipping_type_convert }}</h6>
+                                </div>
+                                <div>
+                                    <h6>
+                                        <span>مبلغ مرسوله: </span><span>{{ order_info.order.cart.calc_price.1|price_format }}</span>
+                                    </h6>
+                                </div>
+                            </div>
+                            <button class="link-buttons change-height mb-5"
+                                    onclick="open_body('#order-summary', '#discount-form2', $('#discount-form2').height()/10 + 'rem')">
+                                <i
+                                        class="fa fa-chevron-down" aria-hidden="true"></i></button>
+                        </div>
+
+                        <div class="drop-body" style="height: 0.5rem; transition: height 400ms ease-in-out">
+                            <div style="opacity: 0; transition: all 900ms ease-in" id="discount-form2">
+                                <div>
+                                    <div class="row">
+                                        {% for item in order_info.order.cart.cartitem_set.all %}
+                                            <div class="bg-white text-right col-3 rounded shadow m-2"
+                                                 id="item-container-{{ item.id }}">
+                                                <div class="row">
+                                                    <div class="col-12 text-center mb-4">
+                                                        <img src="{{ item.product.get_images_thumbnail.0 }}"
+                                                             alt="product image">
+                                                        <h6 style="line-height: 1.6rem; font-size: 70%">{{ item.product.name }}</h6>
+                                                    </div>
+                                                    <div class="col-12 text-dark">
+                                                        <div class="d-flex justify-content-start">
+                                                            {% if item.product_color %}
+
+                                                                <div class="pr-5 pl-5 pb-2 pt-2">
+                                                    <span class="circle-small"
+                                                          style="background-color: {{ item.product_color.color }};"></span>
+                                                                </div>
+
+                                                            {% endif %}
+                                                            {% if item.product_property %}
+                                                                <div>
+                                                                    <div class="pr-5 pl-5 pb-2 pt-2 d-flex">
+                                                                        <i class="fa fa-cogs cart-icons ml-2"
+                                                                           aria-hidden="true"></i>
+                                                                        <p class="text-after-cart-items">{{ item.product_property.value|en_to_fa }}
+
+                                                                        </p>
+                                                                        <small class="small-font mr-2">{{ item.product.factor_property.name }}</small>
+                                                                    </div>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="d-flex mr-5 mt-3 back-links">
+                        <i class="fa fa-chevron-right ml-3 mt-2" aria-hidden="true"></i>
+                        <a class="mt-1" href="{% url 'order:order' %}">بازگشت به شیوه ارسال</a>
                     </div>
                 </div>
                 <div class="col-3">
                     {% if  order_info.order.cart.cartitem_set.all %}
 
-                        <div id="cart-price-div" class="text-center bg-white rounded pb-5 mb-5" style="max-height: 30rem!important;">
+                        <div id="cart-price-div" class="text-center bg-white rounded pb-5 mb-5"
+                             style="max-height: 30rem!important;">
 
                             <div class="row pr-5 pl-5 pt-4">
 
@@ -52,16 +199,19 @@
                                     <h5 style="font-size: 80%">قیمت کالاها</h5>
                                 </div>
                                 <div class="col-6 text-left" id="cart-price-without-discount">
-                                    <h5>{{ order_info.order.cart.calc_price.0|price_format }}<span class="small-font"> تومان </span></h5>
+                                    <h5>{{ order_info.order.cart.calc_price.0|price_format }}<span class="small-font"> تومان </span>
+                                    </h5>
                                 </div>
 
                             </div>
                             <div class="row pr-5 pl-5">
 
-                                <div class="col-6 text-right text-secondary"><h5 style="font-size: 80%">تخفیف کالاها</h5></div>
+                                <div class="col-6 text-right text-secondary"><h5 style="font-size: 80%">تخفیف
+                                    کالاها</h5></div>
                                 <div class="col-6 text-left" id="cart-discount">
                                     <h5 class="text-danger d-flex justify-content-end">
-                                        <span class="ml-2">({{ order_info.order.cart.calc_price.2|price_format }}%)  </span><span>{{ order_info.order.cart.calc_price.3|price_format }}  </span><span class="small-font mr-2"> تومان </span>
+                                        <span class="ml-2">({{ order_info.order.cart.calc_price.2|price_format }}%)  </span><span>{{ order_info.order.cart.calc_price.3|price_format }}  </span><span
+                                            class="small-font mr-2"> تومان </span>
                                     </h5>
                                 </div>
 

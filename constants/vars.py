@@ -108,14 +108,15 @@ USER_TYPE_REVERSE = {
     'کارمند': 'staff',
     'مشتری': 'customer',
 }
-
+INITIAL = 0
 WAITING_FOR_PAY = 1
 PROCESSING = 2
 SENT = 3
 DELIVERED = 4
-CANCELED = 0
+CANCELED = -1
 
 ORDER_STATUS_CHOICES = [
+    ('INITIAL', INITIAL),
     ('WAITING_FOR_PAY', WAITING_FOR_PAY),
     ('PROCESSING', PROCESSING),
     ('SENT', SENT),

@@ -156,6 +156,10 @@ body {
         flex-direction: column;
 
     }
+
+    nav {
+        display: none !important;
+    }
 }
 
 .underline-dashed {
@@ -547,25 +551,25 @@ select:active {
 }
 
 #map {
-    border-radius: 20px!important;
+    border-radius: 20px !important;
 }
 
 
 #address-form label {
-    font-size: 80%!important;
+    font-size: 80% !important;
 }
 
 sup {
-    font-size: 110%!important;
+    font-size: 110% !important;
 }
 
 #address-form small {
-    font-size: 58%!important;
+    font-size: 58% !important;
 }
 
 #address-form input:focus {
-    box-shadow: none!important;
-    outline: none!important;
+    box-shadow: none !important;
+    outline: none !important;
 }
 
 .error-div {
@@ -577,15 +581,14 @@ sup {
 }
 
 .addresses small {
-    font-size: 85%!important;
+    font-size: 85% !important;
     margin-right: 0.4%;
     color: rgba(97, 97, 97, 0.84) !important;
 }
 
 
-
 .addresses i {
-    font-size: 135%!important;
+    font-size: 135% !important;
     color: rgba(97, 97, 97, 0.64) !important;
 }
 
@@ -595,8 +598,8 @@ sup {
 }
 
 .edit-address-link {
-    text-decoration: none!important;
-    font-weight: bold!important;
+    text-decoration: none !important;
+    font-weight: bold !important;
     color: #1e9fc9 !important;
 }
 
@@ -631,9 +634,125 @@ sup {
 }
 
 .progress-bar-pass {
-    background-color: rgb(0, 190, 213)!important;
+    background-color: rgb(0, 190, 213) !important;
 }
 
 .progress-bar-pass-title {
+    color: rgb(0, 190, 213) !important;
+}
+
+.radio-container {
+
+    display: block;
+    position: relative;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.radio-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.radio-container:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.radio-container input:checked ~ .checkmark {
+    background-color: rgb(0, 190, 213);
+
+}
+
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.radio-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.radio-container .checkmark:after {
+    top: 9px;
+    left: 9px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+}
+
+.icon-big-size {
+    font-size: 150%;
+    color: rgb(0, 190, 213);
+}
+
+.custom-input-div {
+    position: relative;
+    width: 300px;
+}
+
+.custom-input {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px 10px 10px 20px;
+    line-height: 1;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.custom-button {
+    position: absolute;
+    left: 10px;
+    top: 3px;
+    bottom: 3px;
+    border: 0;
+    outline: none;
+    margin: 0;
+    padding: 0 10px;
+    z-index: 2;
+    font-size: 90%;
+}
+
+.custom-button:disabled:hover, .custom-button:disabled {
+    color: gray!important;
+}
+.custom-button:enabled:hover, .custom-button:enabled {
     color: rgb(0, 190, 213)!important;
+}
+
+.back-links, .back-links a {
+    color: rgb(0, 190, 213);
+    text-decoration: none;
+    z-index: 3;
+}
+
+.back-links a:hover, .back-links:hover {
+    color: rgb(8, 158, 180);
+    text-decoration: none;
 }

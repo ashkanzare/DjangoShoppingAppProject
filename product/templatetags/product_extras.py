@@ -145,3 +145,8 @@ def multiply(num_1, num_2):
 def str_split(string, separator_index):
     separator, index = separator_index.split('-')
     return string.split(separator)[int(index)]
+
+
+@register.filter(name='shipping_type_convert')
+def shipping_type_convert(string):
+    return "ارسال توسط میشاپ" if string == 'MESHOP' else "ارسال توسط پست"

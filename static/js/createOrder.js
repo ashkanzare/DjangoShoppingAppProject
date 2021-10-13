@@ -24,7 +24,7 @@ function createOrder() {
             url: api_url,
             data: data,
             success: function (data) {
-                console.log(data)
+                window.location.replace($("#payment-url").data('key'))
             },
             error: function (errors) {
                 console.log(errors)

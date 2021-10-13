@@ -190,10 +190,10 @@ class CartItem(models.Model):
 
 
 class Order(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, verbose_name=const.CART)
+    cart = models.OneToOneField(Cart, on_delete=models.CASCADE, verbose_name=const.CART)
     address = models.ForeignKey(Address, on_delete=models.RESTRICT, verbose_name=const.ADDRESS)
     status = models.CharField(max_length=100, choices=const.ORDER_STATUS_CHOICES, verbose_name=const.ORDER_STATUS,
-                              default=const.WAITING_FOR_PAY)
+                              default=const.INITIAL)
     shipping_type = models.CharField(max_length=50, choices=const.SHIPPING_TYPE_CHOICES,
                                      verbose_name=const.SHIPPING_TYPE)
     date = models.DateTimeField(auto_now=True, verbose_name=const.DATE)
@@ -219,8 +219,9 @@ class Order(models.Model):
         return 'MESH' + f"{hash(self.date.strftime('%Y-%m-%d') + str(self.id))}"[1:6]
 
     def save(self, *args, **kwargs):
-        self.cart.status = 'inactive'
-        self.cart.save()
+        if self.status == const.WAITING_FOR_PAY:
+            self.cart.status = 'inactive'
+            self.cart.save()
 
         super().save(*args, **kwargs)
 
