@@ -64,6 +64,22 @@ function set_null(obj) {
     }
 }
 
+// function for ajax to mecoin api
+function convert_to_mecoin(amount) {
+    let mecoin_url = $("#convert-toman-to-mecoin-url").attr('data-url')
+    let mecoin;
+    $.ajax({
+        type: "POST",
+        async: false,
+        url: mecoin_url,
+        data: {toman_amount :amount}, // serializes the form's elements.
+        success: function (data) {
+            mecoin =  data.mecoin
+        }
+    });
+    return mecoin
+}
+
 
 function add_cart_to_database(token, product, color_id = null, property_id = null, item_id = null, number = null) {
     let delete_all = false
@@ -118,6 +134,8 @@ function add_cart_to_database(token, product, color_id = null, property_id = nul
                                     </h5>`)
                 cart_total_price.html(`<h5>${toFarsiNumber(data.cart[1].toLocaleString())}</h5>`)
 
+                $('#mecoin-gift').html(toFarsiNumber(convert_to_mecoin(data.cart[1])))
+
 
                 let item_number = $('#item-' + item_id)
                 let en_number = Number(convert_fa_to_en(item_number.html()))
@@ -146,6 +164,8 @@ function add_cart_to_database(token, product, color_id = null, property_id = nul
 
                         $('#discount-price-value-' + item_id).html(toFarsiNumber((item_discount.data('key') * (en_number - 1)).toLocaleString()))
                         $('#price-value-' + item_id).html(toFarsiNumber((item_price.data('key') * (en_number - 1)).toLocaleString()))
+
+
                     }
                 }
                 if (item_number.html() === '۰' && number < 0) {

@@ -129,13 +129,13 @@
                                 </div>
                             </div>
                             <button class="link-buttons change-height mb-5"
-                                    onclick="open_body('#order-summary', '#discount-form2', $('#discount-form2').height()/10 + 'rem')">
+                                    onclick="open_body('#order-summary', '#order-summary', $('#discount-form2').height()/10 + 'rem')">
                                 <i
                                         class="fa fa-chevron-down" aria-hidden="true"></i></button>
                         </div>
 
                         <div class="drop-body" style="height: 0.5rem; transition: height 400ms ease-in-out">
-                            <div style="opacity: 0; transition: all 900ms ease-in" id="discount-form2">
+                            <div style="opacity: 0; transition: all 900ms ease-in" id="order-summary">
                                 <div>
                                     <div class="row">
                                         {% for item in order_info.order.cart.cartitem_set.all %}
@@ -145,7 +145,7 @@
                                                     <div class="col-12 text-center mb-4">
                                                         <img src="{{ item.product.get_images_thumbnail.0 }}"
                                                              alt="product image">
-                                                        <h6 style="line-height: 1.6rem; font-size: 70%">{{ item.product.name }}</h6>
+                                                        <h6 class="text-justify" style="line-height: 1.6rem; font-size: 70%">{{ item.product.name }}</h6>
                                                     </div>
                                                     <div class="col-12 text-dark">
                                                         <div class="d-flex justify-content-start">

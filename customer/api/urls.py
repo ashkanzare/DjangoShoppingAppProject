@@ -1,8 +1,12 @@
-from django.urls import path, include
-from rest_framework import routers
+from django.urls import path
 
 from customer.api.views import (
-    CustomerEditDetail, IranStateCities, IranStateCitiesTranslate, SetCustomerAddress, UpdateCustomerAddress
+    CustomerEditDetail,
+    IranStateCities,
+    IranStateCitiesTranslate,
+    SetCustomerAddress,
+    UpdateCustomerAddress,
+    MeCoinConverter
 )
 
 app_name = 'customer_api'
@@ -13,4 +17,5 @@ urlpatterns = [
     path('update-customer-address', UpdateCustomerAddress.as_view(), name='update-customer-address'),
     path('cities/', IranStateCities.as_view(), name='iran-cities'),
     path('cities-translate/', IranStateCitiesTranslate.as_view(), name='iran-cities-translate'),
+    path('mecoin-converter/', MeCoinConverter.as_view(), name='mecoin'),
 ]

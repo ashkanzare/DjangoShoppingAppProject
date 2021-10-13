@@ -57,6 +57,25 @@ class Customer(models.Model):
         cart = self.cart_set.filter(status='active')
         return cart[0].cartitem_set.all() if cart else None
 
+    def get_cart_itself(self):
+        cart = self.cart_set.filter(status='active')
+        return cart[0] if cart else None
+
+    def check_mecoin(self):
+        cart = self.get_cart_itself()
+        if cart:
+            wallet = None
+            try:
+                wallet = MeCoinWallet.objects.get(customer=self)
+            except MeCoinWallet.DoesNotExist:
+                pass
+
+            if wallet:
+                return wallet.coin >= cart.cart_mecoin()
+
+            return False
+        return False
+
 
 class Address(models.Model):
     """
@@ -99,3 +118,30 @@ class DiscountCode(models.Model):
 
     def __str__(self):
         return f"{self.customer.user.phone} -- {self.discount_code}"
+
+
+class MeCoinWallet(models.Model):
+    """
+        MeCoinWallet Model contains:
+                customer(required),
+                coin(required)
+    """
+    customer = models.OneToOneField(Customer, on_delete=models.CASCADE, verbose_name=_(CUSTOMER))
+    coin = models.FloatField(default=0, verbose_name=_(COIN))
+
+    def __str__(self):
+        return f"{self.customer.user.phone} -- {self.coin} M.C"
+
+    def add_coin(self, coin_amount):
+        """ add coin to customer wallet """
+        self.coin += coin_amount
+        self.save()
+
+    def convert_to_toman(self):
+        """ convert MeCoin to Toman """
+        return self.coin * MECOIN_PER_TOMAN
+
+    @classmethod
+    def convert_to_mecoin(cls, toman_amount):
+        """ convert Toman to MeCoin """
+        return toman_amount / TOMAN_PER_MECOIN

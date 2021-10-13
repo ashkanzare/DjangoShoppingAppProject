@@ -7,8 +7,10 @@
 {% load static %}
 {% block content %}
     <input id="empty-cart-img" type="hidden" data-key="{% static 'img/empty-cart-2.png' %}">
-
+    <input type="hidden" id="convert-toman-to-mecoin-url"
+           data-url="{% url 'customer_api:mecoin' %}">
     <div class="row under-nav justify-content-center mb-5">
+    {{ object_list.customer.check_mecoin }}
         <div class="col-9">
             <div class="row justify-content-between">
                 <div class="col-8 bg-white rounded" id="main-cart-body" style="height: fit-content">
@@ -131,12 +133,20 @@
                                                             {% with item_price=item.get_item_price %}
                                                                 {% if item_price.1 != 0 %}
 
-                                                                    <p class="text-danger" id="discount-per-items-{{ item.id }}" data-key="{{ item_price.2|subtract:item_price.0 }}"><span class="small-font">تخفیف</span> <span id="discount-price-value-{{ item.id }}">{{ item_price.2|subtract:item_price.0|multiply:item.number|price_format }}</span> <span class="small-font">تومان</span></p>
+                                                                    <p class="text-danger"
+                                                                       id="discount-per-items-{{ item.id }}"
+                                                                       data-key="{{ item_price.2|subtract:item_price.0 }}">
+                                                                        <span class="small-font">تخفیف</span> <span
+                                                                            id="discount-price-value-{{ item.id }}">{{ item_price.2|subtract:item_price.0|multiply:item.number|price_format }}</span>
+                                                                        <span class="small-font">تومان</span></p>
                                                                 {% else %}
                                                                     <p class="p-2"></p>
                                                                 {% endif %}
 
-                                                                <p id="price-per-items-{{ item.id }}" data-key="{{ item_price.0 }}"> <span id="price-value-{{ item.id }}">{{ item_price.0|multiply:item.number|price_format }}</span> <span class="small-font">تومان</span></p>
+                                                                <p id="price-per-items-{{ item.id }}"
+                                                                   data-key="{{ item_price.0 }}"><span
+                                                                        id="price-value-{{ item.id }}">{{ item_price.0|multiply:item.number|price_format }}</span>
+                                                                    <span class="small-font">تومان</span></p>
 
                                                             {% endwith %}
                                                         </div>
@@ -183,7 +193,8 @@
 
                             <div class="row pr-5 pl-5 pt-4">
 
-                                <div class="col-6 text-right text-secondary"><h5 style="font-size: 80%">قیمت کالاها</h5></div>
+                                <div class="col-6 text-right text-secondary"><h5 style="font-size: 80%">قیمت کالاها</h5>
+                                </div>
                                 <div class="col-6 text-left" id="cart-price-without-discount">
                                     <h5>{{ object_list.calc_price.0|price_format }}</h5>
                                 </div>
@@ -191,7 +202,8 @@
                             </div>
                             <div class="row pr-5 pl-5">
 
-                                <div class="col-6 text-right text-secondary"><h5 style="font-size: 80%">تخفیف کالاها</h5></div>
+                                <div class="col-6 text-right text-secondary"><h5 style="font-size: 80%">تخفیف
+                                    کالاها</h5></div>
                                 <div class="col-6 text-left" id="cart-discount">
                                     <h5 class="text-danger d-flex justify-content-end">
                                         <span class="ml-2">({{ object_list.calc_price.2|price_format }}%)  </span><span>{{ object_list.calc_price.3|price_format }}</span>
@@ -215,9 +227,22 @@
                                 شد</small>
                             </div>
                             <div>
-                                <a href="{% url 'order:order' %}" class="btn btn-danger pl-5 pr-5 p-3" >ادامه فرآیند خرید</a>
+                                <a href="{% url 'order:order' %}" class="btn btn-danger pl-5 pr-5 p-3">ادامه فرآیند
+                                    خرید</a>
                             </div>
+                            <div class="text-right mt-3 mb-3 pr-5 pl-5 text-right pt-3 pb-3 rounded-bottom"
+                                 id="cart-mecoin-div">
 
+                                <span>
+                                    <img id="cart-mecoin" class="mt-2" src="{% static 'img/mecoin.png' %}" alt="">
+                                </span>
+                                <span class="small-font">امتیاز می کوین</span>
+                                <div class=" float-left mt-2">
+                                <span id="mecoin-gift"
+                                      class="mr-2 small-font">{{ object_list.cart_mecoin|en_to_fa }}</span>
+                                    <span class="small-font">امتیاز</span>
+                                </div>
+                            </div>
 
                         </div>
 

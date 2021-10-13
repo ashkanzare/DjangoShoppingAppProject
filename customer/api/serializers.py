@@ -62,3 +62,8 @@ class StateCitiesSerializer(serializers.Serializer):
 class StateCitiesTranslateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=250)
     is_city = serializers.BooleanField(default=False)
+
+
+class MeCoinConverterSerializer(serializers.Serializer):
+    toman_amount = serializers.FloatField()
+

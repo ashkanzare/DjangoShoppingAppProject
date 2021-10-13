@@ -141,6 +141,8 @@ class GetPriceByColorAndFactorPropertyView(mixins.ListModelMixin, generics.Gener
         product = Product.get_or_none(product_id)
         if product:
             price = product.calc_price_base_of_color_and_factor_property(property_id, color_id)
+            price_with_discount = get_final_price_for_a_product(price, product.id)
             return Response({'price': price_format(price),
-                             'price_with_discount': price_format(get_final_price_for_a_product(price, product.id))})
+                             'price_with_discount': price_format(price_with_discount),
+                             'price_with_discount_en': price_with_discount})
         return Response({})

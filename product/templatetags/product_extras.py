@@ -4,6 +4,7 @@ from datetime import datetime
 import webcolors
 
 from product.models import ProductDiscount
+from customer.models import MeCoinWallet
 
 register = template.Library()
 
@@ -23,6 +24,13 @@ def en_to_fa(text):
 def price_format(price):
     print(price)
     int_price = format(int(price), ',')
+    return en_to_fa(str(int_price))
+
+
+@register.filter(name='mecoin')
+def mecoin(price):
+    mecoin_amount = MeCoinWallet.convert_to_mecoin(price)
+    int_price = format(mecoin_amount, ',')
     return en_to_fa(str(int_price))
 
 

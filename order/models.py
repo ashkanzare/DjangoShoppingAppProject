@@ -3,7 +3,7 @@ from django.db import models
 from django.utils.datetime_safe import datetime
 
 from constants import vars as const
-from customer.models import Customer, Address
+from customer.models import Customer, Address, MeCoinWallet
 from product.models import Product, ProductFactorProperty, ProductColor
 
 
@@ -114,6 +114,10 @@ class Cart(models.Model):
             cart.customer = Customer.objects.get(user=user)
             cart.session = None
             cart.save()
+
+    def cart_mecoin(self):
+        price_amount = self.calc_price()[1]
+        return MeCoinWallet.convert_to_mecoin(price_amount)
 
 
 class CartItem(models.Model):

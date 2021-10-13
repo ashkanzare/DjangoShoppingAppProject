@@ -116,6 +116,21 @@ function deactivate(list) {
     }
 }
 
+// function for ajax to mecoin api
+function convert_to_mecoin(amount) {
+    let mecoin_url = $("#convert-toman-to-mecoin-url").attr('data-url')
+    let mecoin;
+    $.ajax({
+        type: "POST",
+        async: false,
+        url: mecoin_url,
+        data: {toman_amount :amount}, // serializes the form's elements.
+        success: function (data) {
+            mecoin =  data.mecoin
+        }
+    });
+    return mecoin
+}
 
 // get price impact of chosen color
 function get_price_base_of_color_and_property(property, color, product_id) {
@@ -147,9 +162,13 @@ function get_price_base_of_color_and_property(property, color, product_id) {
                 if (data.price_with_discount !== data.price) {
                     $('#price-with-discount').html(data.price_with_discount + unit)
                     $('#base-price').html(data.price)
+
+                    $('#mecoin-gift').html(toFarsiNumber(convert_to_mecoin(data.price_with_discount_en)))
+
                 }
                 else {
                     $('#base-price').html(data.price + unit)
+                    $('#mecoin-gift').html(toFarsiNumber(convert_to_mecoin(data.price_with_discount_en)))
                 }
             }
         }

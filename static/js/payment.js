@@ -21,7 +21,7 @@ function open_body(div_id, show_div, height) {
     console.log(drop_button)
 
     if (drop_div.height() === 5) {
-        if (show_div === '#discount-form2') {
+        if (show_div === '#order-summary') {
             $(show_div).css('transition', 'all 900ms ease-in')
         }
         drop_button.html('<i class="fa fa-chevron-up" aria-hidden="true"></i>')
@@ -29,7 +29,7 @@ function open_body(div_id, show_div, height) {
         $(show_div).css('opacity', 1).css('margin-top', '30px')
     }
     else {
-        if (show_div === '#discount-form2') {
+        if (show_div === '#order-summary') {
             $(show_div).css('transition', 'all 150ms ease-in')
         }
         drop_button.html('<i class="fa fa-chevron-down" aria-hidden="true"></i>')
@@ -42,9 +42,11 @@ function open_body(div_id, show_div, height) {
 function enable_button(elem) {
     let button = $(".custom-button")
     if ($(elem).val() !== '') {
+        $(elem).css('border', '1px solid rgb(0, 190, 213)')
         button.attr('disabled', false);
     }
     else {
+        $(elem).css('border', '1px solid #ccc')
         button.attr('disabled', true);
     }
 }

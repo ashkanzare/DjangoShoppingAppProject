@@ -10,10 +10,11 @@ from customer.api.serializers import (
     StateCitiesSerializer,
     StateCitiesTranslateSerializer,
     UpdateAddressSerializer,
-    CreateAddressSerializer
+    CreateAddressSerializer,
+    MeCoinConverterSerializer
 )
 
-from customer.models import Customer
+from customer.models import Customer, MeCoinWallet
 from utils.utils_functions import get_states_and_cities, convert_place_name_to_persian
 
 
@@ -131,4 +132,16 @@ class IranStateCitiesTranslate(mixins.RetrieveModelMixin, generics.GenericAPIVie
                 'name': convert_place_name_to_persian(self.request.data['name'],
                                                       is_city=self.request.data.get('is_city', False)),
                 'is_city': self.request.data.get('is_city', False)})
+        return Response({'error': 'not found'})
+
+
+class MeCoinConverter(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    queryset = {}
+    serializer_class = MeCoinConverterSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=self.request.data)
+
+        if serializer.is_valid():
+            return Response({'mecoin': MeCoinWallet.convert_to_mecoin(serializer.data['toman_amount'])})
         return Response({'error': 'not found'})

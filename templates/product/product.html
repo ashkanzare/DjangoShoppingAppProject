@@ -2,6 +2,7 @@
 {% load crispy_forms_filters %}
 {% load i18n %}
 {% load product_extras %}
+{% load static %}
 {% load crispy_forms_tags %}
 {% block title %}{% translate "فروشگاه اینترنتی میشاپ" %}{% endblock %}
 {% block head %}
@@ -42,6 +43,8 @@
            data-url="{% url 'product_api:product-price-by-color-api' %}">
     <input type="hidden" id="product-price-by-color-and-property-url"
            data-url="{% url 'product_api:product-price-by-color-and-property-api' %}">
+    <input type="hidden" id="convert-toman-to-mecoin-url"
+           data-url="{% url 'customer_api:mecoin' %}">
     {% with product_data=product.get_all_info %}
         <div class="row under-nav justify-content-center bg-white" id="test">
             <div class="col-10">
@@ -154,7 +157,7 @@
                                 {% endif %}
                             </div>
 
-                            <div class="col-4 price-side rounded"  style="height: fit-content">
+                            <div class="col-4 price-side rounded" style="height: fit-content">
                                 {% with guarantee=product.check_for_guarantee %}
                                     {% if guarantee %}
 
@@ -203,12 +206,30 @@
                                                                         style="font-size: 70%!important;">تومان</span>
                                                                 </h3>
                                                             </div>
+                                                            <span class="sep-border"></span>
+                                                            <div class="text-right mt-3 mb-3">
+
+                                                                <span><img id="mecoin"
+                                                                           src="{% static 'img/mecoin.png' %}"
+                                                                           alt=""></span>
+                                                                <span id="mecoin-gift" class="mr-2">{{ product.calc_final_price_with_default_properties.1|mecoin|en_to_fa }}</span>
+                                                                <span>امتیاز</span>
+                                                            </div>
                                                         {% else %}
                                                             <h3 id="base-price">
                                                                 {{ product.calc_final_price_with_default_properties.1|price_format }}<span
                                                                     class="m-2"
                                                                     style="font-size: 70%!important;">تومان</span>
                                                             </h3>
+                                                            <span class="sep-border"></span>
+                                                            <div class="text-right mt-3 mb-3">
+
+                                                                <span><img id="mecoin"
+                                                                           src="{% static 'img/mecoin.png' %}"
+                                                                           alt=""></span>
+                                                                <span id="mecoin-gift" class="mr-2">{{ product.calc_final_price_with_default_properties.1|mecoin|en_to_fa }}</span>
+                                                                <span>امتیاز</span>
+                                                            </div>
                                                         {% endif %}
                                                     </div>
 
@@ -228,17 +249,36 @@
                                                                         style="font-size: 70%!important;">تومان</span>
                                                                 </h3>
                                                             </div>
+                                                            <span class="sep-border"></span>
+                                                            <div class="text-right mt-3 mb-3">
+
+                                                                <span><img id="mecoin"
+                                                                           src="{% static 'img/mecoin.png' %}"
+                                                                           alt=""></span>
+                                                                <span id="mecoin-gift" class="mr-2">{{ product.calc_final_price.1|mecoin|en_to_fa }}</span>
+                                                                <span>امتیاز</span>
+                                                            </div>
                                                         {% else %}
                                                             <h3 id="base-price">
                                                                 {{ product_price.0|price_format }}<span class="m-2"
                                                                                                         style="font-size: 70%!important;">تومان</span>
                                                             </h3>
+                                                            <span class="sep-border"></span>
+                                                            <div class="text-right mt-3 mb-3">
+                                                                <span><img id="mecoin"
+                                                                           src="{% static 'img/mecoin.png' %}"
+                                                                           alt=""></span>
+                                                                <span id="mecoin-gift" class="mr-2">{{ product_price.0|mecoin|en_to_fa }}</span>
+                                                                <span>امتیاز</span>
+
+                                                            </div>
                                                         {% endif %}
 
                                                     </div>
 
                                                 {% endif %}
                                             {% endwith %}
+
                                             <span class="sep-border"></span>
                                             <div id="add-to-cart" class="m-5 text-center ">
                                                 <button onclick="

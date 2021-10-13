@@ -724,6 +724,7 @@ sup {
     line-height: 1;
     box-sizing: border-box;
     outline: none;
+    transition: border 200ms ease-in-out;
 }
 
 .custom-button {
@@ -737,6 +738,7 @@ sup {
     padding: 0 10px;
     z-index: 2;
     font-size: 90%;
+    transition: color 200ms ease-in-out;
 }
 
 .custom-button:disabled:hover, .custom-button:disabled {
@@ -745,6 +747,7 @@ sup {
 .custom-button:enabled:hover, .custom-button:enabled {
     color: rgb(0, 190, 213)!important;
 }
+
 
 .back-links, .back-links a {
     color: rgb(0, 190, 213);
@@ -755,4 +758,18 @@ sup {
 .back-links a:hover, .back-links:hover {
     color: rgb(8, 158, 180);
     text-decoration: none;
+}
+
+#mecoin {
+    width: 30px;
+
+}
+
+#cart-mecoin {
+    width: 20px;
+
+}
+
+#cart-mecoin-div {
+    background-color: #f7f8fa;
 }

@@ -69,7 +69,7 @@ ACTIVE = 'فعال'
 SHIPPING_TYPE = 'نوع ارسال'
 ORDER_STATUS = 'وضعیت سفارش'
 DATE = 'تاریخ'
-
+COIN = 'سکه'
 """ Errors """
 INVALID_USERNAME = 'نام کاربری در سیستم موجود است'
 INVALID_PHONE = 'شماره تماس در سیستم موجود است'
@@ -193,3 +193,8 @@ SHIPPING_TYPE_TO_PRICE = {
 
 """ min price for free shipping """
 FREE_SHIPPING_MIN_PRICE = 300000
+
+
+""" MeCoin Unit per Toman """
+MECOIN_PER_TOMAN = 1000
+TOMAN_PER_MECOIN = 100000
