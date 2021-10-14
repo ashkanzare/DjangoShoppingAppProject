@@ -61,20 +61,33 @@ class Customer(models.Model):
         cart = self.cart_set.filter(status='active')
         return cart[0] if cart else None
 
+    def get_mecoin(self):
+        wallet = None
+        try:
+            wallet = MeCoinWallet.objects.get(customer=self)
+        except MeCoinWallet.DoesNotExist:
+            pass
+
+        return wallet
+
     def check_mecoin(self):
         cart = self.get_cart_itself()
         if cart:
-            wallet = None
-            try:
-                wallet = MeCoinWallet.objects.get(customer=self)
-            except MeCoinWallet.DoesNotExist:
-                pass
-
+            wallet = self.get_mecoin()
             if wallet:
-                return wallet.coin >= cart.cart_mecoin()
+                return wallet.convert_to_toman() >= cart.calc_price()[1]
 
             return False
         return False
+
+    def use_mecoin(self, price):
+        """ use customer wallet for purchase """
+        price_per_mecoin = price / MECOIN_PER_TOMAN
+        customer_wallet = self.get_mecoin()
+        if customer_wallet:
+            customer_wallet.coin -= price_per_mecoin
+            customer_wallet.save()
+        return price_per_mecoin
 
 
 class Address(models.Model):
@@ -110,14 +123,25 @@ class DiscountCode(models.Model):
             customer(required),
             discount_code(required)
    """
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name=_(CUSTOMER),
-                                 help_text=_(SEARCH_FOR_USER_HELP_TEXT))
+    customer = models.OneToOneField(Customer, on_delete=models.CASCADE, verbose_name=_(CUSTOMER),
+                                    help_text=_(SEARCH_FOR_USER_HELP_TEXT))
     discount_code = models.CharField(max_length=8, default=generate_random_string, verbose_name=_(DISCOUNT_CODE))
+    discount_amount = models.FloatField(default=0, verbose_name=_(DISCOUNT))
     end_date = models.DateTimeField(default=validate_discount_date, verbose_name=_(END_DATE),
                                     help_text=_(END_DATE_HELP_TEXT))
 
     def __str__(self):
-        return f"{self.customer.user.phone} -- {self.discount_code}"
+        return f"{self.customer.user.phone} -- {self.discount_code} -- {self.discount_amount}%"
+
+    @classmethod
+    def get_by_token_and_code(cls, token, code):
+        customer = Customer.get_by_token(token)
+        discount = None
+        if customer:
+            discount = cls.objects.filter(customer=customer, discount_code=code)
+        if discount:
+            discount = discount[0]
+        return discount
 
 
 class MeCoinWallet(models.Model):
@@ -144,4 +168,4 @@ class MeCoinWallet(models.Model):
     @classmethod
     def convert_to_mecoin(cls, toman_amount):
         """ convert Toman to MeCoin """
-        return toman_amount / TOMAN_PER_MECOIN
+        return toman_amount / MECOIN_PER_TOMAN

@@ -1,0 +1,270 @@
+{% extends 'home_base.html' %}
+{% load customer_extras %}
+{% load product_extras %}
+{% load static %}
+{% block title %}پروفایل {% if customer_object.first_name and customer_object.last_name %}{{ customer.first_name }}
+    {{ customer.last_name }}{% else %}{{ user.phone }}{% endif %}{% endblock %}
+{% block active_navbar_profile %}active{% endblock %}
+{% block content %}
+    <div class="vh-100 w-100 text-center under-nav ">
+        <div class="text-center" id="side-main-div">
+            <div class="d-flex justify-content-between side-main-div-container">
+                <div class="sidebar">
+                    <div class="mb-3 rounded ad-div"></div>
+                    <div class="bg-white rounded sidebar-main text-center">
+                        <div>
+                            <div class="pb-2"></div>
+                            <div class="public-profile-pic m-3 mr-5">
+                                <div class="pt-2">
+                                    <h5>{{ customer_object|get_fullname_or_return_phone }}</h5>
+                                    <p>{% if not customer_object|return_full_name == '-' %}
+                                        ۰{{ user.phone|en_to_fa }}{% endif %}</p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <span class="sep-border"></span>
+                        <div>
+                            <div class="position-sticky">
+                                <div class="list-group list-group-flush mx-3 mt-4">
+                                    <a href="#"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>سفارش های من</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                    <a href="#"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>نظرات</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                    <a href="{% url 'customer:profile-addresses' %}"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>نشانی ها</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                    <a href="#"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>کارت های هدیه</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                    <a href="#"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>اطلاعات حساب</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+
+
+                                </div>
+                            </div>
+                            <span class="sep-border"></span>
+                            <div class="position-sticky">
+                                <div class="list-group list-group-flush mx-3 mt-4 pb-4">
+                                    <a href="{% url 'customer:logout' %}"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order ">
+                                        <div>خروج</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="main mr-xl-5">
+                    <div class="bg-white rounded mb-5 pb-5">
+                        <div class="d-flex p-5">
+                            <div class="d-flex">
+                                <a href="{% url 'customer:profile' %}"><i class="fa fa-arrow-right mt-3 ml-3  responsive-font" style="font-size: 150%" aria-hidden="true"></i></a>
+                                <h4 class="font-weight-bold responsive-font">جزییات سفارش</h4>
+                            </div>
+                            <div class="mr-5 mt-1">
+                                <h5 class=" responsive-font">{{ order.date|convert_date }}</h5>
+                            </div>
+                            <i class="fa fa-circle sep-dot mt-4 mr-3" aria-hidden="true"></i>
+                            <div class="mr-3 mt-1">
+                                <h5 class=" responsive-font">{{ order.order_number }}</h5>
+                            </div>
+                            <div></div>
+                        </div>
+                        <hr>
+                        <div>
+                            <div class="d-flex p-5">
+                                <div  style="font-size: 100%!important;">
+                                    <span class="text-secondary responsive-font">تحویل گیرنده:</span><span
+                                        class="font-weight-bold responsive-font"> {{ order.address.receiver_first_name }} {{ order.address.receiver_last_name }}</span>
+                                </div>
+                                <i class="fa fa-circle sep-dot mt-2 mr-3 ml-3 responsive-font" aria-hidden="true"></i>
+                                <div>
+                                    <span class="text-secondary responsive-font">شماره تماس:</span><span
+                                        class="font-weight-bold responsive-font"> {{ order.address.receiver_phone|en_to_fa }}</span>
+                                </div>
+                            </div>
+                            <div class="text-right pr-5 pl-5 pb-5">
+                                <span class="text-secondary responsive-font">ارسال به:</span><span
+                                    class="font-weight-bold responsive-font"> {{ order.address.postal_address }}</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex p-5">
+                                <div>
+                                    <span class="text-secondary responsive-font">مبلغ کل:</span><span
+                                        class="font-weight-bold responsive-font"> {{ order.total_price|price_format }}</span><span> تومان</span>
+                                </div>
+                                <div><i class="fa fa-circle sep-dot mr-3 ml-3 responsive-font" aria-hidden="true"></i></div>
+                                <div>
+                                    <span class="text-secondary responsive-font">تخفیف:</span><span
+                                        class="font-weight-bold responsive-font"> {{ order.total_cart_price_info.3|price_format }} </span><span> تومان</span>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row justify-content-center">
+                                <div class="col-11 m-3 border-solid rounded">
+                                    <div class="row pt-5 pb-5">
+                                        <div class="col-6 d-flex pt-md-2 mt-5 mt-md-4">
+                                            <h5 class="responsive-font">مرسوله</h5>
+                                            {% if order.shipping_type == 'MESHOP' %}
+                                                <i class="fa fa-truck m-2 mr-3 text-danger" style="font-size: 150%"
+                                                   aria-hidden="true"></i>
+                                            {% else %}
+                                                <img class="m-2 mr-3" src="{% static 'img/post-logo.png' %}"
+                                                     style="width: 25px; height: 25px"
+                                                     alt="post-logo">
+                                            {% endif %}
+                                            <h6 class=" responsive-font"> {{ order.shipping_type|shipping_type_convert }}</h6>
+                                        </div>
+                                        <div class="col-6 text-right mt-2 mt-md-0">
+                                            <h6 class="text-success font-weight-bold responsive-font">
+                                                {% if order.status == 'INITIAL' %}
+                                                    در حال خرید
+                                                {% elif order.status == 'WAITING_FOR_PAY' %}
+                                                    در انتظار پرداخت
+                                                {% elif order.status == 'PROCESSING' %}
+                                                    در حال پردازش سفارش
+                                                {% elif order.status == 'SENT' %}
+                                                    تحویل مرسوله به پست
+                                                {% elif order.status == 'DELIVERED' %}
+                                                    تحویل مرسوله به مشتری
+                                                {% else %}
+                                                    لغو شده
+                                                {% endif %}
+
+                                            </h6>
+                                            <div class="progress">
+                                                <div class="progress-bar progress-bar-success progress-bar-striped active"
+                                                     role="progressbar"
+                                                     aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"
+                                                     style="width:{% if order.status == 'INITIAL' %}
+                                                         20%
+                                                     {% elif order.status == 'WAITING_FOR_PAY' %}
+                                                         30%
+                                                     {% elif order.status == 'PROCESSING' %}
+                                                         50%
+                                                     {% elif order.status == 'SENT' %}
+                                                         70%
+                                                     {% elif order.status == 'DELIVERED' %}
+                                                         100%
+                                                     {% else %}
+                                                         10%
+                                                     {% endif %}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div>
+                                        <h6 class="text-secondary text-right responsive-font">
+                                            لطفا در صورت دریافت کامل مرسوله کد روبرو را به مامور ارسال تحویل دهید: شناسه
+                                            تحویل مرسوله:<span> {{ order.order_code|en_to_fa }} </span>
+                                        </h6>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex pb-5 responsive-font">
+                                        <h6>
+                                            <span class="text-secondary responsive-font">جمع قیمت کالاهای مرسوله:</span><span
+                                                class="font-weight-bold responsive-font"> {{ order.total_cart_price_info.1|price_format }}</span><span> تومان</span>
+                                        </h6>
+                                        <div><i class="fa fa-circle sep-dot mt-4 mr-3 ml-3" aria-hidden="true"></i>
+                                        </div>
+                                        <h6>
+                                            <span class="text-secondary responsive-font">هزینه ارسال:</span><span
+                                                class="font-weight-bold responsive-font">{% if order.has_free_shipping.0 %}
+                                            رایگان {% else %} {{ order.has_free_shipping.1|price_format }}
+                                            <span> تومان</span>{% endif %}</span>
+                                        </h6>
+                                    </div>
+                                    <hr>
+                                    {% for item in order.cart.cartitem_set.all %}
+
+                                        <div class="row p-5">
+
+                                            <div class="col-12 col-md-2 responsive-font">
+                                                <img src="{{ item.product.get_first_image.image.url }}"
+                                                     alt="{{ item.product.name }}"
+                                                     style="object-fit: scale-down; height: 100%; width: 90%;">
+                                                <div class="text-left">{{ item.number|en_to_fa }}</div>
+                                            </div>
+                                            <div class="col-12 col-md-7 mt-5 mt-md-0 text-right">
+                                                <h6 class="font-weight-bold  responsive-font" style="line-height: 2rem">{{ item.product.name }}</h6>
+                                                {% if item.product_color %}
+
+                                                    <div class="mt-5 mr-2">
+                                                    <span class="circle-small"
+                                                          style="background-color: {{ item.product_color.color }}; margin-right: 0!important;">   </span>
+                                                    </div>
+
+                                                {% endif %}
+                                                {% if item.product_property %}
+                                                    <div>
+                                                        <div class="d-flex text-secondary">
+                                                            <i class="fa fa-cogs mt-2" style="font-size: 130%"
+                                                               aria-hidden="true"></i>
+                                                            <h6 class="mr-2">{{ item.product_property.value|en_to_fa }}
+
+                                                            </h6>
+                                                            <h6 class="small-font mr-2">{{ item.product.factor_property.name }}</h6>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                {% if item.product.check_for_guarantee %}
+                                                    <div class="text-center d-flex text-secondary">
+                                                        <div><i class="fa fa-shield mt-2 ml-3 mr-1" aria-hidden="true"
+                                                                style="font-size: 130%"></i></div>
+                                                        <div><h6
+                                                                style="font-size: 75%">{{ item.product.check_for_guarantee.description }}</h6>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                                <div class="text-center d-flex mb-4 text-secondary">
+                                                    <div><i class="fa fa-home mt-2 ml-3 mr-1" aria-hidden="true"
+                                                            style="font-size: 130%"></i></div>
+                                                    <div><h6
+                                                            style="font-size: 75%">میشاپ</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-3">
+                                                <div class="p-md-5">
+                                                    <div class="pt-5 mt-md-5">
+                                                        <h6 class="pt-md-5">
+                                                            <span>قیمت واحد: </span>
+                                                            <span>{{ item.get_item_price.2|price_format }}</span>
+                                                            <span>تومان</span>
+                                                        </h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% if forloop.counter != order.cart.cartitem_set.all|length %}
+                                            <hr>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

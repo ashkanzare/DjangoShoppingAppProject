@@ -67,7 +67,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="main" >
+                <div class="main mr-xl-5">
                     <div>
                         <div class="row">
                             <h5 class="float-right mr-5">اطلاعات کاربری</h5>
@@ -108,16 +108,17 @@
                         </div>
                         <div class="row bg-white">
                             <div class="col-12 mt-3 pb-5">
-                                <a href="{% url "customer:profile-edit" %}" class="text-decoration-underline links "><span class="underline-dashed">ویرایش اطلاعات کاربری</span></a>
+                                <a href="{% url "customer:profile-edit" %}"
+                                   class="text-decoration-underline links "><span class="underline-dashed">ویرایش اطلاعات کاربری</span></a>
                             </div>
 
                         </div>
                     </div>
-                    <div class="mt-5" id="orders-in-desktop">
+                    <div class="mt-5 d-md-block d-none" id="orders-in-desktop">
                         <div class="row">
-                            <h5 class="float-right mr-5">آخرین سفارش ها</h5>
+                            <h5 class="float-right">آخرین سفارش ها</h5>
                         </div>
-                        <div class="row rounded bg-white">
+                        <div class="row rounded bg-white mb-5">
                             <div class="col-12">
                                 <div class="row" id="order-info">
                                     <div class="col">#</div>
@@ -134,18 +135,23 @@
                                     {% for order in last_three_orders %}
                                         <div class="row bg-white mt-5 mb-5">
                                             <div class="col">{{ forloop.counter|en_to_fa }}</div>
-                                            <div class="col">{{ order.order_id }}</div>
+                                            <div class="col">{{ order.order_number }}</div>
                                             <div class="col">{{ order.date|convert_date|en_to_fa }}</div>
-                                            <div class="col">{{ order.payment_amount|en_to_fa }}</div>
-                                            <div class="col">{{ order.total_amount|en_to_fa }}</div>
-                                            <div class="col">{{ order.payment_type }}</div>
-                                            <div class="col"><a href=""><i class="fa fa-angle-left" aria-hidden="true" style="font-size: 200%"></i></a></div>
+                                            <div class="col">{{ order.pay_amount|price_format }}</div>
+                                            <div class="col">{{ order.total_price|price_format }}</div>
+                                            <div class="col">{{ order.payment_method|convert_to_fa }}</div>
+                                            <div class="col"><a href="{% url 'order:order-detail' order.id %}"><i class="fa fa-angle-left" aria-hidden="true"
+                                                                           style="font-size: 200%"></i></a></div>
+
                                         </div>
+                                        {% if not forloop.counter == last_three_orders|length %}
+                                            <hr>
+                                        {% endif %}
 
                                     {% endfor %}
                                 {% else %}
                                     <div class="row pt-5 pb-5">
-                                       <h4 class="text-secondary m-auto"><i>سفارشی موجود نیست</i></h4>
+                                        <h4 class="text-secondary m-auto"><i>سفارشی موجود نیست</i></h4>
                                     </div>
                                 {% endif %}
 

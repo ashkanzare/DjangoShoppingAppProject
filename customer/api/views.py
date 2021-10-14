@@ -3,7 +3,7 @@ from rest_framework import mixins, generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
-from constants.vars import STATES
+from constants.vars import STATES, PRODUCT_MECOIN_UNIT
 
 from customer.api.serializers import (
     CustomerSerializer,
@@ -11,10 +11,11 @@ from customer.api.serializers import (
     StateCitiesTranslateSerializer,
     UpdateAddressSerializer,
     CreateAddressSerializer,
-    MeCoinConverterSerializer
+    MeCoinConverterSerializer, CustomerDiscountSerializer
 )
 
-from customer.models import Customer, MeCoinWallet
+from customer.models import Customer, MeCoinWallet, DiscountCode
+from order.models import Order
 from utils.utils_functions import get_states_and_cities, convert_place_name_to_persian
 
 
@@ -143,5 +144,33 @@ class MeCoinConverter(mixins.RetrieveModelMixin, generics.GenericAPIView):
         serializer = self.get_serializer(data=self.request.data)
 
         if serializer.is_valid():
-            return Response({'mecoin': MeCoinWallet.convert_to_mecoin(serializer.data['toman_amount'])})
+            return Response(
+                {'mecoin': MeCoinWallet.convert_to_mecoin(serializer.data['toman_amount'] / PRODUCT_MECOIN_UNIT)})
         return Response({'error': 'not found'})
+
+
+class CustomerDiscountCheck(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    queryset = {}
+    serializer_class = CustomerDiscountSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=self.request.data)
+        if serializer.is_valid():
+            discount = DiscountCode.get_by_token_and_code(serializer.data['token'], serializer.data['discount_code'])
+            if discount:
+                discount_amount = discount.discount_amount
+                order = Order.get_or_none(serializer.data['order_id'])
+                if order:
+                    if order.customer_discount != 0:
+                        return Response({'error': 'شما در هر سفارش فقط میتوانید از یک کد تخفیف استفاده کنید'},
+                                        status=status.HTTP_400_BAD_REQUEST)
+
+                    order.customer_discount = discount_amount
+                    order.save()
+                    discount.delete()
+
+                    return Response({'order': discount.discount_amount}, status=status.HTTP_200_OK)
+                return Response({'error': 'سفارشی یافت نشد'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'کد تخفیف وارد شده موجود نمیباشد'}, status=status.HTTP_404_NOT_FOUND)
+        print(serializer.errors)
+        return Response({'error': 'ورودی ها معتبر نمیباشند'}, status=status.HTTP_400_BAD_REQUEST)

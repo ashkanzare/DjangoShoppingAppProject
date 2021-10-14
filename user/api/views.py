@@ -12,6 +12,7 @@ from customer.models import Customer
 from user.api.serializers import UserSerializer, CustomerUserSerializer, UserAuthCodeSerializer, \
     UserPasswordSerializer, ResetPasswordSerializer
 from user.models import User, UserAuthCode
+from utils.utils_functions import send_email_thread, send_sms_thread
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -52,11 +53,9 @@ def register_login_view(request):
                     'active': user.is_active,
                     'status': 1
                 }
-                send_sms(
+                send_sms_thread(
                     str(UserAuthCode.objects.get(user=user).code),
-                    '+12065550100',
                     [f'+98{user.phone}'],
-                    fail_silently=False
                 )
             elif re.search(r'^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$', phone_or_email):
                 user_with_given_email = User.objects.filter(email__iexact=phone_or_email)
@@ -91,11 +90,9 @@ def register_login_view(request):
                     'status': 0
                 }
 
-                send_sms(
+                send_sms_thread(
                     str(UserAuthCode.create_or_get_and_delete(user).code),
-                    '+12065550100',
                     [f'+98{request.data["phone"]}'],
-                    fail_silently=False
                 )
             except User.DoesNotExist:
                 data = {
@@ -129,11 +126,9 @@ def check_user_code(request):
                 else:
                     new_code = UserAuthCode.create_or_get_and_delete(user=user)
                     data['status'] = 'time is up', 30
-                    send_sms(
+                    send_sms_thread(
                         str(new_code.code),
-                        '+12065550100',
                         [f'+98{new_code.user.phone}'],
-                        fail_silently=False
                     )
             except (UserAuthCode.DoesNotExist, Token.DoesNotExist):
                 data['status'] = 'invalid input', 40
@@ -154,11 +149,9 @@ def refresh_code(request):
 
                 new_code = UserAuthCode.create_or_get_and_delete(user=user)
                 data['status'] = 'ok', 20
-                send_sms(
+                send_sms_thread(
                     str(new_code.code),
-                    '+12065550100',
                     [f'+98{new_code.user.phone}'],
-                    fail_silently=False
                 )
 
             except (UserAuthCode.DoesNotExist, Token.DoesNotExist):
@@ -220,11 +213,9 @@ def reset_password_get_code(request):
                         'token': Token.objects.get(user=user).key,
                         'status': 0
                     }
-                    send_sms(
+                    send_sms_thread(
                         str(UserAuthCode.create_or_get_and_delete(user).code),
-                        '+12065550100',
                         [f'+98{phone_or_email}'],
-                        fail_silently=False
                     )
                 except User.DoesNotExist:
                     data = {
@@ -242,13 +233,10 @@ def reset_password_get_code(request):
                         'token': token,
                         'status': 3
                     }
-                    send_mail(
+                    send_email_thread(
                         'بازیابی رمزعبور',
                         f'به این لینک مراجعه کنید:\n http://127.0.0.1:8000/customer/reset-password/confirm?token={token} ',
-                        'MeShopKala@info.org',
-                        [phone_or_email],
-                        fail_silently=False
-                    )
+                        [phone_or_email], )
                 else:
                     data = {
                         'response': 'invalid email',
@@ -289,11 +277,9 @@ def check_code_for_reset_password(request):
                     user_code.delete()
                     new_code = UserAuthCode.objects.create(user=user)
                     data['status'] = 'time is up', 30
-                    send_sms(
+                    send_sms_thread(
                         str(new_code.code),
-                        '+12065550100',
                         [f'+98{new_code.user.phone}'],
-                        fail_silently=False
                     )
             except (UserAuthCode.DoesNotExist, Token.DoesNotExist):
                 data['status'] = 'invalid input', 40

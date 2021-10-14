@@ -16,6 +16,23 @@ function refresh_code(token) {
 
 
 $(document).ready(function () {
+    $('#category-icon').hover(function () {
+        $('#category-div').css('display', 'block')
+    }, function () {
+        $('#category-div').css('display', 'none')
+    })
+
+    window.onscroll = function () {
+        scrollFunction()
+    };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            document.getElementById("under-nav-bar").style.top = "-50px";
+        } else {
+            document.getElementById("under-nav-bar").style.top = "0";
+        }
+    }
 
     // refresh code ajax
     if (document.referrer.includes('customer/register-login/')) {
@@ -68,8 +85,7 @@ $(document).ready(function () {
                     `
                     parent.html(email_message_info)
 
-                }
-                else if (data['status'] === 4) {
+                } else if (data['status'] === 4) {
                     $('#ajax-errors').html('<p style=\'font-size: 70%!important;\'>ایمیل وارد شده در سیستم موجود نمیباشد</p>')
                     message_pop_up()
 

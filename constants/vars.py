@@ -70,6 +70,7 @@ SHIPPING_TYPE = 'نوع ارسال'
 ORDER_STATUS = 'وضعیت سفارش'
 DATE = 'تاریخ'
 COIN = 'سکه'
+PAYMENT_METHOD = 'نحوه ی پرداخت'
 """ Errors """
 INVALID_USERNAME = 'نام کاربری در سیستم موجود است'
 INVALID_PHONE = 'شماره تماس در سیستم موجود است'
@@ -108,28 +109,54 @@ USER_TYPE_REVERSE = {
     'کارمند': 'staff',
     'مشتری': 'customer',
 }
-INITIAL = 0
-WAITING_FOR_PAY = 1
-PROCESSING = 2
-SENT = 3
-DELIVERED = 4
-CANCELED = -1
+INITIAL = 'INITIAL'
+WAITING_FOR_PAY = 'WAITING_FOR_PAY'
+PROCESSING = 'PROCESSING'
+SENT = 'SENT'
+DELIVERED = 'DELIVERED'
+CANCELED = 'CANCELED'
 
 ORDER_STATUS_CHOICES = [
-    ('INITIAL', INITIAL),
-    ('WAITING_FOR_PAY', WAITING_FOR_PAY),
-    ('PROCESSING', PROCESSING),
-    ('SENT', SENT),
-    ('DELIVERED', DELIVERED),
-    ('CANCELED', CANCELED),
+    (INITIAL, 'INITIAL'),
+    (WAITING_FOR_PAY, 'WAITING_FOR_PAY'),
+    (PROCESSING, 'PROCESSING'),
+    (SENT, 'SENT'),
+    (DELIVERED, 'DELIVERED'),
+    (CANCELED, 'CANCELED'),
 
 ]
 
+ONLINE = 'ONLINE'
+CASH_ON_DELIVERY = 'CASH_ON_DELIVERY'
+MECOIN = 'MECOIN'
+
+ORDER_PAYMENT_CHOICES = [
+    (ONLINE, 'ONLINE'),
+    (CASH_ON_DELIVERY, 'CASH_ON_DELIVERY'),
+    (MECOIN, 'MECOIN'),
+]
+
+ORDER_PAYMENT_REVERSE = {
+    'cash-on-delivery': CASH_ON_DELIVERY,
+    'online-payment': ONLINE,
+    'mecoin-payment': MECOIN,
+}
+
+ORDER_PAYMENT_PERSIAN_REVERSE = {
+    CASH_ON_DELIVERY: 'پرداخت در محل (با کارت بانکی)',
+    ONLINE: 'پرداخت آنلاین',
+    MECOIN: 'پرداخت با میکوین',
+}
 
 SHIPPING_TYPE_CHOICES = [
     ('MESHOP', 'meshop'),
     ('POST', 'post'),
 ]
+
+SHIPPING_TYPE_PERSIAN_REVERSE = {
+    'MESHOP': 'ارسال توسط میشاپ',
+    'POST': 'ارسال پستی',
+}
 
 CART_ACTIVE = 'active'
 CART_SAVED = 'saved'
@@ -194,7 +221,12 @@ SHIPPING_TYPE_TO_PRICE = {
 """ min price for free shipping """
 FREE_SHIPPING_MIN_PRICE = 300000
 
-
 """ MeCoin Unit per Toman """
-MECOIN_PER_TOMAN = 1000
-TOMAN_PER_MECOIN = 100000
+MECOIN_PER_TOMAN = 10000
+TOMAN_PER_MECOIN = 0.0001
+
+PRODUCT_MECOIN_UNIT = 100
+
+""" sms api """
+SMS_API_KEY = 'wv0peGeWq9JA2FW0OOt6lCEIc2YoGqsZr6F88hhhuy8='
+SMS_NUMBER = "+983000505"

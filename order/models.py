@@ -116,7 +116,7 @@ class Cart(models.Model):
             cart.save()
 
     def cart_mecoin(self):
-        price_amount = self.calc_price()[1]
+        price_amount = self.calc_price()[1] / const.PRODUCT_MECOIN_UNIT
         return MeCoinWallet.convert_to_mecoin(price_amount)
 
 
@@ -200,21 +200,39 @@ class Order(models.Model):
                               default=const.INITIAL)
     shipping_type = models.CharField(max_length=50, choices=const.SHIPPING_TYPE_CHOICES,
                                      verbose_name=const.SHIPPING_TYPE)
+    customer_discount = models.FloatField(default=0)
+    payment_method = models.CharField(max_length=100, choices=const.ORDER_PAYMENT_CHOICES,
+                                      verbose_name=const.PAYMENT_METHOD, default=const.ONLINE)
     date = models.DateTimeField(auto_now=True, verbose_name=const.DATE)
 
     def __str__(self):
-        return f"[ {self.cart.id} ] -- [ {self.status} ] -- [ {self.date} ]"
+        return f"[ {self.cart.id} ] -- [ {self.status} ] -- [ {self.date} ] -- [ {self.payment_method} ]"
+
+    @property
+    def total_cart_price_info(self):
+        cart_price = self.cart.calc_price()
+        return cart_price
+
+    @property
+    def total_cart_price(self):
+        cart_price = self.cart.calc_price()[1]
+        customer_discount = self.customer_discount
+
+        if customer_discount == 0:
+            return cart_price
+
+        return cart_price * (1 - customer_discount / 100)
 
     @property
     def total_price(self):
-        cart_price = self.cart.calc_price()[1]
+        cart_price = self.total_cart_price
         if cart_price >= const.FREE_SHIPPING_MIN_PRICE:
             return cart_price
         return cart_price + const.SHIPPING_TYPE_TO_PRICE[self.shipping_type]
 
     @property
     def pay_amount(self):
-        if self.status == const.WAITING_FOR_PAY:
+        if self.status == const.WAITING_FOR_PAY or self.payment_method == const.CASH_ON_DELIVERY:
             return self.total_price
         return 0
 
@@ -222,8 +240,12 @@ class Order(models.Model):
     def order_number(self):
         return 'MESH' + f"{hash(self.date.strftime('%Y-%m-%d') + str(self.id))}"[1:6]
 
+    @property
+    def order_code(self):
+        return f"11{hash(self.date.strftime('%Y-%m-%d') + str(self.id))}"[-5:]
+
     def save(self, *args, **kwargs):
-        if self.status == const.WAITING_FOR_PAY:
+        if self.status == const.WAITING_FOR_PAY or self.status == const.PROCESSING:
             self.cart.status = 'inactive'
             self.cart.save()
 
@@ -237,3 +259,17 @@ class Order(models.Model):
         except cls.DoesNotExist:
             pass
         return order
+
+    @classmethod
+    def get_or_none(cls, order_id):
+        order = None
+        try:
+            order = cls.objects.get(pk=order_id)
+        except cls.DoesNotExist:
+            pass
+        return order
+
+    @property
+    def has_free_shipping(self):
+        cart_price = self.total_cart_price
+        return cart_price >= const.FREE_SHIPPING_MIN_PRICE, const.SHIPPING_TYPE_TO_PRICE[self.shipping_type]

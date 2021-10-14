@@ -1,9 +1,9 @@
-
 from django.shortcuts import render
 from django.views.generic import ListView
 from rest_framework import mixins, generics
 from rest_framework.authtoken.models import Token
 
+from order.models import Order
 from utils.utils_functions import convert_place_name_to_persian
 from .forms import UserRegisterLogin, UserCode, UserPassword, ResetPassword
 
@@ -148,9 +148,7 @@ class CustomerProfileListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context[
-            'last_three_orders'] = None  # [{'order_id': 'MESH34-3', 'date': datetime.now(), 'payment_amount': 0,
-        #   "total_amount": '350,000', 'payment_type': 'نقدی'}] # dummy data
+        context['last_three_orders'] = Order.objects.filter(cart__customer=self.get_queryset())
         return context
 
 

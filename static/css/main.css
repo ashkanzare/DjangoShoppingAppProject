@@ -31,6 +31,62 @@ body {
     max-font-size: 1rem !important;
 }
 
+#navbar-title {
+    font-family: digifont, serif !important;
+    color: #d51b1b !important;
+    font-size: 3.5rem !important;
+}
+
+#login-nav {
+    font-size: 90%!important;
+}
+
+#login-nav i {
+    font-size: 150%!important;
+}
+#login-nav:hover {
+    color: white!important;
+    background-color: #bababa !important;
+    border: 1px solid white!important;
+}
+
+
+#nav-cart {
+    background-image: url("../img/cart-icon.jpg");
+    background-repeat: no-repeat;
+    padding: 0 10px;
+}
+
+@media screen and (max-width: 1390px) {
+    #navbar-title {
+        font-family: digifont, serif !important;
+        color: #d51b1b !important;
+        font-size: 1.5rem !important;
+        text-align: left !important;
+    }
+
+}
+
+#nav-search {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 12px;
+  height: 3.5em;
+  font-size: 14px;
+  background-color: #e5e5e5;
+  background-image: url("../img/search-icon.png");
+  background-position: 700px 15px;
+  background-repeat: no-repeat;
+  padding: 9px 50px 12px 40px;
+  -webkit-transition: width 0.4s ease-in-out;
+  transition: width 0.4s ease-in-out;
+}
+
+#nav-search:focus {
+  background-color: white;
+}
+
 
 .vertical-center {
     min-height: 100vh;
@@ -157,8 +213,16 @@ body {
 
     }
 
-    nav {
-        display: none !important;
+}
+
+.responsive-font {
+    font-size: 100%;
+}
+
+@media screen and (max-width: 800px) {
+
+    .responsive-font {
+        font-size: 80% !important;
     }
 }
 
@@ -217,6 +281,10 @@ body {
 
 .border {
     border: 1px rgba(0, 0, 0, 0.15) dashed !important;
+}
+
+.border-solid {
+    border: 1px rgba(0, 0, 0, 0.15) solid !important;
 }
 
 #order-info > div {
@@ -347,6 +415,7 @@ select:active {
     margin-right: 1%;
     margin-top: 0.5%;
 }
+
 
 .text-after-cart-items {
     margin-right: 3%;
@@ -742,10 +811,11 @@ sup {
 }
 
 .custom-button:disabled:hover, .custom-button:disabled {
-    color: gray!important;
+    color: gray !important;
 }
+
 .custom-button:enabled:hover, .custom-button:enabled {
-    color: rgb(0, 190, 213)!important;
+    color: rgb(0, 190, 213) !important;
 }
 
 
@@ -772,4 +842,45 @@ sup {
 
 #cart-mecoin-div {
     background-color: #f7f8fa;
+}
+
+.sep-dot {
+    color: rgba(198, 198, 198, 0.91);
+    font-size: 50%;
+}
+
+#navbar {
+  background-color: #333; /* Black background color */
+  position: fixed; /* Make it stick/fixed */
+  top: -50px; /* Hide the navbar 50 px outside of the top view */
+  width: 100%; /* Full width */
+  transition: top 0.3s; /* Transition effect when sliding down (and up) */
+}
+
+/* Style the navbar links */
+#navbar a {
+  float: left;
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  text-decoration: none;
+}
+
+#navbar a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+#under-nav-bar {
+    transition: top 500ms ease-in-out, visibility 500ms ease-in;
+    z-index: -2;
+    border: white 1px solid;
+
+}
+
+#category-icon:hover {
+    cursor: pointer;
+    border-bottom: red 1px solid;
+    transition: border-bottom-width 1000ms ease-in;
 }

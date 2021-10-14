@@ -6,7 +6,8 @@ from customer.api.views import (
     IranStateCitiesTranslate,
     SetCustomerAddress,
     UpdateCustomerAddress,
-    MeCoinConverter
+    MeCoinConverter,
+    CustomerDiscountCheck
 )
 
 app_name = 'customer_api'
@@ -18,4 +19,5 @@ urlpatterns = [
     path('cities/', IranStateCities.as_view(), name='iran-cities'),
     path('cities-translate/', IranStateCitiesTranslate.as_view(), name='iran-cities-translate'),
     path('mecoin-converter/', MeCoinConverter.as_view(), name='mecoin'),
+    path('check-discount-code/', CustomerDiscountCheck.as_view(), name='check-discount-code'),
 ]

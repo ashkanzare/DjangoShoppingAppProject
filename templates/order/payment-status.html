@@ -1,0 +1,92 @@
+{% extends 'home_base.html' %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+{% load product_extras %}
+{% load crispy_forms_tags %}
+{% block title %}پرداخت{% endblock %}
+{% load static %}
+{% block head %}
+    <script src="{% static 'js/payment.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <input id="empty-cart-img" type="hidden" data-key="{% static 'img/empty-cart-2.png' %}">
+    <input id="user-token" type="hidden" data-key="{{ user.get_token }}">
+    <input id="order-id" type="hidden" data-key="{{ order_info.order.id }}">
+    <input id="check-discount-url" type="hidden" data-key="{% url 'customer_api:check-discount-code' %}">
+    <div class="row under-nav justify-content-center" style="margin-top: 5%!important;">
+        <div class="col-6 d-flex justify-content-between" style="align-items: center;" id="purchase-info-title">
+            <div class="order-progress-bar-title progress-bar-pass-title" style="margin-right: 6%!important;">اطلاعات
+                خرید
+            </div>
+            <div class="order-progress-bar-title progress-bar-pass-title" id="payment-info-title">پرداخت</div>
+            <div class="order-progress-bar-title progress-bar-pass-title" style="margin-left: 3%!important;"
+                 id="order-done-info-title">اتمام
+                خرید و ارسال
+            </div>
+        </div>
+
+    </div>
+    <div class="row justify-content-center mb-5">
+
+        <div class="col-5 d-flex" style="align-items: center;">
+            <div class="order-progress-bar-circle progress-bar-pass" id="purchase-info"></div>
+            <div class="order-progress-bar-line progress-bar-pass"></div>
+            <div class="order-progress-bar-circle progress-bar-pass" id="payment-info"></div>
+            <div class="order-progress-bar-line progress-bar-pass"></div>
+            <div class="order-progress-bar-circle progress-bar-pass" id="order-done-info"></div>
+        </div>
+
+    </div>
+    <div class="row justify-content-center mb-5">
+        <div class="col-7  bg-white rounded">
+            <div class="row justify-content-center">
+                <div class="col-8 text-right p-5">
+                    <h3 class="text-success">سفارش شما با موفقیت ثبت گردید</h3>
+                    <h6 class="text-secondary pt-3">شماره سفارش: <span
+                            class="text-dark font-weight-bold">{{ order_info.order.order_number }}</span></h6>
+                    <h6 class="text-secondary pt-3">شیوه پرداخت: <span
+                            class="text-dark font-weight-bold">{{ order_info.payment_method.0 }}</span></h6>
+                    <div class="pt-5">
+                        <a class="btn btn-danger pr-5 pl-5 pt-3 pb-3" style="font-size: 120%!important;"
+                           href="{% url 'customer:profile' %}">پیگیری سفارش</a>
+                        <a class="btn text-danger pr-5 pl-5" style="font-size: 110%!important;" href="{% url 'home' %}">بازگشت
+                            به صفحه اصلی سایت</a>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <img class="m-5" style="width: 200px; margin-left: 20%!important;"
+                         src="{% static 'img/cart-checked.png' %}" alt="">
+                </div>
+
+            </div>
+            <hr>
+            <div class="text-right m-4">
+                {% if order_info.payment_method.1 == 'CASH_ON_DELIVERY' %}
+                    <h6>
+                        <span>مبلغ</span>
+                        <span>{{ order_info.order.total_price|price_format }}</span>
+                        <span> تومان از دستگاه کارتخوان سیار در هنگام تحویل سفارش دریافت میگردد</span>
+                    </h6>
+                {% else %}
+                    <h6>
+                        <span>مقدار</span>
+                        <span>{{ order_info.payment_method.2|price_format }}</span>
+                        <span>میکوین از کیف پول شما برداشته شد.</span>
+                    </h6>
+                {% endif %}
+            </div>
+            <div class="text-right m-4">
+                <h6>
+                    <span>
+                        <img id="cart-mecoin" class="mt-2" src="{% static 'img/mecoin.png' %}" alt="">
+                    </span>
+                    <span>{{ order_info.order.cart.cart_mecoin|en_to_fa }}</span>
+                    <span> امتیاز میکوین بعد از دریافت سفارش به حساب شما تعلق میگیرد.</span>
+                </h6>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

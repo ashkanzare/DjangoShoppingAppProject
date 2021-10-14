@@ -10,10 +10,9 @@
     <input type="hidden" id="convert-toman-to-mecoin-url"
            data-url="{% url 'customer_api:mecoin' %}">
     <div class="row under-nav justify-content-center mb-5">
-    {{ object_list.customer.check_mecoin }}
         <div class="col-9">
-            <div class="row justify-content-between">
-                <div class="col-8 bg-white rounded" id="main-cart-body" style="height: fit-content">
+            <div class="row justify-content-{% if object_list.cartitem_set.all %}between{% else %}center{% endif %}" id="main-cart-div">
+                <div class="{% if object_list.cartitem_set.all %}col-8{% else %}col-11{% endif %} bg-white rounded" id="main-cart-body" style="height: fit-content">
                     {% if object_list.cartitem_set.all %}
                         {% for item in object_list.cartitem_set.all %}
                             <div class="bg-white text-right cart-item-container" id="item-container-{{ item.id }}">
@@ -276,17 +275,19 @@
                                     بعدی را تکمیل کنید.</p>
                             </div>
                         {% endif %}
-                        <div class="d-flex justify-content-between bg-white rounded"
-                             style="pointer-events: none;  cursor:not-allowed;  -webkit-user-select: none;">
+                        {% if object_list.cartitem_set.all|length != 0 %}
+                            <div class="d-flex justify-content-between bg-white rounded" id="free-shipping-ad"
+                                 style="pointer-events: none;  cursor:not-allowed;  -webkit-user-select: none;">
 
-                            <div class="text-right mr-5">
-                                <h5 class="mt-4 pt-2" style="font-size: 80%">ارسال سفارش های رایگان</h5>
-                                <p class="text-secondary" style="font-size: 60%">سفارش های بالای ۳۰۰ هزار تومان</p>
+                                <div class="text-right mr-5">
+                                    <h5 class="mt-4 pt-2" style="font-size: 80%">ارسال سفارش های رایگان</h5>
+                                    <p class="text-secondary" style="font-size: 60%">سفارش های بالای ۳۰۰ هزار تومان</p>
+                                </div>
+                                <div><img class="rounded" src="{% static 'img/order-delivery-info.png' %}"
+                                          alt="order-delivery-info"></div>
+
                             </div>
-                            <div><img class="rounded" src="{% static 'img/order-delivery-info.png' %}"
-                                      alt="order-delivery-info"></div>
-
-                        </div>
+                        {% endif %}
                     {% endif %}
                 </div>
 

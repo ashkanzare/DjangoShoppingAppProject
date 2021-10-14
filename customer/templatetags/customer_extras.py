@@ -3,6 +3,7 @@ import jdatetime
 from datetime import datetime
 
 from customer.models import Customer
+import constants.vars as const
 
 register = template.Library()
 
@@ -97,3 +98,15 @@ def user_to_customer(user):
 def equal(num_1, num_2):
     """ check if two parameters are equal """
     return num_1 == num_2
+
+
+@register.filter(name='price_format')
+def price_format(price):
+    print(price)
+    int_price = format(int(price), ',')
+    return en_to_fa(str(int_price))
+
+
+@register.filter(name='convert_to_fa')
+def convert_to_fa(string):
+    return const.ORDER_PAYMENT_PERSIAN_REVERSE[string]

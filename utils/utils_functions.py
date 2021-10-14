@@ -13,8 +13,12 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.contrib.staticfiles.finders import find
 from django.templatetags.static import static
+from django.core.mail import send_mail
 
 from constants.vars import STATES
+import constants.vars as const
+import threading
+from ippanel import Client
 
 """
     utils_function.py is a module for extra functions that project needed
@@ -160,3 +164,48 @@ def convert_place_name_to_persian(name, is_city=False):
         if place:
             return max(place, key=place.get)
         return None
+
+
+class EmailThread(threading.Thread):
+    def __init__(self, subject, content, recipient_list):
+        self.subject = subject
+        self.content = content
+        self.recipient_list = recipient_list
+        threading.Thread.__init__(self)
+
+    def run(self) -> None:
+        send_mail(
+            self.subject,
+            self.content,
+            'meshop@gmail.com',
+            self.recipient_list,
+            fail_silently=False
+        )
+
+
+def send_email_thread(subject, content, recipient_list):
+    EmailThread(subject, content, recipient_list).start()
+
+
+class SMSThread(threading.Thread):
+    def __init__(self, content, recipient_list):
+        self.content = content
+        self.recipient_list = recipient_list
+        threading.Thread.__init__(self)
+
+    def run(self) -> None:
+        sms = Client(const.SMS_API_KEY)
+        pattern_values = {
+            "date": self.content,
+        }
+
+        sms.send_pattern(
+            "ls7gnxv2gn",
+            const.SMS_NUMBER,
+            self.recipient_list[0],
+            pattern_values,
+        )
+
+
+def send_sms_thread(content, recipient_list):
+    SMSThread(content, recipient_list).start()

@@ -72,9 +72,9 @@ function convert_to_mecoin(amount) {
         type: "POST",
         async: false,
         url: mecoin_url,
-        data: {toman_amount :amount}, // serializes the form's elements.
+        data: {toman_amount: amount}, // serializes the form's elements.
         success: function (data) {
-            mecoin =  data.mecoin
+            mecoin = data.mecoin
         }
     });
     return mecoin
@@ -133,52 +133,54 @@ function add_cart_to_database(token, product, color_id = null, property_id = nul
                                         <span class="ml-2">(${toFarsiNumber(data.cart[2].toLocaleString())}%)  </span><span>${toFarsiNumber(data.cart[3].toLocaleString())}</span>
                                     </h5>`)
                 cart_total_price.html(`<h5>${toFarsiNumber(data.cart[1].toLocaleString())}</h5>`)
+                if (number) {
+                    $('#mecoin-gift').html(toFarsiNumber(convert_to_mecoin(data.cart[1])))
+                }
 
-                $('#mecoin-gift').html(toFarsiNumber(convert_to_mecoin(data.cart[1])))
-
-
-                let item_number = $('#item-' + item_id)
-                let en_number = Number(convert_fa_to_en(item_number.html()))
-                if (number > 0) {
-                    item_number.html(toFarsiNumber(en_number + 1))
-                    let item_discount = $('#discount-per-items-' + item_id)
-                    let item_price = $('#price-per-items-' + item_id)
-
-                    $('#discount-price-value-' + item_id).html(toFarsiNumber((item_discount.data('key') * (en_number + 1)).toLocaleString()))
-                    $('#price-value-' + item_id).html(toFarsiNumber((item_price.data('key') * (en_number + 1)).toLocaleString()))
-
-                    get_cart()
-                } else {
-                    if (delete_all) {
-                        item_number.html('۰')
-
-                        let cart_reserve_info = $('#cart-reserve-info')
-                        cart_reserve_info.animate({opacity: 0}, 100,)
-                        setTimeout(function () {
-                            cart_reserve_info.remove()
-                        }, 300);
-                    } else {
-                        item_number.html(toFarsiNumber(en_number - 1))
+                if (item_id) {
+                    let item_number = $('#item-' + item_id)
+                    let en_number = Number(convert_fa_to_en(item_number.html()))
+                    if (number > 0) {
+                        item_number.html(toFarsiNumber(en_number + 1))
                         let item_discount = $('#discount-per-items-' + item_id)
                         let item_price = $('#price-per-items-' + item_id)
 
-                        $('#discount-price-value-' + item_id).html(toFarsiNumber((item_discount.data('key') * (en_number - 1)).toLocaleString()))
-                        $('#price-value-' + item_id).html(toFarsiNumber((item_price.data('key') * (en_number - 1)).toLocaleString()))
+                        $('#discount-price-value-' + item_id).html(toFarsiNumber((item_discount.data('key') * (en_number + 1)).toLocaleString()))
+                        $('#price-value-' + item_id).html(toFarsiNumber((item_price.data('key') * (en_number + 1)).toLocaleString()))
+
+                        get_cart()
+                    } else {
+                        if (delete_all) {
+                            item_number.html('۰')
+
+                            let cart_reserve_info = $('#cart-reserve-info')
+                            cart_reserve_info.animate({opacity: 0}, 100,)
+                            setTimeout(function () {
+                                cart_reserve_info.remove()
+                            }, 300);
+                        } else {
+                            item_number.html(toFarsiNumber(en_number - 1))
+                            let item_discount = $('#discount-per-items-' + item_id)
+                            let item_price = $('#price-per-items-' + item_id)
+
+                            $('#discount-price-value-' + item_id).html(toFarsiNumber((item_discount.data('key') * (en_number - 1)).toLocaleString()))
+                            $('#price-value-' + item_id).html(toFarsiNumber((item_price.data('key') * (en_number - 1)).toLocaleString()))
 
 
-                    }
-                }
-                if (item_number.html() === '۰' && number < 0) {
-                    let item_element = $('#item-container-' + item_id)
-                    item_element.animate({opacity: 0}, 100,)
-                    setTimeout(function () {
-                        let pre_div_last_child = item_element.prev('div').children().last()
-                        if (pre_div_last_child.attr('class') === 'sep-border') {
-                            pre_div_last_child.remove()
                         }
-                        item_element.remove()
+                    }
+                    if (item_number.html() === '۰' && number < 0) {
+                        let item_element = $('#item-container-' + item_id)
+                        item_element.animate({opacity: 0}, 100,)
+                        setTimeout(function () {
+                            let pre_div_last_child = item_element.prev('div').children().last()
+                            if (pre_div_last_child.attr('class') === 'sep-border') {
+                                pre_div_last_child.remove()
+                            }
+                            item_element.remove()
 
-                    }, 300);
+                        }, 300);
+                    }
                 }
 
             }
@@ -192,6 +194,9 @@ function add_cart_to_database(token, product, color_id = null, property_id = nul
                                     </div>                                                                                
 `
                     cart_main_div.html(empty_div)
+                    $("#main-cart-body").attr('class', 'col-11 bg-white rounded')
+                    $('#main-cart-div').attr('class', 'row justify-content-center')
+                    $("#free-shipping-ad").remove()
                     $("#cart-price-div").remove()
 
                 }

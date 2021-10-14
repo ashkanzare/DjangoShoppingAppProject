@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from django.utils.translation import gettext as _
 
-from customer.models import Customer, Address
+from customer.models import Customer, Address, DiscountCode
 from user.models import User
 
 import constants.vars as const
@@ -66,4 +66,13 @@ class StateCitiesTranslateSerializer(serializers.Serializer):
 
 class MeCoinConverterSerializer(serializers.Serializer):
     toman_amount = serializers.FloatField()
+
+
+class CustomerDiscountSerializer(serializers.ModelSerializer):
+    token = serializers.CharField(max_length=100, allow_blank=True, required=False)
+    order_id = serializers.IntegerField()
+
+    class Meta:
+        model = DiscountCode
+        fields = ['token', 'order_id', 'discount_code']
 

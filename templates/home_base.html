@@ -2,6 +2,7 @@
 {% load crispy_forms_filters %}
 {% load i18n %}
 {% load customer_extras %}
+{% load static %}
 {% load crispy_forms_tags %}
 {% block title %}{% translate "فروشگاه اینترنتی میشاپ" %}{% endblock %}
 
@@ -29,65 +30,135 @@
     <input type="hidden" id="sync-carts-url" data-url="{% url 'order_api:sync-carts' %}">
     <input type="hidden" id="city-province-translate-url" data-key="{% url 'customer_api:iran-cities-translate' %}">
     <input type="hidden" id="city-province-url" data-key="{% url 'customer_api:iran-cities' %}">
-
-    <nav class="navbar navbar-inverse  navbar-expand-md  navbar-fixed-top mb-5">
+    <nav class="navbar-fixed-top">
         <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">MESHOP</a>
-            </div>
-            <ul class="nav navbar-nav nav-categories">
-                <li class="{% block active_navbar_home %}{% endblock %}"><a href="{% url 'home' %}">خانه</a></li>
-
-            </ul>
-            <form class="navbar-form navbar-left">
-                <div class="d-flex">
-                    <input type="text" class="form-control ml-2" placeholder="جستجو..." name="search">
-
-                    <button class="btn btn-default" type="submit">
-                        <i class="glyphicon glyphicon-search"></i>
-                    </button>
-
-                </div>
-            </form>
-            <div>
-                <ul class="nav navbar-nav">
-                    {% if user.is_authenticated %}
-                        <script>
-                            add_from_local_to_server("{{ user.get_token }}")
-                        </script>
-                        {% with user_customer=user|user_to_customer %}
-                            {% if user_customer and user_customer.first_name and user_customer.last_name %}
-                                <li><a><h5>{{ user_customer.first_name }} {{ user_customer.last_name }}</h5></a></li>
+            <div class="row text-right navbar navbar-fixed-top">
+                <div class="col-12 bg-white">
+                    <div class="row">
+                        <div class="col-2 text-left bg-white"><a class="navbar-brand" id="navbar-title"
+                                                                 href="{% url 'home' %}">MeShop</a></div>
+                        <div class="col-5 bg-white">
+                            <form class="navbar-form">
+                                <div class="d-flex">
+                                    <input type="text" id="nav-search" class="form-control ml-2"
+                                           placeholder="جستجو در میشاپ..."
+                                           name="search">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-3 bg-white"></div>
+                        <div class="col-2 text-center bg-white mt-4">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'customer:profile' %}" class="text-secondary"><i
+                                        class="fa fa-user-o mt-1"
+                                        aria-hidden="true"
+                                        style="font-size: 140%"></i></a>
                             {% else %}
-                                <li><a><h5>۰{{ user.phone|en_to_fa }}</h5></a></li>
+                                <a href="{% url 'customer:register-login' %}" class="btn btn-outline-dark"
+                                   id="login-nav">
+                                    <span><i class="fa fa-user-o mt-1 ml-2" aria-hidden="true"></i></span>
+                                    <span>ورود به حساب کاربری</span>
+                                </a>
                             {% endif %}
-                        {% endwith %}
-                        <li><a href="{% url 'order:cart' %}">
+                            <span class="mr-3 ml-3" style="font-size: 140%">|</span>
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'order:cart' %}" class="position-relative">
+                                <span class="pr-2 pl-2 position-absolute mt-3" id="cart-counter"
+                                      style="visibility: {% if user.customer.get_cart|length != 0 %}visible{% else %}hidden{% endif %}!important;">{{ user.customer.get_cart|length|en_to_fa }}</span>
+                                    <img class="ml-5" src="{% static 'img/cart-icon.jpg' %}" alt=""></a>
+                            {% else %}
+                                <a href="{% url 'order:cart' %}" class="position-relative">
+                                    <span class="pr-2 pl-2 position-absolute mt-3" id="cart-counter"><script>get_cart()</script></span>
+                                    <img class="ml-5" src="{% static 'img/cart-icon.jpg' %}" alt=""></a>
+                            {% endif %}
 
 
-                    <span class="m-2 pr-2 pl-2" id="cart-counter"
-                          style="visibility: {% if user.customer.get_cart|length != 0 %}visible{% else %}hidden{% endif %}!important;">{{ user.customer.get_cart|length|en_to_fa }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 bg-white" id="under-nav-bar">
+                    <div class="row p-3">
+                        <div class="col-1"></div>
+                        <div class="col-1 d-flex" >
+                            <div class="d-flex" id="category-icon">
+                                <i class="fa fa-bars mt-3 ml-3" aria-hidden="true"></i>
+                                <h6>دسته بندی ها</h6>
+                            </div>
 
-                            <i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a>
-                        </li>
-
-                        <li class="{% block active_navbar_profile %}{% endblock %}"><a
-                                href="{% url 'customer:profile' %}"><h5>پروفایل</h5></a></li>
-                        <li><a href="{% url 'customer:logout' %}"><h5>خروج</h5></a></li>
-
-                    {% else %}
-
-                        <li>
-                            <a href="{% url 'order:cart' %}"><span class="m-2 pr-2 pl-2" id="cart-counter"><script>get_cart()</script></span>
-                                <i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a>
-                        </li>
-                        <li><a href="{% url 'customer:register-login' %}"><h5>ورود/ثبت نام</h5></a></li>
-
-                    {% endif %}
-                </ul>
+                        </div>
+                        <div class="col-1">2</div>
+                        <div class="col-1">3</div>
+                        <div class="col-6"></div>
+                    </div>
+                    <div id="category-div" style="display: none" class="row">
+                        salam
+                    </div>
+                </div>
             </div>
         </div>
+
     </nav>
+
+
+
+    {#    <nav class="navbar navbar-inverse  navbar-expand-md  navbar-fixed-top mb-5">#}
+    {#        <div class="container-fluid">#}
+    {#            <div class="navbar-header">#}
+    {#                <a class="navbar-brand" href="#">MESHOP</a>#}
+    {#            </div>#}
+    {#            <ul class="nav navbar-nav nav-categories">#}
+    {#                <li class="{% block active_navbar_home %}{% endblock %}"><a href="{% url 'home' %}">خانه</a></li>#}
+    {##}
+    {#            </ul>#}
+    {#            <form class="navbar-form navbar-left">#}
+    {#                <div class="d-flex">#}
+    {#                    <input type="text" class="form-control ml-2" placeholder="جستجو..." name="search">#}
+    {##}
+    {#                    <button class="btn btn-default" type="submit">#}
+    {#                        <i class="glyphicon glyphicon-search"></i>#}
+    {#                    </button>#}
+    {##}
+    {#                </div>#}
+    {#            </form>#}
+    {#            <div>#}
+    {#                <ul class="nav navbar-nav">#}
+    {#                    {% if user.is_authenticated %}#}
+    {#                        <script>#}
+    {#                            add_from_local_to_server("{{ user.get_token }}")#}
+    {#                        </script>#}
+    {#                        {% with user_customer=user|user_to_customer %}#}
+    {#                            {% if user_customer and user_customer.first_name and user_customer.last_name %}#}
+    {#                                <li><a><h5>{{ user_customer.first_name }} {{ user_customer.last_name }}</h5></a></li>#}
+    {#                            {% else %}#}
+    {#                                <li><a><h5>۰{{ user.phone|en_to_fa }}</h5></a></li>#}
+    {#                            {% endif %}#}
+    {#                        {% endwith %}#}
+    {#                        <li><a href="{% url 'order:cart' %}">#}
+    {##}
+    {##}
+    {#                    <span class="m-2 pr-2 pl-2" id="cart-counter"#}
+    {#                          style="visibility: {% if user.customer.get_cart|length != 0 %}visible{% else %}hidden{% endif %}!important;">{{ user.customer.get_cart|length|en_to_fa }}</span>#}
+    {##}
+    {#                            <i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a>#}
+    {#                        </li>#}
+    {##}
+    {#                        <li class="{% block active_navbar_profile %}{% endblock %}"><a#}
+    {#                                href="{% url 'customer:profile' %}"><h5>پروفایل</h5></a></li>#}
+    {#                        <li><a href="{% url 'customer:logout' %}"><h5>خروج</h5></a></li>#}
+    {##}
+    {#                    {% else %}#}
+    {##}
+    {#                        <li>#}
+    {#                            <a href="{% url 'order:cart' %}"><span class="m-2 pr-2 pl-2" id="cart-counter"><script>get_cart()</script></span>#}
+    {#                                <i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a>#}
+    {#                        </li>#}
+    {#                        <li><a href="{% url 'customer:register-login' %}"><h5>ورود/ثبت نام</h5></a></li>#}
+    {##}
+    {#                    {% endif %}#}
+    {#                </ul>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </nav>#}
 
     <!-- Navbar -->
     <div id="base-main-div">

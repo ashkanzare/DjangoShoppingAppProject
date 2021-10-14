@@ -3,6 +3,7 @@ import jdatetime
 from datetime import datetime
 import webcolors
 
+import constants.vars as const
 from product.models import ProductDiscount
 from customer.models import MeCoinWallet
 
@@ -29,7 +30,7 @@ def price_format(price):
 
 @register.filter(name='mecoin')
 def mecoin(price):
-    mecoin_amount = MeCoinWallet.convert_to_mecoin(price)
+    mecoin_amount = MeCoinWallet.convert_to_mecoin(price / const.PRODUCT_MECOIN_UNIT)
     int_price = format(mecoin_amount, ',')
     return en_to_fa(str(int_price))
 
@@ -158,3 +159,8 @@ def str_split(string, separator_index):
 @register.filter(name='shipping_type_convert')
 def shipping_type_convert(string):
     return "ارسال توسط میشاپ" if string == 'MESHOP' else "ارسال توسط پست"
+
+
+@register.filter(name='find_discount')
+def find_discount(price, percent):
+    return price * (1 - percent / 100)
