@@ -57,7 +57,7 @@ def check_personal_code_is_valid(code):
 
     if len(code) < 8 or len(code) > 10:
         raise ValidationError(
-            _('%(value)s is not valid personal code'),
+            _(const.INVALID_PERSONAL_ID),
             params={'value': code},
         )
 
@@ -121,7 +121,7 @@ def unique_phone_email_validator(phone_email):
     User = get_user_model()
     try:
         User.objects.get(Q(email=phone_email) | Q(phone=phone_email))
-        raise ValidationError(_(f'This {"phone" if phone_email.isnumeric() else "email"} has been registered before'))
+        raise ValidationError(_(f'این  {"شماره" if phone_email.isnumeric() else "ایمیل"} در سیستم موجود است'))
     except User.DoesNotExist:
         return phone_email
 

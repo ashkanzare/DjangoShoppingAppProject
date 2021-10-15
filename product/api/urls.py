@@ -12,7 +12,9 @@ from product.api.views import (
     GetPriceByColorAndFactorPropertyView,
     GetProductByCategoryExceptGivenIdView,
     get_all_category,
-    SearchProductView
+    SearchProductView,
+    GetProductsByCategoryView,
+    GetProductByCategoryExceptGivenIdWithPaginationView
 )
 
 app_name = 'product_api'
@@ -20,8 +22,8 @@ app_name = 'product_api'
 urlpatterns = [
     path('', get_all_products, name='products-api'),
     path('product-by-category/', GetProductByCategoryView.as_view(), name='category-products-api'),
-    path('category-exclude-product/', GetProductByCategoryExceptGivenIdView.as_view(),
-         name='category-exclude-product-api'),
+    # path('category-exclude-product/', GetProductByCategoryExceptGivenIdView.as_view(),
+    #      name='category-exclude-product-api'),
     path('categories/', GetAllCategoriesView.as_view(), name='categories-api'),
     path('categories-with-children/', get_all_category, name='categories-with-children'),
     path('product-info/', GetProductByIdView.as_view(), name='product-info-api'),
@@ -31,4 +33,7 @@ urlpatterns = [
     path('product-price-by-color-and-property/', GetPriceByColorAndFactorPropertyView.as_view(),
          name='product-price-by-color-and-property-api'),
     path('search-in-products/', SearchProductView.as_view(), name='search-in-products'),
+    path('products-by-category/', GetProductsByCategoryView.as_view(), name='products-by-category'),
+    path('category-exclude-product/', GetProductByCategoryExceptGivenIdWithPaginationView.as_view(),
+         name='category-exclude-product'),
 ]

@@ -5,7 +5,6 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% block title %}{% translate "فروشگاه اینترنتی میشاپ" %}{% endblock %}
-{% block head %}<script src="{% static 'js/navbar.js' %}"></script>{% endblock %}
 {% block main %}
     <input type="hidden" data-url="{% url 'product_api:categories-with-children' %}" id="categories-with-children-url">
     <div id="category-modal" class="modal fade" role="dialog" style="margin-top: 10%!important;">
@@ -29,11 +28,13 @@
     <input type="hidden" id="categories-url" data-url="{% url 'product_api:categories-api' %}">
     <input type="hidden" id="product-detail-url" data-url="{% url 'product:product-detail' 0 %}">
     <input type="hidden" id="add-to-cart-url" data-url="{% url 'order_api:add-to-cart' %}">
+    <input type="hidden" id="product-image-url" data-url="{% url 'product_api:product-images-api' %}">
     <input type="hidden" id="cart-items-for-local" data-url="{% url 'order_api:add-to-session-cart' %}">
     <input type="hidden" id="sync-carts-url" data-url="{% url 'order_api:sync-carts' %}">
     <input type="hidden" id="city-province-translate-url" data-key="{% url 'customer_api:iran-cities-translate' %}">
     <input type="hidden" id="city-province-url" data-key="{% url 'customer_api:iran-cities' %}">
     <input type="hidden" id="search-in-products-url" data-key="{% url 'product_api:search-in-products' %}">
+    <input type="hidden" id="products-by-category-url" data-url="{% url 'product_api:products-by-category' %}">
     <nav class="navbar-fixed-top">
         <div class="container-fluid">
             <div class="row text-right navbar navbar-fixed-top">
@@ -83,7 +84,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 bg-white" id="under-nav-bar">
+                <div class="col-12 bg-white shadow" id="under-nav-bar">
                     <div class="row p-3">
                         <div class="col-1"></div>
                         <div class="col-1 d-flex" >

@@ -113,6 +113,7 @@ class Address(models.Model):
     phone_code_regex = RegexValidator(regex=r'^09\d{9}', message=PHONE_HELP_TEXT)
     receiver_phone = models.CharField(max_length=11, verbose_name=RECEIVER_PHONE, validators=[phone_code_regex])
 
+
     def __str__(self):
         return f"[ {self.customer} ] -- [ {self.state} -- {self.city} ] "
 

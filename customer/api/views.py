@@ -1,9 +1,10 @@
+from django.contrib.auth import login
 from django.http import JsonResponse
 from rest_framework import mixins, generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
-from constants.vars import STATES, PRODUCT_MECOIN_UNIT
+from constants.vars import STATES, PRODUCT_MECOIN_UNIT, INVALID_PASSWORD_MATCH
 
 from customer.api.serializers import (
     CustomerSerializer,
@@ -30,8 +31,18 @@ class CustomerEditDetail(mixins.RetrieveModelMixin,
         data = {key: data[key][0] for key in data}
 
         token = Token.objects.get(key=data['token'])
-
         customer = Customer.objects.filter(user=token.user)
+        # check if password is in data
+        if 'password' in data:
+            if data['password'] != data['password-confirm'] or data['password'] == '':
+                return Response({'status': 40,
+                                 'errors': {'password': [INVALID_PASSWORD_MATCH]}})
+            else:
+                user = customer[0].user
+                user.set_password(data['password'])
+                user.save()
+                login(self.request, user)
+                return Response({'status': 20})
 
         data = {key: data[key] if (key in customer[0].__dict__ and (
                 customer[0].__dict__[key] != data[key] or customer[0].__dict__[key] == '')) or (
@@ -49,6 +60,7 @@ class CustomerEditDetail(mixins.RetrieveModelMixin,
             token.user.update_by_kwargs(**cleaned_data_user)
             customer.update(**cleaned_data_customer)
             return Response({'status': 20})
+
         return Response(
             {'status': 40,
              'errors': serializer.errors}

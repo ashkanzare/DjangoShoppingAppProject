@@ -96,8 +96,8 @@ class Product(models.Model):
         if discount:
             if discount.percent_mode:
                 return True, total_price * (1 - discount.discount_amount / 100), discount.discount_amount, total_price
-            return False, total_price - discount.discount_amount, total_price
-        return None, total_price
+            return False, total_price - discount.discount_amount, total_price, None
+        return None, total_price, None, None
 
     @classmethod
     def get_or_none(cls, product_id):
@@ -197,6 +197,22 @@ class Product(models.Model):
             price_with_properties = self.price + (factor_properties[0].price_impact if factor_properties else 0)
             total_price = price_with_properties + (color_property[0].price_impact if color_property else 0)
             return total_price
+
+    @property
+    def discount_price_for_api(self):
+        return self.calc_final_price_with_default_properties()[1]
+
+    @property
+    def discount_percent_for_api(self):
+        return self.calc_final_price_with_default_properties()[2]
+
+    @property
+    def final_price_for_api(self):
+        return self.calc_final_price_with_default_properties()[3]
+
+    @property
+    def first_image(self):
+        return self.get_first_image().image.url
 
 
 class ProductFactorProperty(models.Model):

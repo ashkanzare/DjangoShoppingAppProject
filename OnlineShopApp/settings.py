@@ -96,10 +96,10 @@ WSGI_APPLICATION = 'OnlineShopApp.wsgi.application'
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'OnlineShop2',
-#         'USER': 'postgres',
-#         'PASSWORD': 'nia@13891377',
-#         'HOST': 'localhost',
+#         'NAME': 'meshop-db',
+#         'USER': 'root',
+#         'PASSWORD': 'icixuWyLXyJ9VkVVKz8uG71i',
+#         'HOST': 'meshop-db',
 #         'PORT': '5432'
 #     }
 # }

@@ -9,6 +9,10 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['name']
 
 
+class CategoryByIdSerializer(serializers.Serializer):
+    category_id = serializers.IntegerField()
+
+
 class BasicCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -46,6 +50,17 @@ class ColorAndPropertyByIdSerializer(serializers.Serializer):
 
 
 class BaseProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = '__all__'
+
+
+class BaseAPIProductSerializer(serializers.ModelSerializer):
+    final_price_for_api = serializers.FloatField()
+    discount_price_for_api = serializers.FloatField()
+    discount_percent_for_api = serializers.FloatField()
+    first_image = serializers.CharField(max_length=2000)
+
     class Meta:
         model = Product
         fields = '__all__'
@@ -95,6 +110,7 @@ class ProductWithImageSerializer(serializers.ModelSerializer):
         model = ProductImage
         fields = '__all__'
         depth = 1
+
 
 class SearchByString(serializers.Serializer):
     string = serializers.CharField(max_length=1000)

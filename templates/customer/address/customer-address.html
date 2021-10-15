@@ -61,7 +61,7 @@
                         <div>
                             <div class="position-sticky">
                                 <div class="list-group list-group-flush mx-3 mt-4">
-                                    <a href="#"
+                                    <a href="{% url 'customer:profile' %}"
                                        class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
                                         <div>سفارش های من</div>
                                         <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
@@ -71,7 +71,7 @@
                                         <div>نظرات</div>
                                         <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
                                     </a>
-                                    <a href="#"
+                                    <a href="{% url 'customer:profile-addresses' %}"
                                        class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
                                         <div>نشانی ها</div>
                                         <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
@@ -81,7 +81,7 @@
                                         <div>کارت های هدیه</div>
                                         <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
                                     </a>
-                                    <a href="#"
+                                    <a href="{% url 'customer:profile' %}"
                                        class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
                                         <div>اطلاعات حساب</div>
                                         <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
@@ -109,7 +109,7 @@
                         <div class="row">
 
                             <div class="col-12 bg-white rounded mb-5" style="min-height: 40rem">
-                                <h5 class="text-under-line text-right small-font pt-3">نشانی ها</h5>
+                                <h5 class="text-under-line text-right pt-3">نشانی ها</h5>
                                 <div class="addresses">
                                     {% if addresses %}
                                         <div class="pt-4">

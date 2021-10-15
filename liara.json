@@ -1,0 +1,8 @@
+{
+  "disks": [
+    {
+      "name": "meshop-disk",
+      "mountTo": "media"
+    }
+  ]
+}

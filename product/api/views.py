@@ -4,9 +4,21 @@ from rest_framework import mixins, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from product.api.serializers import ProductSerializer, CategoryProductSerializer, BaseProductSerializer, \
-    BasicCategorySerializer, ProductByIdSerializer, PropertyDescriptionSerializer, ProductImageSerializer, \
-    PropertyByIdSerializer, ColorAndPropertyByIdSerializer, CategoryAndProductSerializer, SearchByString
+from rest_framework import pagination
+
+from product.api.serializers import (ProductSerializer,
+                                     CategoryProductSerializer,
+                                     BaseProductSerializer,
+                                     BasicCategorySerializer,
+                                     ProductByIdSerializer,
+                                     PropertyDescriptionSerializer,
+                                     ProductImageSerializer,
+                                     PropertyByIdSerializer,
+                                     ColorAndPropertyByIdSerializer,
+                                     CategoryAndProductSerializer,
+                                     SearchByString,
+                                     CategoryByIdSerializer, BaseAPIProductSerializer
+                                     )
 from product.models import Product, Category, PropertyDescription, ProductFactorProperty, ProductColor
 from product.templatetags.product_extras import get_final_price_for_a_product, price_format
 
@@ -178,3 +190,30 @@ class SearchProductView(mixins.ListModelMixin, generics.GenericAPIView):
             'category': product.category.name
         } for product in products]
         return Response(products_with_image)
+
+
+class StandardResultsSetPagination(pagination.PageNumberPagination):
+    page_size = 1
+    page_query_param = 'page'
+    page_size_query_param = 'per_page'
+    max_page_size = 1000
+
+
+class GetProductsByCategoryView(generics.ListAPIView):
+    """ get products by category id """
+    serializer_class = BaseAPIProductSerializer
+    pagination_class = StandardResultsSetPagination
+
+    def get_queryset(self):
+        return Product.objects.filter(category_id=self.request.query_params.get('category_id', None))
+
+
+class GetProductByCategoryExceptGivenIdWithPaginationView(generics.ListAPIView):
+    """ Get all products by category name """
+    pagination_class = StandardResultsSetPagination
+    serializer_class = BaseAPIProductSerializer
+
+    def get_queryset(self):
+        product = self.request.query_params.get('product_id', 0)
+        print(product)
+        return Product.objects.filter(category_id=self.request.query_params.get('category_id', None)).exclude(id=product)

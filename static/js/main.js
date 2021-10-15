@@ -14,6 +14,72 @@ function refresh_code(token) {
     });
 }
 
+// short description for product name
+function short_description(string) {
+    if (string.length > 40) {
+        return string.slice(0, 40) + '...'
+    } else {
+        return string
+    }
+}
+
+// generate product cart
+function product_cart(product) {
+    let a;
+    let product_detail = $("#product-detail-url").data('url')
+    $.ajax({
+        type: "POST",
+        url: $("#product-image-url").data('url'),
+        data: {product_id: product.id},
+        async: false,
+        success: function (data) {
+            let price;
+            if (product.discount_percent_for_api !== null) {
+
+                price = `<div class="d-flex justify-content-end">
+                                                    <strike class="card-text m-2"
+                                                            style="font-size: 85%">${toFarsiNumber(product.final_price_for_api.toLocaleString())} </strike>
+                                                    <p class="p-2"
+                                                       style="font-size: 90%; background-color: red; color: white; border-radius: 20px;">${toFarsiNumber(product.discount_percent_for_api)}%</p>
+                                                </div>
+                                                <p class="card-text">${toFarsiNumber(product.discount_price_for_api.toLocaleString())}
+                                                    تومان </p>`
+            } else {
+                price = `
+                 <p class="card-text m-2">${toFarsiNumber(product.discount_price_for_api.toLocaleString())}
+                                                    تومان </p>
+                `
+            }
+            a = `
+                        <a class="product-a-container" href="${product_detail.replace('0', product.id)}">
+                            <div class="card text-right m-3" style="width: 17rem">
+                                <div style="height: 15rem;" class="text-center">
+                                    <img class="card-img-top" src="${data[0].image}"
+                                         style="object-fit: scale-down; height: 100%; width: 100%"
+                                         alt="product image">
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-title">${short_description(product.name)}</p>
+                                    <div class="text-left price">
+                
+                                            ${price}
+                
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    
+                    `
+
+        }
+
+
+    });
+    return a
+
+
+}
+
 
 $(document).ready(function () {
 
@@ -69,7 +135,6 @@ $(document).ready(function () {
             url: url,
             data: form.serialize(), // serializes the form's elements.
             success: function (data) {
-                console.log(data)
                 if (data['status'] === 0) {
                     let new_url = $("#customer-check-code-reset-password-url").attr('data-url') + "?token=" + data['token'];
                     window.location.replace(new_url)
@@ -119,7 +184,6 @@ $(document).ready(function () {
             url: url,
             data: {'token': token, 'code': $('#id_code').val()}, // serializes the form's elements.
             success: function (data) {
-                console.log(data)
 
                 // show response from the python script.
                 let response_status_code = data['status'][1]
@@ -217,7 +281,6 @@ $(document).ready(function () {
             url: url,
             data: form.serialize(), // serializes the form's elements.
             success: function (data) {
-                console.log(data)
                 if (data['status'] === 0) {
                     let new_url = $('#customer-login-url').attr('data-url') + "?token=" + data['token'] + '&login_type=onetime_code';
                     window.location.replace(new_url)
@@ -285,13 +348,11 @@ $(document).ready(function () {
         let form = $(this);
         let url = form.attr('action');
         let token = window.location.href.split('?')[1].substring(6,).split('&')[0]
-        console.log(token)
         $.ajax({
             type: "POST",
             url: url,
             data: {'token': token, 'code': $('#id_code').val()}, // serializes the form's elements.
             success: function (data) {
-                console.log(data)
 
                 // show response from the python script.
                 let response_status_code = data['status'][1]
@@ -376,9 +437,60 @@ $(document).ready(function () {
         // If the count down is over, write some text
         if (distance < 0) {
             clearInterval(x);
-            document.getElementById("counter-parent").innerHTML = "<a class='links' href='' onclick='refresh_code(window.location.href.split(`?`)[1].substring(6,))'>ارسال مجدد کد</a>";
+            if (document.getElementById("counter-parent")) {
+                document.getElementById("counter-parent").innerHTML = "<a class='links' href='' onclick='refresh_code(window.location.href.split(`?`)[1].substring(6,))'>ارسال مجدد کد</a>";
+            }
         }
     }, 1000);
+
+    let url = $("#categories-with-children-url").data('url')
+    let detail_url = $("#category-detail-url").data('url')
+    $.ajax({
+        type: "GET",
+        url: url,
+        success: function (data) {
+            let html = $("<div class='d-flex' />")
+            let cleaned_data = []
+            for (let object of data) {
+                if (object.parent === null) {
+                    cleaned_data.push(object)
+                }
+            }
+            for (let category of cleaned_data) {
+
+                if (category.parent === null) {
+                    let class_attr = 'text-center border-right'
+                    if (data.indexOf(category) === cleaned_data.length - 1) {
+                        class_attr += ' border-left'
+                    }
+                    let parent_div = $(`<div class='${class_attr}' style='min-width: 13rem'/>`)
+                    parent_div.html(`<a href="${detail_url.replace('0', category.id)}"><h6>${category.name}</h6></a>`)
+                    if (category.children.length !== 0) {
+                        let div = $("<div/>")
+                        parent_div.append($("<hr/>"))
+                        for (let child of category.children) {
+                            let child_div = $("<div/>")
+                            child_div.html(`<a href="${detail_url.replace('0', child.id)}"><h6>${child.name}</h6></a>`)
+                            div.append(child_div)
+                        }
+                        parent_div.append(div)
+                    }
+                    html.append(parent_div)
+                }
+            }
+            $("#category-div").append(html)
+        }
+    });
+    window.addEventListener('click', function (e) {
+        if (document.getElementById('navbar-search-form').contains(e.target)) {
+            // Clicked in box
+        } else {
+            $("#show-results").css('display', 'none')
+            $("#nav-search").val('')
+        }
+
+
+    });
 
 });
 
@@ -426,52 +538,4 @@ function show_result() {
     }
 }
 
-$(document).ready(function () {
-    let url = $("#categories-with-children-url").data('url')
-    let detail_url = $("#category-detail-url").data('url')
-    $.ajax({
-        type: "GET",
-        url: url,
-        success: function (data) {
-            let html = $("<div class='d-flex' />")
-            let cleaned_data = []
-            for (let object of data) {
-                if (object.parent === null) {
-                    cleaned_data.push(object)
-                }
-            }
-            for (let category of cleaned_data) {
 
-                if (category.parent === null) {
-                    let class_attr = 'text-center border-right'
-                    if (data.indexOf(category) === cleaned_data.length - 1) {
-                        class_attr += ' border-left'
-                    }
-                    let parent_div = $(`<div class='${class_attr}' style='min-width: 13rem'/>`)
-                    parent_div.html(`<a href="${detail_url.replace('0', category.id)}"><h6>${category.name}</h6></a>`)
-                    if (category.children.length !== 0) {
-                        let div = $("<div/>")
-                        parent_div.append($("<hr/>"))
-                        for (let child of category.children) {
-                            let child_div = $("<div/>")
-                            child_div.html(`<a href="${detail_url.replace('0', child.id)}"><h6>${child.name}</h6></a>`)
-                            div.append(child_div)
-                        }
-                        parent_div.append(div)
-                    }
-                    html.append(parent_div)
-                }
-            }
-            $("#category-div").append(html)
-        }
-    });
-    window.addEventListener('click', function (e) {
-        if (document.getElementById('navbar-search-form').contains(e.target)) {
-            // Clicked in box
-        } else {
-           $("#show-results").css('display', 'none')
-            $("#nav-search").val('')
-        }
-    });
-
-})

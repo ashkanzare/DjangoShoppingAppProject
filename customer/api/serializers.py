@@ -75,4 +75,3 @@ class CustomerDiscountSerializer(serializers.ModelSerializer):
     class Meta:
         model = DiscountCode
         fields = ['token', 'order_id', 'discount_code']
-
