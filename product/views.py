@@ -50,3 +50,20 @@ class ProductView(generic.DetailView):
             context['other_products'] = paginator.page(paginator.num_pages)
 
         return context
+
+
+class CategoryProductsView(generic.ListView):
+    template_name = 'product/products-by-category.html'
+    context_object_name = 'products'
+
+    def get_queryset(self):
+        category_id = self.kwargs.get('category_id', None)
+        products = Product.objects.filter(Q(category_id=category_id) | Q(category__parent__id=category_id))
+        return products
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = Category.objects.filter(pk=self.kwargs.get('category_id', None)).first().name
+        return context
+
+

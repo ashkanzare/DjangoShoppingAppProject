@@ -88,3 +88,13 @@ class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
         fields = ['image']
+
+
+class ProductWithImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = '__all__'
+        depth = 1
+
+class SearchByString(serializers.Serializer):
+    string = serializers.CharField(max_length=1000)

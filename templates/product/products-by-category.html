@@ -1,0 +1,52 @@
+{% extends 'home_base.html' %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+{% load product_extras %}
+{% load crispy_forms_tags %}
+{% block title %}{% translate "فروشگاه اینترنتی میشاپ" %}{% endblock %}
+{% block content %}
+
+
+        <div class="container vh-100 under-nav">
+        {% if products %}
+                <div class="category-div">
+                    <h5 class="text-center p-3">محصولات مرتبط با دسته  <b>{{ category }}</b></h5>
+                    <div class="d-flex justify-content-center">
+                        {% for product in products %}
+                            <a class="product-a-container" href="{% url 'product:product-detail' product.id %}">
+                                <div class="card text-right m-3" style="width: 17rem">
+                                    <div style="height: 15rem;" class="text-center">
+                                        <img class="card-img-top" src="{{ product.get_first_image.image.url }}"
+                                             style="object-fit: scale-down; height: 100%; width: 100%"
+                                             alt="product image">
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-title">{{ product.name|short_description }}</p>
+                                        <div class="text-left price">
+                                            {% if product.calc_final_price_with_default_properties.0 %}
+                                                <div class="d-flex justify-content-end">
+                                                    <strike class="card-text m-2"
+                                                            style="font-size: 85%">{{ product.calc_final_price_with_default_properties.3|price_format }} </strike>
+                                                    <p class="p-2"
+                                                       style="font-size: 90%; background-color: red; color: white; border-radius: 20px;">{{ product.calc_final_price_with_default_properties.2|en_to_fa }}%</p>
+                                                </div>
+                                                <p class="card-text">{{ product.calc_final_price_with_default_properties.1|price_format }}
+                                                    تومان </p>
+                                            {% else %}
+
+                                                <p class="card-text m-2">{{ product.calc_final_price_with_default_properties.1|price_format }}
+                                                    تومان </p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+
+        {% endif %}
+
+    </div>
+
+{% endblock %}

@@ -879,8 +879,17 @@ sup {
 
 }
 
+#category-icon {
+    border-bottom: white 1px solid;
+}
+
+
 #category-icon:hover {
     cursor: pointer;
     border-bottom: red 1px solid;
     transition: border-bottom-width 1000ms ease-in;
+}
+
+#category-div ul {
+    list-style: none;
 }

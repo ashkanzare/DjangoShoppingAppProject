@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from product.api.serializers import ProductSerializer, CategoryProductSerializer, BaseProductSerializer, \
     BasicCategorySerializer, ProductByIdSerializer, PropertyDescriptionSerializer, ProductImageSerializer, \
-    PropertyByIdSerializer, ColorAndPropertyByIdSerializer, CategoryAndProductSerializer
+    PropertyByIdSerializer, ColorAndPropertyByIdSerializer, CategoryAndProductSerializer, SearchByString
 from product.models import Product, Category, PropertyDescription, ProductFactorProperty, ProductColor
 from product.templatetags.product_extras import get_final_price_for_a_product, price_format
 
@@ -146,3 +146,35 @@ class GetPriceByColorAndFactorPropertyView(mixins.ListModelMixin, generics.Gener
                              'price_with_discount': price_format(price_with_discount),
                              'price_with_discount_en': price_with_discount})
         return Response({})
+
+
+@api_view(['GET', ])
+def get_all_category(request):
+    """ Get all categories """
+    queryset = Category.objects.all()
+    final_list = []
+    serializer = BasicCategorySerializer
+    for category in queryset:
+        children = [serializer(child).data for child in Category.objects.filter(parent=category)]
+        category_list = {'name': category.name, 'children': children, 'id': category.id,
+                         'parent': category.parent.name if category.parent else None}
+        final_list.append(category_list)
+
+    return Response(final_list)
+
+
+class SearchProductView(mixins.ListModelMixin, generics.GenericAPIView):
+    """ search in products """
+    queryset = {}
+    serializer_class = SearchByString
+
+    def post(self, request, *args, **kwargs):
+        string = self.request.data['string']
+        products = Product.objects.filter(Q(name__icontains=string) | Q(category__name__icontains=string))
+        products_with_image = [{
+            'id': product.id,
+            'name': product.name,
+            'image': product.get_first_image().image.url,
+            'category': product.category.name
+        } for product in products]
+        return Response(products_with_image)

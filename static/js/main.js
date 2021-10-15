@@ -16,11 +16,20 @@ function refresh_code(token) {
 
 
 $(document).ready(function () {
+
     $('#category-icon').hover(function () {
         $('#category-div').css('display', 'block')
     }, function () {
-        $('#category-div').css('display', 'none')
+        $('#category-div').hover(function () {
+            $('#category-div').css('display', 'block')
+        }, function () {
+            $('#category-div').css('display', 'none');
+            $("#navbar-title").hover(function () {
+                $('#category-div').css('display', 'none');
+            })
+        })
     })
+
 
     window.onscroll = function () {
         scrollFunction()
@@ -372,3 +381,97 @@ $(document).ready(function () {
     }, 1000);
 
 });
+
+
+function show_result() {
+    let url = $("#search-in-products-url").data('key')
+    let product_detail = $("#product-detail-url").data('url')
+    let string = $('#nav-search').val()
+    if (string !== '') {
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: {string: string},
+            success: function (data) {
+                let results = $('#show-results')
+                results.html('')
+                if (data.length !== 0) {
+                    for (let product of data) {
+                        let product_html = `
+                            
+                            <div class="border-solid rounded pt-1 bg-white col-4 text-center pb-5" style="height: fit-content">
+                                <a href="${product_detail.replace('0', product.id)}" style="text-decoration: none" class="text-dark">
+                                    <img style="width: 100px" class="mr-3" src="${product.image}">
+                                    <div>
+                                        <h6 class="pt-1" style="line-height: 1.6rem">${product.name}</h6> 
+                                        <small class="small-font mr-4">دسته: ${product.category}</small>
+                                    </div>
+                                </a>
+                                                               
+                            </div>
+                 
+                        `
+                        results.append($(product_html))
+                    }
+                    results.css('display', 'flex')
+                } else {
+                    results.append('<div class="col-12 text-center bg-white rounded border-solid"><h5><i>نتیجه ای یافت نشد</i></h5></div>')
+                    results.css('display', 'flex')
+                }
+            }
+        });
+
+    } else {
+        $('#show-results').html('').css('display', 'none')
+    }
+}
+
+$(document).ready(function () {
+    let url = $("#categories-with-children-url").data('url')
+    let detail_url = $("#category-detail-url").data('url')
+    $.ajax({
+        type: "GET",
+        url: url,
+        success: function (data) {
+            let html = $("<div class='d-flex' />")
+            let cleaned_data = []
+            for (let object of data) {
+                if (object.parent === null) {
+                    cleaned_data.push(object)
+                }
+            }
+            for (let category of cleaned_data) {
+
+                if (category.parent === null) {
+                    let class_attr = 'text-center border-right'
+                    if (data.indexOf(category) === cleaned_data.length - 1) {
+                        class_attr += ' border-left'
+                    }
+                    let parent_div = $(`<div class='${class_attr}' style='min-width: 13rem'/>`)
+                    parent_div.html(`<a href="${detail_url.replace('0', category.id)}"><h6>${category.name}</h6></a>`)
+                    if (category.children.length !== 0) {
+                        let div = $("<div/>")
+                        parent_div.append($("<hr/>"))
+                        for (let child of category.children) {
+                            let child_div = $("<div/>")
+                            child_div.html(`<a href="${detail_url.replace('0', child.id)}"><h6>${child.name}</h6></a>`)
+                            div.append(child_div)
+                        }
+                        parent_div.append(div)
+                    }
+                    html.append(parent_div)
+                }
+            }
+            $("#category-div").append(html)
+        }
+    });
+    window.addEventListener('click', function (e) {
+        if (document.getElementById('navbar-search-form').contains(e.target)) {
+            // Clicked in box
+        } else {
+           $("#show-results").css('display', 'none')
+            $("#nav-search").val('')
+        }
+    });
+
+})
