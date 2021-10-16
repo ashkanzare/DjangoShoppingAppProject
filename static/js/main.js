@@ -491,6 +491,11 @@ $(document).ready(function () {
 
 
     });
+    $("#return-to-top").click(function(event) {
+        event.preventDefault();
+        $("html, body").animate({ scrollTop: 0 }, "slow");
+        return false;
+    });
 
 });
 
@@ -538,4 +543,7 @@ function show_result() {
     }
 }
 
+function clear_cart_session() {
+    localStorage.removeItem('cart_counter')
+}
 

@@ -1,9 +1,17 @@
 let global_map;
 let map_backup;
-
-function show_map() {
-
+$(document).ready(function () {
     mapboxgl.setRTLTextPlugin('https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.0/mapbox-gl-rtl-text.js');
+})
+
+function show_map(pos_x = null, pos_y = null) {
+    let default_position = [51.33776109571264, 35.70000461459449]
+    if (pos_x !== null && pos_y !== null) {
+        default_position = [pos_x, pos_y]
+    }
+    if (global_map) {
+        global_map.remove()
+    }
     setTimeout(function () {
 
 
@@ -33,7 +41,7 @@ function show_map() {
                     }
                 ]
             },
-            center: [51.33776109571264, 35.70000461459449], // starting position
+            center: default_position, // starting position
             zoom: 14.5 // starting zoom
         });
         map.on('load', function () {
@@ -71,7 +79,6 @@ $(document).ready(function () {
         type: "GET",
         url: api_url,
         success: function (data) {
-            console.log(data)
             places_select = `<select class="form-control" id="provinces">`
             for (let i in data) {
                 let option = `<option value="${i}">${i}</option>`
@@ -104,14 +111,28 @@ function getCookie(name) {
 }
 
 // address details modal
-function address_details(address_list, address_str) {
+function address_details(address_list, address_str, pos_x, pos_y, check_for_new_or_edit) {
     let modal_title = $('.modal-title')
     let modal_body = $('#address-body')
     let api_url = $('#city-province-url').data('key')
     let select = places_select
 
+    let post_form_id;
+    const address_id = $("#address-modal").data('key')
+
     modal_title.html('جزییات آدرس')
-    let address_form = `
+    let address_form;
+    if (check_for_new_or_edit) {
+
+        address_form = $(`#${address_id}-form`)
+        $(`#postal_address`).val(address_str)
+        $(`#${address_id}-provinces`).append(select)
+        post_form_id = `address-form-${address_id}`
+
+    } else {
+
+        post_form_id = "address-form"
+        address_form = `
     <form action="${$('#create-address-url').data('key')}" class="text-right p-5" id="address-form" method="post" style="border-top: 1px solid black" onsubmit="return validateAddressForm()">
             <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
             <div class="d-flex justify-content-center mb-2">
@@ -194,12 +215,12 @@ function address_details(address_list, address_str) {
         </form>
     
     `
+    }
     $('#MAP').css('display', 'none')
-    modal_body.append($(address_form))
-    let select_parent = $('#provinces')
+    modal_body.append($(address_form).css('display', 'block'))
+    let select_parent = $('#' + post_form_id + ' #provinces')
 
-    $('#address-form input').click(function () {
-        console.log($(this))
+    $('#' + post_form_id + ' input').click(function () {
         $(this).css('box-shadow', 'none').css('outline', 'none')
     })
 
@@ -218,7 +239,7 @@ function address_details(address_list, address_str) {
         data: {name: province.normalize()},
         success: function (data) {
             console.log(data)
-            let cities_select = `<select class="form-control" id="cities">`
+            let cities_select = `<select class="form-control cities" id="cities">`
             for (let i of data.cities) {
                 let option = `<option value="${i}">${i}</option>`
 
@@ -276,14 +297,29 @@ function address_details(address_list, address_str) {
         }
     });
 
-    $("#address-form").submit(function (e) {
+
+    $('#' + post_form_id).submit(function (e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
+        let object;
+        if (check_for_new_or_edit) {
+            object = {
+                city: $('#' + post_form_id + ' .cities').val(),
+                state: $(`#${address_id}-provinces #provinces`).val()
+            }
+        } else {
+            object = {
+                city: $('#cities').val(),
+                state: $('#provinces').val()
+            }
+        }
+
 
         let form = $(this);
         let disabled = form.find(':input:disabled').removeAttr('disabled');
-        let serialized_form = form.serialize() + '&token=' + $('#token').data('key') + `&city=${$('#cities').val()}` + `&state=${$('#provinces').val()}`
-        disabled.attr('disabled', 'disabled');
 
+        let serialized_form = form.serialize() + '&token=' + $('#token').data('key') + `&city=${object.city}` + `&state=${object.state}` + `&position_x=${pos_x}&position_y=${pos_y}`
+        disabled.attr('disabled', 'disabled');
+        console.log(serialized_form)
         let url = form.attr('action');
 
         $.ajax({
@@ -291,6 +327,7 @@ function address_details(address_list, address_str) {
             url: url,
             data: serialized_form,
             success: function (data) {
+                console.log(data)
                 location.reload()
             },
             error: function (errors) {
@@ -306,10 +343,13 @@ function address_details(address_list, address_str) {
 
 // get coordinate from map and convert to address
 function get_coordinate() {
+    let check_for_new_or_edit = true
+    if ($('#address-modal').data('key') === 'null') {
+        check_for_new_or_edit = false
+    }
     let location = global_map.getCenter()
     let lat = location.lat
     let lng = location.lng
-    console.log(location)
     let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?&access_token=pk.eyJ1IjoianNjYXN0cm8iLCJhIjoiY2s2YzB6Z25kMDVhejNrbXNpcmtjNGtpbiJ9.28ynPf1Y5Q8EyB_moOHylw`
     let translate_url = $('#city-province-translate-url').data('key')
 
@@ -360,7 +400,7 @@ function get_coordinate() {
                             address_list.push(fa_city)
                             address_list.push(fa_section)
                             setTimeout(function () {
-                                address_details(address_list, address_list.slice(1).join('-'))
+                                address_details(address_list, address_list.slice(1).join('-'), lng, lat, check_for_new_or_edit)
                             }, 500)
                         } else {
                             fa_province = fa_place
@@ -382,6 +422,7 @@ function get_coordinate() {
 // refresh map
 function refresh_map() {
     $('#address-form').remove()
+    $('#address-body form').remove()
     $('#MAP').css('display', 'block')
 
 }
@@ -389,32 +430,38 @@ function refresh_map() {
 // get element and set it's display to none
 function display_none(elem_id) {
     $(elem_id).css('display', 'none')
+    global_map.remove()
 }
 
 // validate address form
 function validateAddressForm() {
     var container, inputs, index;
-
-    container = document.getElementById('address-form');
-
+    let address_id = $("#address-modal").data('key')
+    let address_form;
+    if (address_id === 'null') {
+        address_form = '#address-form'
+        container = document.getElementById('address-form');
+    } else {
+        address_form = '#address-form-' + address_id
+        container = document.getElementById('address-form-' + address_id);
+    }
     inputs = container.getElementsByTagName('input');
     let check = ''
-    $('#address-form input').css('box-shadow', 'none').css('outline', 'none')
+    $(address_form + ' input').css('box-shadow', 'none').css('outline', 'none')
     for (index = 0; index < inputs.length; ++index) {
 
         if (inputs[index].value === '') {
-            console.log(inputs[index].id)
             check = 'empty'
             $('#' + inputs[index].id).css('box-shadow', '0 0 3px 0 red').css('outline', 'red 1px solid')
 
         }
     }
     if (check === 'empty') {
-        let error_div = $('#address-form-errors').attr('class', 'text-center pb-2 error-div pr-5 pl-5').css('display', 'block')
+        let error_div = $(address_form + ' #address-form-errors').attr('class', 'text-center pb-2 error-div pr-5 pl-5').css('display', 'block')
         let error = `<i class="fa fa-exclamation-circle text-danger" aria-hidden="true"></i>
                     <span  class="text-danger small-font">لطفا فیلد های زیر را پر کنید</span>
                     <div class="float-left mr-5">
-                        <button type="button" class="close text-danger" onclick="display_none('#address-form-errors')">&times;</button>
+                        <button type="button" class="close text-danger" onclick="display_none('${address_form} #address-form-errors')">&times;</button>
                     </div>
                     `
         error_div.html(error)
@@ -422,8 +469,8 @@ function validateAddressForm() {
     }
 
     // check postal code and building number
-    let postal_code = $("#postal_code")
-    let building_number = $("#building_number")
+    let postal_code = $(address_form + " #postal_code")
+    let building_number = $(address_form + " #building_number")
 
     let inputs_obj = {
         'کد پستی ': postal_code,
@@ -434,11 +481,11 @@ function validateAddressForm() {
     for (let input in inputs_obj) {
         let elem = inputs_obj[input]
         if (!IsNumeric(elem.val())) {
-            let error_div = $('#address-form-errors').attr('class', 'text-center pb-2 error-div pr-5 pl-5').css('display', 'block')
+            let error_div = $(address_form + ' #address-form-errors').attr('class', 'text-center pb-2 error-div pr-5 pl-5').css('display', 'block')
             let error = `<i class="fa fa-exclamation-circle text-danger" aria-hidden="true"></i>
                         <span  class="text-danger small-font"> ${input}باید فقط شامل ارقام باشد </span>
                         <div class="float-left mr-5">
-                            <button type="button" class="close text-danger" onclick="display_none('#address-form-errors')">&times;</button>
+                            <button type="button" class="close text-danger" onclick="display_none('${address_form} #address-form-errors')">&times;</button>
                         </div>
                         `
             elem.css('box-shadow', '0 0 3px 0 red').css('outline', 'red 1px solid')
@@ -448,11 +495,11 @@ function validateAddressForm() {
     }
     // check postal code length
     if (postal_code.val().length !== 10) {
-        let error_div = $('#address-form-errors').attr('class', 'text-center pb-2 error-div pr-5 pl-5').css('display', 'block')
+        let error_div = $(address_form + ' #address-form-errors').attr('class', 'text-center pb-2 error-div pr-5 pl-5').css('display', 'block')
         let error = `<i class="fa fa-exclamation-circle text-danger" aria-hidden="true"></i>
                         <span  class="text-danger small-font"> کد پستی باید شامل ۱۰ رقم باشد </span>
                         <div class="float-left mr-5">
-                            <button type="button" class="close text-danger" onclick="display_none('#address-form-errors')">&times;</button>
+                            <button type="button" class="close text-danger" onclick="display_none('${address_form} #address-form-errors')">&times;</button>
                         </div>
                         `
         postal_code.css('box-shadow', '0 0 3px 0 red').css('outline', 'red 1px solid')
@@ -461,14 +508,14 @@ function validateAddressForm() {
     }
     // check phone number
     var regex = new RegExp('^09\\d{9}$');
-    let phone = $('#receiver_phone')
+    let phone = $(address_form + ' #receiver_phone')
     var result = regex.test(phone.val());
     if (!result) {
-        let error_div = $('#address-form-errors').attr('class', 'text-center pb-2 error-div pr-5 pl-5').css('display', 'block')
+        let error_div = $(address_form + ' #address-form-errors').attr('class', 'text-center pb-2 error-div pr-5 pl-5').css('display', 'block')
         let error = `<i class="fa fa-exclamation-circle text-danger" aria-hidden="true"></i>
                         <span  class="text-danger small-font"> شماره تلفن وارد شده نامعتبر است </span>
                         <div class="float-left mr-5">
-                            <button type="button" class="close text-danger" onclick="display_none('#address-form-errors')">&times;</button>
+                            <button type="button" class="close text-danger" onclick="display_none('${address_form} #address-form-errors')">&times;</button>
                         </div>
                         `
         phone.css('box-shadow', '0 0 3px 0 red').css('outline', 'red 1px solid')
@@ -540,4 +587,35 @@ function change_shipping(shipping_id) {
     }
 
 
+}
+
+function new_address() {
+    $("#address-modal .modal-title").html('آدرس جدید')
+    $('#address-modal').data('key', 'null')
+    show_map()
+}
+
+
+function reset_address(address_id, pos_x, pos_y) {
+    $("#address-modal .modal-title").html('ویرایش آدرس')
+    $('#address-modal').data('key', address_id)
+    show_map(pos_x, pos_y)
+}
+
+function delete_address(address_id) {
+    if (confirm("آیا از پاک کردن این آدرس اطمینان دارید؟")) {
+        $.ajax({
+            type: "POST",
+            url: $("#delete-an-address-url").data('url'),
+            data: {id: address_id, token: $('#token').data('key')},
+            success: function (data) {
+                $(`#${address_id}-form`).remove()
+                $(`#${address_id}-div`).remove()
+                $(`#${address_id}-hr`).remove()
+            },
+            error: function (e) {
+                console.log(e)
+            }
+        })
+    }
 }

@@ -241,7 +241,7 @@ body {
 
 .ad-div {
     height: 7rem !important;
-    background-image: url("../img/invite-friends-label.jpg");
+    background-image: url("../img/invite-friends-label.png");
     background-size: cover;
 }
 
@@ -896,4 +896,37 @@ sup {
 
 .button-nav:hover {
     cursor: pointer;
+}
+
+.footer {
+    bottom: 0;
+}
+#digi-footer {
+    font-size: 250%;
+    font-family: digital, sans-serif;
+    color: red;
+}
+
+#return-to-top {
+    padding: 13%;
+    width: 150%;
+    border: 1px solid gray;
+    border-radius: 15px;
+    background-color: transparent;
+    color: #4d4d4d;
+    outline: none;
+}
+
+.phone-info {
+    font-size: 85%;
+}
+
+.footer-links > div > div:hover {
+    cursor: pointer;
+}
+
+.footer-links-des {
+    font-size: 80%;
+    color: rgba(0, 0, 0, 0.55);
+    margin-top: 2%;
 }

@@ -75,7 +75,6 @@
 
                                         <div class="col-3 text-right address-border rounded m-2 pr-3 pl-3 pt-2 pb-2"
                                              id="{{ address.id }}">
-                                            {{ address.id }}
                                             <div style="min-height: 20rem">
                                                 <button class="link-buttons" onclick="change_address({{ address.id }})">
                                                     <small>به این آدرس ارسال می شود</small></button>
@@ -101,16 +100,18 @@
                                                 </div>
                                             </div>
                                             <div class="p-3 d-flex justify-content-end">
-                                                <a href=""><small>حذف</small></a><span class="mr-2 ml-2 text-secondary"
-                                                                                       style="font-size: 120%">|</span><a
-                                                    href=""><small>ویرایش</small></a>
+                                                <a href="{% url 'customer:profile-addresses' %}"><small>ویرایش</small></a>
                                             </div>
                                         </div>
 
                                     {% endfor %}
 
                                 </div>
-
+                            {% else %}
+                                <div class="text-center">
+                                    <h5>شما هیچ آدرسی ثبت نکرده اید. برای ثبت آدرس جدید روی لینک زیر کلیک کنید:</h5>
+                                    <a href="{% url 'customer:profile-addresses' %}">ایجاد آدرس جدید</a>
+                                </div>
                             {% endif %}
                         {% endwith %}
                     </div>

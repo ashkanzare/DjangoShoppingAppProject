@@ -53,6 +53,15 @@ class Customer(models.Model):
             customer = Customer.objects.get(user=user)
         return customer
 
+    @classmethod
+    def get_by_user_or_none(cls, user):
+        customer = None
+        try:
+            customer = cls.objects.get(user=user, user__is_customer=True)
+        except cls.DoesNotExist:
+            pass
+        return customer
+
     def get_cart(self):
         cart = self.cart_set.filter(status='active')
         return cart[0].cartitem_set.all() if cart else None
@@ -96,7 +105,7 @@ class Address(models.Model):
             customer(required),
             address(required)
     """
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name=_(CUSTOMER))
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, verbose_name=_(CUSTOMER), null=True, blank=True)
     state = models.CharField(max_length=100, verbose_name=STATE)
     city = models.CharField(max_length=100, verbose_name=CITY)
     postal_address = models.TextField(verbose_name=POSTAL_ADDRESS)
@@ -113,6 +122,8 @@ class Address(models.Model):
     phone_code_regex = RegexValidator(regex=r'^09\d{9}', message=PHONE_HELP_TEXT)
     receiver_phone = models.CharField(max_length=11, verbose_name=RECEIVER_PHONE, validators=[phone_code_regex])
 
+    position_x = models.FloatField(default=MAP_X)
+    position_y = models.FloatField(default=MAP_Y)
 
     def __str__(self):
         return f"[ {self.customer} ] -- [ {self.state} -- {self.city} ] "

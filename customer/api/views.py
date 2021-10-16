@@ -12,7 +12,7 @@ from customer.api.serializers import (
     StateCitiesTranslateSerializer,
     UpdateAddressSerializer,
     CreateAddressSerializer,
-    MeCoinConverterSerializer, CustomerDiscountSerializer
+    MeCoinConverterSerializer, CustomerDiscountSerializer, DeleteAddressSerializer
 )
 
 from customer.models import Customer, MeCoinWallet, DiscountCode
@@ -116,7 +116,37 @@ class UpdateCustomerAddress(mixins.UpdateModelMixin, generics.GenericAPIView):
 
             return Response({'status': 'customer does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
-        return Response(serializer.errors, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DeleteCustomerAddress(mixins.UpdateModelMixin, generics.GenericAPIView):
+    queryset = {}
+    serializer_class = DeleteAddressSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=self.request.data)
+        if serializer.is_valid():
+
+            token = serializer.validated_data['token']
+            customer = Customer.get_by_token(token)
+            address_id = serializer.validated_data['id']
+
+            if customer:
+                serializer.validated_data['customer'] = customer
+                customer_address = customer.address_set.filter(pk=address_id)
+
+                if customer_address:
+                    address = customer_address[0]
+                    address.customer = None
+                    address.save()
+                    return Response({'status': 'address deleted'}, status=status.HTTP_201_CREATED)
+
+                return Response({'status': 'address does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+            return Response({'status': 'customer does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class IranStateCities(mixins.RetrieveModelMixin, generics.GenericAPIView):

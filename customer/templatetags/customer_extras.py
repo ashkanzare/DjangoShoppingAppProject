@@ -71,6 +71,7 @@ def return_empty_str_if_none(obj):
 @register.filter(name='get_fullname_or_return_phone')
 def get_fullname_or_return_phone(customer_obj):
     """ return fullname of a customer if exists or their phone """
+
     if customer_obj.first_name and customer_obj.last_name:
         return f"{customer_obj.first_name} {customer_obj.last_name}"
     return f"۰{en_to_fa(customer_obj.user.phone)}"

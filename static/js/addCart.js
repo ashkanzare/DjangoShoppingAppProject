@@ -18,6 +18,7 @@ function toFarsiNumber(n) {
 function get_cart() {
     let cart = 'cart_counter'
     let local_storage_cart = localStorage.getItem(cart)
+
     let cart_counter = $('#cart-counter')
     if (local_storage_cart) {
 

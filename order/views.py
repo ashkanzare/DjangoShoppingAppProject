@@ -1,4 +1,3 @@
-from django.http import HttpResponseNotFound
 from django.urls import reverse
 from django.utils import translation
 from django.shortcuts import render, redirect
@@ -59,14 +58,16 @@ class PaymentView(generic.ListView):
     context_object_name = 'order_info'
 
     def get_queryset(self):
-        order = Order.objects.filter(cart__customer__user=self.request.user, status=const.INITIAL)
         queryset = {}
-        if order:
-            queryset = {'order': order[0],
-                        'MESHOP_SHIPPING': const.MESHOP_SHIPPING,
-                        'NORMAL_SHIPPING': const.NORMAL_SHIPPING,
-                        'FREE_SHIPPING_MIN_PRICE': const.FREE_SHIPPING_MIN_PRICE
-                        }
+        if not self.request.user.is_anonymous:
+            order = Order.objects.filter(cart__customer__user=self.request.user, status=const.INITIAL)
+
+            if order:
+                queryset = {'order': order[0],
+                            'MESHOP_SHIPPING': const.MESHOP_SHIPPING,
+                            'NORMAL_SHIPPING': const.NORMAL_SHIPPING,
+                            'FREE_SHIPPING_MIN_PRICE': const.FREE_SHIPPING_MIN_PRICE
+                            }
         return queryset
 
     def get(self, request, *args, **kwargs):
@@ -107,7 +108,7 @@ class PaymentDetailView(generic.ListView):
         queryset = self.get_queryset()
         if queryset:
             return render(request, self.template_name, context={self.context_object_name: queryset})
-        return HttpResponseNotFound("Page not found")
+        return render(request, '404.html', context={})
 
 
 class OrderDetailView(generic.ListView):
@@ -122,4 +123,11 @@ class OrderDetailView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['customer_object'] = self.get_queryset().cart.customer
+        print(self.get_queryset().cart.customer)
         return context
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        if queryset:
+            return render(request, self.template_name, context={self.context_object_name: queryset})
+        return render(request, '404.html', context={})

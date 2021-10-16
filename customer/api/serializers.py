@@ -55,6 +55,15 @@ class UpdateAddressSerializer(serializers.ModelSerializer):
         exclude = ['customer']
 
 
+class DeleteAddressSerializer(serializers.ModelSerializer):
+    token = serializers.CharField(max_length=40)
+    id = serializers.IntegerField()
+
+    class Meta:
+        model = Address
+        fields = ['id', 'token']
+
+
 class StateCitiesSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=250)
 

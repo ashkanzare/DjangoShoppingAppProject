@@ -46,6 +46,7 @@ def register_login_view(request):
                 Customer.objects.create(user=user)
                 user.is_customer = True
                 user.is_active = False
+                user.save()
                 data = {
                     'response': 'user created successfully',
                     'phone': user.phone,
@@ -59,8 +60,6 @@ def register_login_view(request):
                 )
             elif re.search(r'^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$', phone_or_email):
                 user_with_given_email = User.objects.filter(email__iexact=phone_or_email)
-                print(user_with_given_email)
-                print(phone_or_email)
                 if user_with_given_email:
                     user = user_with_given_email[0]
                     data = {
@@ -116,6 +115,7 @@ def check_user_code(request):
                     if user_code.code == request.data['code']:
                         data['status'] = 'ok', 10
                         data['active'] = user.is_active = True
+                        user.save()
                         login(request, user)
                         user_code.delete()
                         token.delete()

@@ -71,6 +71,7 @@ ORDER_STATUS = 'وضعیت سفارش'
 DATE = 'تاریخ'
 COIN = 'سکه'
 PAYMENT_METHOD = 'نحوه ی پرداخت'
+STAFF = 'کارمند'
 """ Errors """
 INVALID_USERNAME = 'نام کاربری در سیستم موجود است'
 INVALID_PHONE = 'شماره تماس در سیستم موجود است'
@@ -230,3 +231,7 @@ PRODUCT_MECOIN_UNIT = 100
 """ sms api """
 SMS_API_KEY = 'wv0peGeWq9JA2FW0OOt6lCEIc2YoGqsZr6F88hhhuy8='
 SMS_NUMBER = "+983000505"
+
+""" map default coordinate """
+MAP_X = 51.33776109571264
+MAP_Y = 35.70000461459449

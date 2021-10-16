@@ -5,21 +5,20 @@ function createOrder() {
     let cart_id = $("#cart_id").data('key');
     let address_id = $("#selected-address").data('key');
     let shipping_type = $(".selected-shipping")[0].id
+    if (address_id) {
+        if (shipping_type.includes('meshop')) {
+            shipping_type = 'MESHOP'
+        } else {
+            shipping_type = 'POST'
+        }
 
-    if (shipping_type.includes('meshop')) {
-        shipping_type = 'MESHOP'
-    }
-    else {
-        shipping_type = 'POST'
-    }
-
-    const data = {
-        token: token,
-        cart_id: cart_id,
-        address_id: address_id,
-        shipping_type: shipping_type
-    }
-    $.ajax({
+        const data = {
+            token: token,
+            cart_id: cart_id,
+            address_id: address_id,
+            shipping_type: shipping_type
+        }
+        $.ajax({
             type: "POST",
             url: api_url,
             data: data,
@@ -30,5 +29,9 @@ function createOrder() {
                 console.log(errors)
             }
         });
+    }
+    else {
+        alert('لطفا یک آدرس ایجاد کنید')
+    }
 
 }

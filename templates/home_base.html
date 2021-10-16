@@ -57,6 +57,7 @@
                         <div class="col-3 bg-white"></div>
                         <div class="col-2 text-center bg-white mt-4">
                             {% if user.is_authenticated %}
+                                <script>add_from_local_to_server('{{user.get_token}}')</script>
                                 <a href="{% url 'customer:profile' %}" class="text-secondary"><i
                                         class="fa fa-user-o mt-1"
                                         aria-hidden="true"
@@ -109,68 +110,53 @@
 
 
 
-    {#    <nav class="navbar navbar-inverse  navbar-expand-md  navbar-fixed-top mb-5">#}
-    {#        <div class="container-fluid">#}
-    {#            <div class="navbar-header">#}
-    {#                <a class="navbar-brand" href="#">MESHOP</a>#}
-    {#            </div>#}
-    {#            <ul class="nav navbar-nav nav-categories">#}
-    {#                <li class="{% block active_navbar_home %}{% endblock %}"><a href="{% url 'home' %}">خانه</a></li>#}
-    {##}
-    {#            </ul>#}
-    {#            <form class="navbar-form navbar-left">#}
-    {#                <div class="d-flex">#}
-    {#                    <input type="text" class="form-control ml-2" placeholder="جستجو..." name="search">#}
-    {##}
-    {#                    <button class="btn btn-default" type="submit">#}
-    {#                        <i class="glyphicon glyphicon-search"></i>#}
-    {#                    </button>#}
-    {##}
-    {#                </div>#}
-    {#            </form>#}
-    {#            <div>#}
-    {#                <ul class="nav navbar-nav">#}
-    {#                    {% if user.is_authenticated %}#}
-    {#                        <script>#}
-    {#                            add_from_local_to_server("{{ user.get_token }}")#}
-    {#                        </script>#}
-    {#                        {% with user_customer=user|user_to_customer %}#}
-    {#                            {% if user_customer and user_customer.first_name and user_customer.last_name %}#}
-    {#                                <li><a><h5>{{ user_customer.first_name }} {{ user_customer.last_name }}</h5></a></li>#}
-    {#                            {% else %}#}
-    {#                                <li><a><h5>۰{{ user.phone|en_to_fa }}</h5></a></li>#}
-    {#                            {% endif %}#}
-    {#                        {% endwith %}#}
-    {#                        <li><a href="{% url 'order:cart' %}">#}
-    {##}
-    {##}
-    {#                    <span class="m-2 pr-2 pl-2" id="cart-counter"#}
-    {#                          style="visibility: {% if user.customer.get_cart|length != 0 %}visible{% else %}hidden{% endif %}!important;">{{ user.customer.get_cart|length|en_to_fa }}</span>#}
-    {##}
-    {#                            <i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a>#}
-    {#                        </li>#}
-    {##}
-    {#                        <li class="{% block active_navbar_profile %}{% endblock %}"><a#}
-    {#                                href="{% url 'customer:profile' %}"><h5>پروفایل</h5></a></li>#}
-    {#                        <li><a href="{% url 'customer:logout' %}"><h5>خروج</h5></a></li>#}
-    {##}
-    {#                    {% else %}#}
-    {##}
-    {#                        <li>#}
-    {#                            <a href="{% url 'order:cart' %}"><span class="m-2 pr-2 pl-2" id="cart-counter"><script>get_cart()</script></span>#}
-    {#                                <i class="fa fa-shopping-cart mt-2" aria-hidden="true" style="font-size: 150%"></i></a>#}
-    {#                        </li>#}
-    {#                        <li><a href="{% url 'customer:register-login' %}"><h5>ورود/ثبت نام</h5></a></li>#}
-    {##}
-    {#                    {% endif %}#}
-    {#                </ul>#}
-    {#            </div>#}
-    {#        </div>#}
-    {#    </nav>#}
 
     <!-- Navbar -->
-    <div id="base-main-div">
+    <div id="base-main-div" style="padding-top: 3%; margin-bottom: 15%">
         {% block content %}
         {% endblock %}
+    </div>
+    <div class="footer container-fluid bg-white pr-5 pl-5 pt-3 pb-5 mt-5 border-top" style="margin-top: 30%">
+        <div class="row justify-content-between">
+            <div class="col-auto" id="digi-footer">
+                میشاپ
+            </div>
+            <div class="col-8"></div>
+            <div class="col-auto">
+                <button id="return-to-top" onclick="topFunction()">
+                    بازگشت به بالا
+                </button>
+            </div>
+
+        </div>
+        <div class="row justify-content-center phone-info">
+            <div class="col-auto">هفت روز هفته، ۲۴ ساعت شبانه‌روز پاسخگوی شما هستیم</div>
+            <div class="col-auto">|</div>
+            <div class="col-auto">تلفن پشتیبانی:</div>
+            <div class="col-auto text-left">{{ '61930000 - 021'|en_to_fa }}</div>
+
+        </div>
+        <div class="row mt-5 justify-content-around text-center footer-links">
+            <div class="col mt-3">
+                <div><img src="{% static 'img/check.PNG' %}"></div>
+                <div class="footer-links-des">ضمانت اصل بودن کالا</div>
+            </div>
+            <div class="col">
+                <div><img src="{% static 'img/garranty.PNG' %}"></div>
+                <div class="footer-links-des"> ۷ روز ضمانت بازگشت کالا</div>
+            </div>
+            <div class="col">
+                <div><img src="{% static 'img/head.PNG' %}"></div>
+                <div class="footer-links-des">۷ روز هفته ۲۴ ساعته</div>
+            </div>
+            <div class="col">
+                <div><img src="{% static 'img/pay.PNG' %}"></div>
+                <div class="footer-links-des">امکان پرداخت در محل</div>
+            </div>
+            <div class="col mt-3">
+                <div><img src="{% static 'img/exp.PNG' %}"></div>
+                <div class="footer-links-des">امکان تحویل اکسپرس</div>
+            </div>
+        </div>
     </div>
 {% endblock %}

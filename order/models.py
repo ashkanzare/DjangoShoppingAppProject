@@ -1,10 +1,12 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.urls import reverse
 from django.utils.datetime_safe import datetime
 
 from constants import vars as const
 from customer.models import Customer, Address, MeCoinWallet
 from product.models import Product, ProductFactorProperty, ProductColor
+from utils.utils_functions import send_processing_sms_thread
 
 
 class Cart(models.Model):
@@ -242,12 +244,20 @@ class Order(models.Model):
 
     @property
     def order_code(self):
-        return f"11{hash(self.date.strftime('%Y-%m-%d') + str(self.id))}"[-5:]
+        return f"{hash(self.date.strftime('%Y-%m-%d') + str(self.id))}"[-5:]
 
     def save(self, *args, **kwargs):
         if self.status == const.WAITING_FOR_PAY or self.status == const.PROCESSING:
             self.cart.status = 'inactive'
             self.cart.save()
+        if self.status == const.PROCESSING:
+            send_processing_sms_thread(
+                {'name': self.cart.customer.first_name,
+                 'order': self.order_number,
+                 'code': self.order_code,
+                 'link': reverse('order:order-detail', args=[self.id])},
+                [f'98{self.cart.customer.user.phone}']
+            )
 
         super().save(*args, **kwargs)
 

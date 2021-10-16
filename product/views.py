@@ -67,3 +67,4 @@ class CategoryProductsView(generic.ListView):
         return context
 
 
+

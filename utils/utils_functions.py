@@ -196,11 +196,11 @@ class SMSThread(threading.Thread):
     def run(self) -> None:
         sms = Client(const.SMS_API_KEY)
         pattern_values = {
-            "date": self.content,
+            "verification-code": self.content,
         }
 
         sms.send_pattern(
-            "ls7gnxv2gn",
+            "b3dcrp5j1r",
             const.SMS_NUMBER,
             self.recipient_list[0],
             pattern_values,
@@ -209,3 +209,30 @@ class SMSThread(threading.Thread):
 
 def send_sms_thread(content, recipient_list):
     SMSThread(content, recipient_list).start()
+
+
+class ProcessingSMSThread(threading.Thread):
+    def __init__(self, content, recipient_list):
+        self.content = content
+        self.recipient_list = recipient_list
+        threading.Thread.__init__(self)
+
+    def run(self) -> None:
+        sms = Client(const.SMS_API_KEY)
+        pattern_values = {
+            "name": self.content['name'],
+            'order-number': self.content['order'],
+            'delivery-code': self.content['code'],
+            'link': self.content['link']
+        }
+
+        sms.send_pattern(
+            "u3mqw50ubd",
+            const.SMS_NUMBER,
+            self.recipient_list[0],
+            pattern_values,
+        )
+
+
+def send_processing_sms_thread(content, recipient_list):
+    ProcessingSMSThread(content, recipient_list).start()

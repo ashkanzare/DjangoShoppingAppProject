@@ -3,6 +3,7 @@
 {% load crispy_forms_filters %}
 {% load i18n %}
 {% load crispy_forms_tags %}
+{% block head %}<script src="{% static 'js/register.js' %}"></script>{% endblock %}
 {% block title %}{% translate "ورود/ثبت نام | فروشگاه اینترنتی میشاپ" %}{% endblock %}
 {% block main %}
     <input type="hidden" id="customer-login-url" data-url="{% url 'customer:login' 'confirm' %}">
@@ -38,12 +39,12 @@
                                 {% if not auth_by %}
                                     <div class="mt-5 mb-4">
                                         <a href="{% url 'customer:login' "confirm" %}?token={{ token }}&login_type={{ "onetime_code" }}"
-                                           class="links"> ورود با رمز یکبار مصرف<span class="mr-2">></span></a>
+                                           class="links"> ورود با رمز یکبار مصرف<span class="mr-2"><i class="fa fa-chevron-left mt-1 arrow-left" aria-hidden="true"></i></span></a>
                                     </div>
                                 {% endif %}
                                 <div>
                                     <a href="{% url 'customer:phone-reset-password' 'confirm' %}?token={{ token }}"
-                                       class="links"> بازیابی رمزعبور<span class="mr-2">></span></a>
+                                       class="links"> بازیابی رمزعبور<span class="mr-2"><i class="fa fa-chevron-left mt-1 arrow-left" aria-hidden="true"></i></span></a>
                                 </div>
                             </div>
                             <input type="submit" class="btn red w-100 submit-btn" value="ادامه">
@@ -120,7 +121,7 @@
                                 {% if login %}
                                     <div class="mt-2 mb-5">
                                         <a href="{% url 'customer:login' "confirm" %}?token={{ token }}&login_type={{ "password" }}"
-                                           class="links"> ورود با رمزعبور<span class="mr-2">></span></a>
+                                           class="links"> ورود با رمزعبور<span class="mr-2"><i class="fa fa-chevron-left mt-1 arrow-left" aria-hidden="true"></i></span></a>
                                     </div>
 
                                 {% endif %}

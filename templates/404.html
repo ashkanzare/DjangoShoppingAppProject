@@ -1,0 +1,17 @@
+{% extends 'home_base.html' %}
+{% load crispy_forms_filters %}
+{% load i18n %}
+{% load static %}
+{% load product_extras %}
+{% load crispy_forms_tags %}
+{% block head %}<script src="{% static 'js/home.js' %}"></script>
+    <style>#base-main-div {margin-bottom: 20%!important;}</style>{% endblock %}
+{% block title %}{% translate "فروشگاه اینترنتی میشاپ" %}{% endblock %}
+{% block content %}
+
+    <div class="container vh-100 under-nav mb-5 text-center bg-white rounded p-5 w-75" style="margin-top: 10%!important; margin-bottom: 10%">
+        <h1>صفحه ای که دنبالش هستید رو پیدا نکردیم</h1>
+    </div>
+
+
+{% endblock %}

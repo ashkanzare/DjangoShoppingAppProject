@@ -1,14 +1,10 @@
 from django.shortcuts import render
 from django.views.generic import ListView
-from rest_framework import mixins, generics
 from rest_framework.authtoken.models import Token
 
 from order.models import Order
-from utils.utils_functions import convert_place_name_to_persian
-from .forms import UserRegisterLogin, UserCode, UserPassword, ResetPassword
-
-# Create your views here.
-from .models import Customer, Address
+from customer.forms import UserRegisterLogin, UserCode, UserPassword, ResetPassword
+from customer.models import Customer, Address
 
 
 def user_register_login(request):
@@ -51,7 +47,7 @@ def user_login(request, token):
         }
         return render(request, 'customer/register-login.html', context=context)
     except Token.DoesNotExist:
-        return render(request, 'page_not_found/page_not_found.html', context={})
+        return render(request, '404.html', context={})
 
 
 def user_register(request, token):
@@ -71,7 +67,7 @@ def user_register(request, token):
         }
         return render(request, 'customer/register-login.html', context=context)
     except Token.DoesNotExist:
-        return render(request, 'page_not_found/page_not_found.html', context={})
+        return render(request, '404.html', context={})
 
 
 def phone_reset_password(request, token):
@@ -89,7 +85,7 @@ def phone_reset_password(request, token):
         }
         return render(request, 'customer/auth/restore-password.html', context=context)
     except Token.DoesNotExist:
-        return render(request, 'page_not_found/page_not_found.html', context={})
+        return render(request, '404.html', context={})
 
 
 def confirm_code_for_reset_password(request, token):
@@ -109,7 +105,7 @@ def confirm_code_for_reset_password(request, token):
         }
         return render(request, 'customer/auth/restore-password.html', context=context)
     except Token.DoesNotExist:
-        return render(request, 'page_not_found/page_not_found.html', context={})
+        return render(request, '404.html', context={})
 
 
 def reset_password(request, token):
@@ -131,7 +127,7 @@ def reset_password(request, token):
 
         return render(request, 'customer/auth/restore-password.html', context=context)
     except Token.DoesNotExist:
-        return render(request, 'page_not_found/page_not_found.html', context={})
+        return render(request, '404.html', context={})
 
 
 class CustomerProfileListView(ListView):
@@ -144,12 +140,18 @@ class CustomerProfileListView(ListView):
 
     def get_queryset(self):
         logged_in_user = self.request.user
-        return Customer.objects.get(user=logged_in_user)
+        return Customer.get_by_user_or_none(logged_in_user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['last_three_orders'] = Order.objects.filter(cart__customer=self.get_queryset())
         return context
+
+    def get(self, request, *args, **kwargs):
+        if not self.request.user.is_anonymous:
+            if self.get_queryset():
+                return super(CustomerProfileListView, self).get(request, *args, **kwargs)
+        return render(request, '404.html', context={})
 
 
 class CustomerProfileEditListView(ListView):
@@ -162,7 +164,7 @@ class CustomerProfileEditListView(ListView):
 
     def get_queryset(self):
         logged_in_user = self.request.user
-        return Customer.objects.get(user=logged_in_user)
+        return Customer.get_by_user_or_none(logged_in_user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -171,6 +173,12 @@ class CustomerProfileEditListView(ListView):
         context['months'] = [i for i in range(1, 13)]
         context['years'] = [i for i in range(1310, 1384)]
         return context
+
+    def get(self, request, *args, **kwargs):
+        if not self.request.user.is_anonymous:
+            if self.get_queryset():
+                return super(CustomerProfileEditListView, self).get(request, *args, **kwargs)
+        return render(request, '404.html', context={})
 
 
 class CustomerAddressListView(ListView):
@@ -183,9 +191,15 @@ class CustomerAddressListView(ListView):
 
     def get_queryset(self):
         logged_in_user = self.request.user
-        return Customer.objects.get(user=logged_in_user)
+        return Customer.get_by_user_or_none(logged_in_user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['addresses'] = Address.objects.filter(customer__user=self.request.user)
         return context
+
+    def get(self, request, *args, **kwargs):
+        if not self.request.user.is_anonymous:
+            if self.get_queryset():
+                return super(CustomerAddressListView, self).get(request, *args, **kwargs)
+        return render(request, '404.html', context={})

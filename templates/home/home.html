@@ -8,52 +8,6 @@
 {% block title %}{% translate "فروشگاه اینترنتی میشاپ" %}{% endblock %}
 {% block content %}
 
-
-    {% block active_navbar_home %}active{% endblock %}
-    <div class="container vh-100 under-nav mb-5" id="products-container">
-
-        </div>
-{#        {% for category in object_list %}#}
-{#            {% if category.products %}#}
-{#                <div class="category-div">#}
-{#                    <h5 class="text-right p-3">{{ category.name }}</h5>#}
-{#                    <div class="d-flex justify-content-center">#}
-{#                        {% for product in category.products %}#}
-{#                            <a class="product-a-container" href="{% url 'product:product-detail' product.id %}">#}
-{#                                <div class="card text-right m-3" style="width: 17rem">#}
-{#                                    <div style="height: 15rem;" class="text-center">#}
-{#                                        <img class="card-img-top" src="{{ product.get_first_image.image.url }}"#}
-{#                                             style="object-fit: scale-down; height: 100%; width: 100%"#}
-{#                                             alt="product image">#}
-{#                                    </div>#}
-{#                                    <div class="card-body">#}
-{#                                        <p class="card-title">{{ product.name|short_description }}</p>#}
-{#                                        <div class="text-left price">#}
-{#                                            {% if product.calc_final_price_with_default_properties.0 %}#}
-{#                                                <div class="d-flex justify-content-end">#}
-{#                                                    <strike class="card-text m-2"#}
-{#                                                            style="font-size: 85%">{{ product.calc_final_price_with_default_properties.3|price_format }} </strike>#}
-{#                                                    <p class="p-2"#}
-{#                                                       style="font-size: 90%; background-color: red; color: white; border-radius: 20px;">{{ product.calc_final_price_with_default_properties.2|en_to_fa }}%</p>#}
-{#                                                </div>#}
-{#                                                <p class="card-text">{{ product.calc_final_price_with_default_properties.1|price_format }}#}
-{#                                                    تومان </p>#}
-{#                                            {% else %}#}
-{##}
-{#                                                <p class="card-text m-2">{{ product.calc_final_price_with_default_properties.1|price_format }}#}
-{#                                                    تومان </p>#}
-{#                                            {% endif %}#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </a>#}
-{#                        {% endfor %}#}
-{#                    </div>#}
-{#                </div>#}
-{##}
-{#            {% endif %}#}
-{#        {% endfor %}#}
-
-    </div>
+    <div class="container vh-100 under-nav mb-5" id="products-container"></div>
 
 {% endblock %}

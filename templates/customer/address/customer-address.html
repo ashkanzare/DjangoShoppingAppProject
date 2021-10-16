@@ -9,9 +9,9 @@
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.5.0/mapbox-gl.css' rel='stylesheet'/>
 {% endblock %}
 {% block content %}
-
+    <input type="hidden" id="delete-an-address-url" data-url="{% url 'customer_api:delete-customer-address' %}">
     <!--  modal start  -->
-    <div id="address-modal" class="modal fade" role="dialog" style="margin-top: 10%!important;">
+    <div id="address-modal" class="modal fade" role="dialog" style="margin-top: 10%!important;" data-key="null">
         <div class="modal-dialog">
 
             <div class="modal-content">
@@ -22,7 +22,8 @@
                 </div>
                 <div class="modal-body" id="address-body">
                     <div id="MAP">
-                        <section class="map_box_container" style="position: relative; height: 30rem">
+                        <section class="map_box_container" id="map-containter-test"
+                                 style="position: relative; height: 30rem">
                             <!--MAP-->
                             <div id='map'></div>
                         </section>
@@ -50,8 +51,8 @@
                             <div class="pb-2"></div>
                             <div class="public-profile-pic m-3 mr-5">
                                 <div class="pt-2">
-                                    <h5 style="font-size: 80%">{{ customer_object|get_fullname_or_return_phone }}</h5>
-                                    <p style="font-size: 80%">{% if not customer_object|return_full_name == '-' %}
+                                    <h5 >{{ customer_object|get_fullname_or_return_phone }}</h5>
+                                    <p>{% if not customer_object|return_full_name == '-' %}
                                         ۰{{ user.phone|en_to_fa }}{% endif %}</p>
                                 </div>
                             </div>
@@ -66,19 +67,9 @@
                                         <div>سفارش های من</div>
                                         <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
                                     </a>
-                                    <a href="#"
-                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
-                                        <div>نظرات</div>
-                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
-                                    </a>
                                     <a href="{% url 'customer:profile-addresses' %}"
                                        class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
                                         <div>نشانی ها</div>
-                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
-                                    </a>
-                                    <a href="#"
-                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
-                                        <div>کارت های هدیه</div>
                                         <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
                                     </a>
                                     <a href="{% url 'customer:profile' %}"
@@ -114,9 +105,125 @@
                                     {% if addresses %}
                                         <div class="pt-4">
                                             {% for address in addresses %}
-                                                <div class="row p-3">
+
+                                                <div style="display: none" id="{{ address.id }}-form">
+
+                                                    <form action="{% url 'customer_api:update-customer-address' %}" id="address-form-{{ address.id }}"
+                                                          class="text-right p-5" method="post"
+                                                          style="border-top: 1px solid black"
+                                                          onsubmit="return validateAddressForm()">
+                                                        <input type="hidden" value="{{ address.id }}" name="id">
+                                                        {% csrf_token %}
+                                                        <div class="d-flex justify-content-center mb-2">
+                                                            <div id="address-form-errors"
+                                                                 class="text-center d-none error-div pr-5 pl-5"></div>
+                                                        </div>
+                                                        <div class="form-row mb-4">
+
+                                                            <div class="col" id="{{ address.id }}-provinces">
+                                                                <!-- Province -->
+                                                                <label for="province">استان<sup>*</sup></label>
+
+                                                            </div>
+                                                            <div id="cities-div" class="col">
+                                                                <!-- City -->
+                                                                <label for="city">شهر<sup>*</sup></label>
+
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- address -->
+                                                        <label for="postal_address">نشانی پستی<sup>*</sup></label>
+                                                        <input type="text" id="postal_address" name="postal_address"
+                                                               class="form-control mb-4">
+
+
+                                                        <div class="form-row mb-4">
+                                                            <div class="col">
+                                                                <!-- building number -->
+                                                                <label for="building_number">پلاک<sup>*</sup></label>
+                                                                <input type="text" id="building_number"
+                                                                       name="building_number" maxlength="4"
+                                                                       class="form-control" value="{{ address.building_number }}">
+                                                            </div>
+
+                                                            <div class="col">
+                                                                <!-- building unit -->
+                                                                <label for="building_unit">واحد<sup>*</sup></label>
+                                                                <input type="text" id="building_unit"
+                                                                       name="building_unit" class="form-control"
+                                                                       maxlength="5" value="{{ address.building_unit }}">
+                                                            </div>
+
+                                                            <div class="col-6">
+                                                                <!-- postal code -->
+                                                                <label for="postal_code">کد پستی<sup>*</sup></label>
+                                                                <input type="text" id="postal_code" name="postal_code"
+                                                                       maxlength="10" class="form-control" value="{{ address.postal_code }}">
+                                                                <small>کدپستی باید ۱۰ رقم و بدون خط تیره باشد</small>
+                                                            </div>
+                                                        </div>
+
+                                                        <hr>
+                                                        <div class="form-check text-right pb-5">
+                                                            <input type="checkbox" id="receiver" name="receiver"
+                                                                   class="form-check-input">
+                                                            <label class="form-check-label mr-5" for="receiver">گیرنده
+                                                                سفارش خودم هستم</label>
+                                                        </div>
+                                                        <div>
+                                                            <div class="form-row mb-4">
+                                                                <div class="col">
+                                                                    <!-- receiver first name -->
+                                                                    <label for="receiver_first_name">نام
+                                                                        گیرنده<sup>*</sup></label>
+                                                                    <input type="text" id="receiver_first_name"
+                                                                           name="receiver_first_name"
+                                                                           class="form-control" value="{{ address.receiver_first_name }}">
+                                                                </div>
+
+                                                                <div class="col">
+                                                                    <!-- receiver last name -->
+                                                                    <label for="receiver_last_name">نام خانوادگی
+                                                                        گیرنده<sup>*</sup></label>
+                                                                    <input type="text" id="receiver_last_name"
+                                                                           name="receiver_last_name"
+                                                                           class="form-control" value="{{ address.receiver_last_name }}">
+                                                                </div>
+
+                                                                <div class="col-12">
+                                                                    <!-- receiver phone -->
+                                                                    <label for="receiver_phone">شماره موبایل<sup>*</sup></label>
+                                                                    <input type="text" id="receiver_phone"
+                                                                           name="receiver_phone" class="form-control" value="{{ address.receiver_phone }}">
+                                                                    <small>مثل: ۰۹۱۲۳۴۵۶۷۸۹</small>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="d-flex justify-content-around pt-3 mt-3"
+                                                             style="border-top: 1px solid black">
+                                                            <button class="small-font mt-1 link-buttons text-primary"
+                                                                    onclick="refresh_map()">اصلاح موقعیت روی نقشه
+                                                            </button>
+                                                            <button style="min-width: 10rem!important;"
+                                                                    class="btn btn-danger" type="submit">
+                                                                تایید و ثبت آدرس
+                                                            </button>
+                                                        </div>
+                                                    </form>
+
+                                                </div>
+
+
+                                                <div class="row p-3" id="{{ address.id }}-div">
                                                     <div class="col-12 text-right pb-3 pt-3 mr-2 mb-2 font-weight-bold">
-                                                        <p>{{ address.postal_address }}</p>
+                                                        <div class="row">
+                                                            <div class="col-11"><p>{{ address.postal_address }}</p></div>
+                                                            <div class="col-1">
+                                                                <button class="link-buttons" onclick="delete_address({{ address.id }})"><i class="fa fa-times" aria-hidden="true"></i></button>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="col-12 text-right mb-3">
                                                         <i class="fa fa-map-signs" aria-hidden="true"></i>
@@ -131,18 +238,21 @@
                                                         <small>{{ address.receiver_first_name }} {{ address.receiver_last_name }}</small>
                                                     </div>
                                                     <div class="col-12 text-right mt-3">
-                                                        <a class="small-font edit-address-link" href="">ویرایش نشانی<i
+                                                        <button class="link-buttons small-font edit-address-link"
+                                                                data-toggle="modal" data-target="#address-modal"
+                                                                onclick="reset_address({{ address.id }}, {{ address.position_x }}, {{ address.position_y }})">
+                                                            ویرایش نشانی<i
                                                                 class="fa fa-chevron-left mr-2 arrow-left"
-                                                                aria-hidden="true"></i></a>
+                                                                aria-hidden="true"></i></button>
                                                     </div>
                                                 </div>
-                                                <hr>
+                                                <hr id="{{ address.id }}-hr">
 
 
                                             {% endfor %}
                                             <div class="col-12 text-right mt-3 pb-4">
                                                 <button class="link-buttons  d-flex" data-toggle="modal"
-                                                        data-target="#address-modal" onclick="show_map()">
+                                                        data-target="#address-modal" onclick="new_address()">
                                                     <i class="fa fa-map-marker ml-3" aria-hidden="true"></i>
                                                     <p style="font-size: 90%">اضافه کردن آدرس جدید</p>
                                                 </button>
@@ -154,7 +264,8 @@
                                         <p class="mt-2 small-font">با ثبت نشانی‌های خود، روند خریدتان را سریع‌تر
                                             کنید</p>
                                         <button style="min-width: 20rem!important;" class="btn btn-outline-danger"
-                                                data-toggle="modal" data-target="#address-modal" onclick="show_map()">
+                                                data-toggle="modal" data-target="#address-modal"
+                                                onclick='new_address()'>
                                             افزودن نشانی جدید
                                         </button>
                                     {% endif %}

@@ -16,9 +16,10 @@
                             <div class="pb-2"></div>
                             <div class="public-profile-pic m-3 mr-5">
                                 <div class="pt-2">
-                                    <h5>{{ customer_object|get_fullname_or_return_phone }}</h5>
-                                    <p>{% if not customer_object|return_full_name == '-' %}
-                                        ۰{{ user.phone|en_to_fa }}{% endif %}</p>
+
+                                    {% if not customer_object|return_full_name == '-' %}
+                                        ۰{{ user.phone|en_to_fa }}{% else %}
+                                        <h5>{{ customer_object|get_fullname_or_return_phone }}</h5>{% endif %}
                                 </div>
                             </div>
 
@@ -27,27 +28,19 @@
                         <div>
                             <div class="position-sticky">
                                 <div class="list-group list-group-flush mx-3 mt-4">
-                                    <a href="#"
+                                    <a href="{% url 'customer:profile' %}"
                                        class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
                                         <div>سفارش های من</div>
                                         <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
                                     </a>
-                                    <a href="#"
-                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
-                                        <div>نظرات</div>
-                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
-                                    </a>
+
                                     <a href="{% url 'customer:profile-addresses' %}"
                                        class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
                                         <div>نشانی ها</div>
                                         <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
                                     </a>
-                                    <a href="#"
-                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
-                                        <div>کارت های هدیه</div>
-                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
-                                    </a>
-                                    <a href="#"
+
+                                    <a href="{% url 'customer:profile' %}"
                                        class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
                                         <div>اطلاعات حساب</div>
                                         <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
@@ -73,7 +66,9 @@
                     <div class="bg-white rounded mb-5 pb-5">
                         <div class="d-flex p-5">
                             <div class="d-flex">
-                                <a href="{% url 'customer:profile' %}"><i class="fa fa-arrow-right mt-3 ml-3  responsive-font" style="font-size: 150%" aria-hidden="true"></i></a>
+                                <a href="{% url 'customer:profile' %}"><i
+                                        class="fa fa-arrow-right mt-3 ml-3  responsive-font" style="font-size: 150%"
+                                        aria-hidden="true"></i></a>
                                 <h4 class="font-weight-bold responsive-font">جزییات سفارش</h4>
                             </div>
                             <div class="mr-5 mt-1">
@@ -88,7 +83,7 @@
                         <hr>
                         <div>
                             <div class="d-flex p-5">
-                                <div  style="font-size: 100%!important;">
+                                <div style="font-size: 100%!important;">
                                     <span class="text-secondary responsive-font">تحویل گیرنده:</span><span
                                         class="font-weight-bold responsive-font"> {{ order.address.receiver_first_name }} {{ order.address.receiver_last_name }}</span>
                                 </div>
@@ -108,7 +103,8 @@
                                     <span class="text-secondary responsive-font">مبلغ کل:</span><span
                                         class="font-weight-bold responsive-font"> {{ order.total_price|price_format }}</span><span> تومان</span>
                                 </div>
-                                <div><i class="fa fa-circle sep-dot mr-3 ml-3 responsive-font" aria-hidden="true"></i></div>
+                                <div><i class="fa fa-circle sep-dot mr-3 ml-3 responsive-font" aria-hidden="true"></i>
+                                </div>
                                 <div>
                                     <span class="text-secondary responsive-font">تخفیف:</span><span
                                         class="font-weight-bold responsive-font"> {{ order.total_cart_price_info.3|price_format }} </span><span> تومان</span>
@@ -202,7 +198,8 @@
                                                 <div class="text-left">{{ item.number|en_to_fa }}</div>
                                             </div>
                                             <div class="col-12 col-md-7 mt-5 mt-md-0 text-right">
-                                                <h6 class="font-weight-bold  responsive-font" style="line-height: 2rem">{{ item.product.name }}</h6>
+                                                <h6 class="font-weight-bold  responsive-font"
+                                                    style="line-height: 2rem">{{ item.product.name }}</h6>
                                                 {% if item.product_color %}
 
                                                     <div class="mt-5 mr-2">
