@@ -35,7 +35,7 @@ Clone the project
   git clone https://github.com/ashkanzare/DjangoShoppingAppProject.git
 ```
 
-Modify the sample .sample-env file with your database, sms, ... settings and rename it to .env
+Modify the sample .sample-env file with your database, sms, ... settings and rename it to .env in OnlineShopApp folder
 ```bash
   mv .sample-env .env
   vim .env
