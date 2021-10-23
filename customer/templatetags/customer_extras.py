@@ -103,7 +103,6 @@ def equal(num_1, num_2):
 
 @register.filter(name='price_format')
 def price_format(price):
-    print(price)
     int_price = format(int(price), ',')
     return en_to_fa(str(int_price))
 

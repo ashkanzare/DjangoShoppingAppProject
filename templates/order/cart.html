@@ -195,7 +195,7 @@
                                 <div class="col-6 text-right text-secondary"><h5 style="font-size: 80%">قیمت کالاها</h5>
                                 </div>
                                 <div class="col-6 text-left" id="cart-price-without-discount">
-                                    <h5>{{ object_list.calc_price.0|price_format }}</h5>
+                                    <h5>{{ object_list.calc_price.0|price_format }} <span class="small-font mr-2"> تومان </span></h5>
                                 </div>
 
                             </div>
@@ -205,7 +205,7 @@
                                     کالاها</h5></div>
                                 <div class="col-6 text-left" id="cart-discount">
                                     <h5 class="text-danger d-flex justify-content-end">
-                                        <span class="ml-2">({{ object_list.calc_price.2|price_format }}%)  </span><span>{{ object_list.calc_price.3|price_format }}</span>
+                                        <span class="ml-2">({{ object_list.calc_price.2|price_format }}%)  </span><span>{{ object_list.calc_price.3|price_format }}</span><span class="small-font mr-2"> تومان </span>
                                     </h5>
                                 </div>
 
@@ -215,7 +215,7 @@
 
                                 <div class="col-6 text-right"><h5 style="font-size: 80%">جمع سبد خرید</h5></div>
                                 <div class="col-6 text-left" id="cart-total-price">
-                                    <h5>{{ object_list.calc_price.1|price_format }}</h5>
+                                    <h5>{{ object_list.calc_price.1|price_format }} <span class="small-font mr-2"> تومان </span></h5>
                                 </div>
 
                             </div>

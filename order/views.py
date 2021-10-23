@@ -123,7 +123,6 @@ class OrderDetailView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['customer_object'] = self.get_queryset().cart.customer
-        print(self.get_queryset().cart.customer)
         return context
 
     def get(self, request, *args, **kwargs):

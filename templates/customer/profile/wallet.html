@@ -1,0 +1,83 @@
+{% extends 'home_base.html' %}
+{% load customer_extras %}
+{% load static %}
+{% block head %}
+    <script src="{% static 'js/modals.js' %}"></script>{% endblock %}
+{% block title %}کیف پول
+    {% if customer_object.customer.first_name and customer_object.customer.last_name %}
+        {{ customer.customer.first_name }}
+        {{ customer.customer.last_name }}{% else %}{{ user.phone }}{% endif %}{% endblock %}
+{% block active_navbar_profile %}active{% endblock %}
+{% block content %}
+    <div class="vh-100 w-100 text-center under-nav">
+        <div class="text-center" id="side-main-div">
+            <div class="d-flex justify-content-between side-main-div-container">
+                <div class="sidebar">
+                    <div class="mb-3 rounded ad-div"></div>
+                    <div class="bg-white rounded sidebar-main text-center">
+                        <div>
+                            <div class="pb-2"></div>
+                            <div class="public-profile-pic m-3 mr-5">
+                                <div class="pt-2">
+                                    <h5>{{ customer_object.customer|get_fullname_or_return_phone }}</h5>
+                                    <p>{% if not customer_object.customer|return_full_name == '-' %}
+                                        ۰{{ user.phone|en_to_fa }}{% endif %}</p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <span class="sep-border"></span>
+                        <div>
+                            <div class="position-sticky">
+                                <div class="list-group list-group-flush mx-3 mt-4">
+                                    <a href="{% url 'customer:profile' %}"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>سفارش های من</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                    <a href="{% url 'customer:profile-addresses' %}"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>نشانی ها</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                    <a href="{% url 'customer:profile-wallet' %}"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>کیف پول</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                    <a href="{% url 'customer:profile' %}"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order mb-2">
+                                        <div>اطلاعات حساب</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+
+
+                                </div>
+                            </div>
+                            <span class="sep-border"></span>
+                            <div class="position-sticky">
+                                <div class="list-group list-group-flush mx-3 mt-4 pb-4">
+                                    <a href="{% url 'customer:logout' %}"
+                                       class="list-group-item d-flex justify-content-between list-group-item-action py-2 text-right my-order ">
+                                        <div>خروج</div>
+                                        <div><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="main">
+                    <div class="col-12 bg-white rounded mb-5" style="min-height: 40rem">
+                        <img class="mt-3" style="width: 20%" src="{% static 'img/wallet.png' %}"
+                             alt="address-logo">
+
+                        <h4><span>موجودی شما: </span><span>{{ customer_object.coin|price_format }} میکوین </span> (<span>{{ customer_object.convert_to_toman|price_format }} تومان</span>)</h4>
+                        <h5>با هر مقدار خرید به اندازه یک درصد از آن میکوین هدیه میگیرید.</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

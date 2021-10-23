@@ -23,3 +23,8 @@ class DiscountCodeAdmin(admin.ModelAdmin):
 @admin.register(Customer)
 class ProductAdmin(admin.ModelAdmin):
     inlines = [MeCoinWalletTabularInline, DiscountCodeTabularInline]
+
+
+@admin.register(MeCoinWallet)
+class MeCoinWalletAdmin(admin.ModelAdmin):
+    pass

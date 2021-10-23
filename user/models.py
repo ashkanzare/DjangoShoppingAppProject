@@ -4,7 +4,6 @@ from django.contrib.auth.models import Group
 from django.db import models
 from django.utils.datetime_safe import datetime
 from django.utils.translation import gettext as _
-from rest_framework import permissions
 
 import constants.vars as const
 from utils.utils_functions import generate_random_code, compute_code_expire_time
@@ -47,21 +46,6 @@ class UserManager(BaseUserManager):
         return self._create_user(phone, password, is_manager=True, **extra_fields)
 
 
-class ObjectIsCustomerOnly(permissions.BasePermission):
-    """
-    Custom permission to only allow staff to edit customers not superusers.
-    """
-
-    def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed to any request,
-        # so we'll always allow GET, HEAD or OPTIONS requests.
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
-        # Write permissions are only allowed to the owner of the snippet.
-        return obj.is_customer
-
-
 class User(AbstractUser):
     """ User model """
 
@@ -70,7 +54,7 @@ class User(AbstractUser):
     phone = models.CharField(max_length=10000, unique=True, verbose_name=_(const.PHONE))
     is_customer = models.BooleanField(default=False, verbose_name=_(const.CUSTOMER))
     is_manager = models.BooleanField(default=False, verbose_name=_(const.MANAGER))
-    is_staff = models.BooleanField(default=False, verbose_name=_(const.STAFF))
+    is_employee = models.BooleanField(default=False, verbose_name=_(const.STAFF))
 
     USERNAME_FIELD = 'phone'
 
@@ -120,9 +104,12 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        if self.is_staff:
-            group = Group.objects.get(name='staff')
-            self.groups.add(group)
+        if self.is_employee:
+            try:
+                group = Group.objects.get(name='staff')
+                self.groups.add(group)
+            except Group.DoesNotExist:
+                pass
 
 
 class UserAuthCode(models.Model):

@@ -97,19 +97,26 @@ function pre_next(url, category_id) {
 
 function get_products(category_list) {
     let url = $("#products-by-category-url").data('url')
+    let new_pagination;
+    if (window.outerWidth <= 850) {
+        new_pagination = 1
+    } else {
+        new_pagination = 4
+    }
     for (let category of category_list) {
         $.ajax({
             type: "GET",
-            url: url + '?category_id=' + category.id,
+            url: url + '?category_id=' + category.id + '&new_pagination=' + new_pagination,
             success: function (data) {
 
                 let html =
                     `
                         <div class="category-div mt-4 pt-3 pb-3">
+                            <div class="row"><div class="col-12 text-right mr-5 mt-3">${category.name} (<small>${toFarsiNumber(category.products_count)} <span>محصول</span></small>)</div></div>
                             <div class="row justify-content-between">
-                                <div class="col-1" style="margin-top: 9%"> <i class="fa fa-chevron-circle-right button-nav" aria-hidden="true" id="next-${category.id}" style="font-size: 400%" onclick="pre_next('${data.next}', ${category.id})"></i> </div>
-                                <div style="height: 28rem" class="col-9 text-center d-flex justify-content-center" id="cat-${category.id}-product"></div>
-                                <div class="col-1" style="margin-top: 9%"> <i class="fa fa-chevron-circle-left button-nav" aria-hidden="true" id="pre-${category.id}" style="font-size: 400%" onclick="pre_next('${data.previous}', ${category.id})"></i> </div>
+                                <div class="col-2 col-md-1" style="margin-top: 9%"> <i class="fa fa-chevron-circle-right button-nav mt-5 mt-md-0" aria-hidden="true" id="next-${category.id}" style="font-size: 400%" onclick="pre_next('${data.next}', ${category.id})"></i> </div>
+                                <div style="height: 28rem" class="col-6 text-center d-flex justify-content-center col-md-9" id="cat-${category.id}-product"></div>
+                                <div class="col-2 col-md-1" style="margin-top: 9%"> <i class="fa fa-chevron-circle-left button-nav mt-5 mt-md-0" aria-hidden="true" id="pre-${category.id}" style="font-size: 400%" onclick="pre_next('${data.previous}', ${category.id})"></i> </div>
                             </div>
                         </div>    
         `
@@ -131,7 +138,6 @@ function get_products(category_list) {
                         })
                     }
                     let category_div = $(`#cat-${category.id}-product`)
-
 
                     for (let product of data.results) {
 

@@ -60,7 +60,7 @@ function get_product_images(product_id) {
             let modal_body = $('#product-images-modal-body')
             let images_html = ''
             for (let image of data) {
-                console.log(data)
+
                 let img = `<img class="mySlides" src="${image.image}" style="width:100%" alt="product image">`
                 images_html += img
             }
@@ -231,6 +231,7 @@ function pre_next(url, category_id) {
                             $(this).css('cursor', 'pointer')
                         })
                 }
+
                 category_div.html('')
                 for (let product of data.results) {
                     category_div.append(product_cart(product))
@@ -295,7 +296,6 @@ $(document).ready(function () {
 
     let category_id = [{id: $("#category-id-data").data('key')}]
     let product_id = $("#product-id-data").data('key')
-    console.log(category_id, product_id)
     get_products(category_id, product_id)
 
 

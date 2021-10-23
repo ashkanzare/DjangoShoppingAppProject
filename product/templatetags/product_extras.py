@@ -23,7 +23,6 @@ def en_to_fa(text):
 
 @register.filter(name='price_format')
 def price_format(price):
-    print(price)
     int_price = format(int(price), ',')
     return en_to_fa(str(int_price))
 

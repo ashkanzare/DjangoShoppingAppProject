@@ -1,12 +1,10 @@
 import re
 
 from django.contrib.auth import login, authenticate
-from django.core.mail import send_mail
 from rest_framework import viewsets, status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from sms import send_sms
 
 from customer.models import Customer
 from user.api.serializers import UserSerializer, CustomerUserSerializer, UserAuthCodeSerializer, \
@@ -247,7 +245,6 @@ def reset_password_get_code(request):
                     'response': 'invalid input',
                     'status': 5
                 }
-        print(serializer.error_messages)
         return Response(data)
 
 

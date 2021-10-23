@@ -20,6 +20,10 @@ class Category(models.Model):
     def __str__(self):
         return f"[ Parent: {self.parent.name if self.parent else 0} ] -- [ Child: {self.name} ]"
 
+    @property
+    def products_count(self):
+        return self.product_set.all().count()
+
     class Meta:
         ordering = ('parent__name',)
 

@@ -11,20 +11,26 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
+import environ
+
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!0d0%h-rjrd-%g3*&scg$@kke3ap&*9-#47%1!3)de3&biozbq'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -90,20 +96,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'OnlineShopApp.wsgi.application'
 
-# Database
+# PosgreSQL Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-#
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'meshop-db',
-#         'USER': 'root',
-#         'PASSWORD': 'icixuWyLXyJ9VkVVKz8uG71i',
-#         'HOST': 'meshop-db',
+#         'NAME': env('DATABASE_NAME'),
+#         'USER': env('DATABASE_USERNAME'),
+#         'PASSWORD': env('DATABASE_PASSWORD'),
+#         'HOST': env('DATABASE_HOST'),
 #         'PORT': '5432'
 #     }
 # }
 
+# Use SQLite database settings if you don't have PostgreSQL on your system
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -171,6 +178,7 @@ AUTH_USER_MODEL = 'user.User'
 # )
 
 SESSION_COOKIE_SECURE = False
+
 # SMS Backend configure
 SMS_BACKEND = 'sms.backends.console.SmsBackend'
 

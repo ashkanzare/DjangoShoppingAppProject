@@ -1,0 +1,10 @@
+SECRET_KEY=random-secret-key
+DEBUG=True
+DATABASE_NAME=meshop-db
+DATABASE_USERNAME=root
+DATABASE_PASSWORD=root
+DATABASE_HOST=meshop-host
+SMS_API_TOKEN=your-sms-api-token
+SMS_NUMBER=your-sms-number
+SMS_PATTERN=your-sms-pattern
+SITE_EMAIL=your-site-email

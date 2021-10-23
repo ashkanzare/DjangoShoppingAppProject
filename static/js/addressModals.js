@@ -238,7 +238,7 @@ function address_details(address_list, address_str, pos_x, pos_y, check_for_new_
         url: api_url,
         data: {name: province.normalize()},
         success: function (data) {
-            console.log(data)
+
             let cities_select = `<select class="form-control cities" id="cities">`
             for (let i of data.cities) {
                 let option = `<option value="${i}">${i}</option>`
@@ -258,7 +258,7 @@ function address_details(address_list, address_str, pos_x, pos_y, check_for_new_
             url: api_url,
             data: {name: new_province.normalize()},
             success: function (data) {
-                console.log(data)
+
                 let cities_select = `<select class="form-control" id="cities">`
                 for (let i of data.cities) {
                     let option = `<option value="${i}">${i}</option>`
@@ -319,7 +319,6 @@ function address_details(address_list, address_str, pos_x, pos_y, check_for_new_
 
         let serialized_form = form.serialize() + '&token=' + $('#token').data('key') + `&city=${object.city}` + `&state=${object.state}` + `&position_x=${pos_x}&position_y=${pos_y}`
         disabled.attr('disabled', 'disabled');
-        console.log(serialized_form)
         let url = form.attr('action');
 
         $.ajax({
@@ -327,11 +326,11 @@ function address_details(address_list, address_str, pos_x, pos_y, check_for_new_
             url: url,
             data: serialized_form,
             success: function (data) {
-                console.log(data)
+
                 location.reload()
             },
             error: function (errors) {
-                console.log(errors)
+
             }
         });
 
@@ -614,7 +613,7 @@ function delete_address(address_id) {
                 $(`#${address_id}-hr`).remove()
             },
             error: function (e) {
-                console.log(e)
+
             }
         })
     }

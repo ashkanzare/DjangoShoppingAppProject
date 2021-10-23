@@ -252,13 +252,12 @@ class Order(models.Model):
             self.cart.save()
         if self.status == const.PROCESSING:
             send_processing_sms_thread(
-                {'name': self.cart.customer.first_name,
+                {'name': self.cart.customer.first_name if self.cart.customer.first_name else self.address.receiver_first_name,
                  'order': self.order_number,
                  'code': self.order_code,
-                 'link': reverse('order:order-detail', args=[self.id])},
+                 'link': 'https://meshop.iran.liara.run' + reverse('order:order-detail', args=[self.id])},
                 [f'98{self.cart.customer.user.phone}']
             )
-
         super().save(*args, **kwargs)
 
     @classmethod

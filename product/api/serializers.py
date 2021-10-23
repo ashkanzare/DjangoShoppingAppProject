@@ -14,6 +14,8 @@ class CategoryByIdSerializer(serializers.Serializer):
 
 
 class BasicCategorySerializer(serializers.ModelSerializer):
+    products_count = serializers.IntegerField()
+
     class Meta:
         model = Category
         fields = '__all__'

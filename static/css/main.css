@@ -59,10 +59,17 @@ body {
 
 @media screen and (max-width: 1390px) {
     #navbar-title {
-        font-family: digifont, serif !important;
-        color: #d51b1b !important;
-        font-size: 1.5rem !important;
-        text-align: left !important;
+        font-size: 3.5rem !important;
+    }
+
+}
+
+@media screen and (max-width: 850px) {
+    #navbar-title {
+        font-size: 5rem !important;
+    }
+    #base-main-div {
+        margin-top: 50%!important;
     }
 
 }
@@ -224,6 +231,13 @@ body {
     .responsive-font {
         font-size: 80% !important;
     }
+
+    .responsive-font-button {
+        font-size: 60% !important;
+    }
+    #profile-left-nav {
+        width: 50%!important;
+    }
 }
 
 .underline-dashed {
@@ -345,6 +359,7 @@ select:active {
 .category-div {
     background-color: white;
     border-radius: 20px;
+    width: 100%;
 }
 
 .card:hover {
@@ -909,7 +924,7 @@ sup {
 
 #return-to-top {
     padding: 13%;
-    width: 150%;
+    width: 100%;
     border: 1px solid gray;
     border-radius: 15px;
     background-color: transparent;

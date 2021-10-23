@@ -7,18 +7,24 @@ import string
 from hashlib import sha256
 from django.contrib.auth import get_user_model
 from django.db.models import Q
-from django.utils.datetime_safe import datetime, time
+from django.utils.datetime_safe import datetime
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 from django.contrib.staticfiles.finders import find
 from django.templatetags.static import static
 from django.core.mail import send_mail
+from sms import send_sms
 
 from constants.vars import STATES
 import constants.vars as const
 import threading
 from ippanel import Client
+import environ
+
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
 
 """
     utils_function.py is a module for extra functions that project needed
@@ -140,7 +146,6 @@ def get_states_and_cities(state_name):
         states = json.load(jsonfile)
         if state_name in STATES:
             index = STATES[state_name]
-            print({'cities': [city['name'] for city in states[index]['cities']]})
             return {'cities': [city['name'] for city in states[index]['cities']]}
         return {'cities': 'not found'}
 
@@ -177,7 +182,7 @@ class EmailThread(threading.Thread):
         send_mail(
             self.subject,
             self.content,
-            'meshop@gmail.com',
+            env('SITE_EMAIL'),
             self.recipient_list,
             fail_silently=False
         )
@@ -194,16 +199,23 @@ class SMSThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self) -> None:
-        sms = Client(const.SMS_API_KEY)
-        pattern_values = {
-            "verification-code": self.content,
-        }
-
-        sms.send_pattern(
-            "b3dcrp5j1r",
-            const.SMS_NUMBER,
-            self.recipient_list[0],
-            pattern_values,
+        # if you want to use faraz sms api just un-comment 203-213 and comment 214-219
+        # sms = Client(env('SMS_API_TOKEN'))
+        # pattern_values = {
+        #     "verification-code": self.content,
+        # }
+        #
+        # sms.send_pattern(
+        #     env('SMS_PATTERN'),
+        #     env('SMS_NUMBER'),
+        #     self.recipient_list[0],
+        #     pattern_values,
+        # )
+        send_sms(
+            self.content,
+            '+981000',
+            self.recipient_list,
+            fail_silently=False
         )
 
 
@@ -218,19 +230,26 @@ class ProcessingSMSThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self) -> None:
-        sms = Client(const.SMS_API_KEY)
-        pattern_values = {
-            "name": self.content['name'],
-            'order-number': self.content['order'],
-            'delivery-code': self.content['code'],
-            'link': self.content['link']
-        }
-
-        sms.send_pattern(
-            "u3mqw50ubd",
-            const.SMS_NUMBER,
-            self.recipient_list[0],
-            pattern_values,
+        # if you want to use faraz sms api just un-comment 233-247 and comment 247-252
+        # sms = Client(env('SMS_API_TOKEN'))
+        # pattern_values = {
+        #     "name": self.content['name'],
+        #     'order-number': self.content['order'],
+        #     'delivery-code': self.content['code'],
+        #     'link': self.content['link']
+        # }
+        #
+        # sms.send_pattern(
+        #     env('SMS_PATTERN_2'),
+        #     env('SMS_NUMBER'),
+        #     self.recipient_list[0],
+        #     pattern_values,
+        # )
+        send_sms(
+            const.order_sms(self.content),
+            '+981000',
+            self.recipient_list,
+            fail_silently=False
         )
 
 

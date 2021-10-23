@@ -4,7 +4,7 @@ from rest_framework.authtoken.models import Token
 
 from order.models import Order
 from customer.forms import UserRegisterLogin, UserCode, UserPassword, ResetPassword
-from customer.models import Customer, Address
+from customer.models import Customer, Address, MeCoinWallet
 
 
 def user_register_login(request):
@@ -202,4 +202,23 @@ class CustomerAddressListView(ListView):
         if not self.request.user.is_anonymous:
             if self.get_queryset():
                 return super(CustomerAddressListView, self).get(request, *args, **kwargs)
+        return render(request, '404.html', context={})
+
+
+class CustomerWalletListView(ListView):
+    """
+    view for see wallet of a user
+    """
+    model = Customer
+    template_name = 'customer/profile/wallet.html'
+    context_object_name = 'customer_object'
+
+    def get_queryset(self):
+        logged_in_user = self.request.user
+        return MeCoinWallet.objects.get(customer__user=logged_in_user)
+
+    def get(self, request, *args, **kwargs):
+        if not self.request.user.is_anonymous:
+            if self.get_queryset():
+                return super(CustomerWalletListView, self).get(request, *args, **kwargs)
         return render(request, '404.html', context={})

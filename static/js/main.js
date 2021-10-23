@@ -103,9 +103,13 @@ $(document).ready(function () {
 
     function scrollFunction() {
         if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            document.getElementById("under-nav-bar").style.top = "-50px";
+            if (document.getElementById("under-nav-bar")) {
+                document.getElementById("under-nav-bar").style.top = "-50px";
+            }
         } else {
-            document.getElementById("under-nav-bar").style.top = "0";
+            if (document.getElementById("under-nav-bar")) {
+                document.getElementById("under-nav-bar").style.top = "0";
+            }
         }
     }
 
@@ -363,7 +367,6 @@ $(document).ready(function () {
                     $('form div > input').val('')
                     $('#ajax-errors').html("<p style='font-size: 70%!important;'>کد وارد شده اشتباه است</p>")
                     message_pop_up()
-                    console.log($('#myPopup'))
 
                 } else if (response_status_code === 30) {
                     $('form div > input').val('')
@@ -445,6 +448,7 @@ $(document).ready(function () {
 
     let url = $("#categories-with-children-url").data('url')
     let detail_url = $("#category-detail-url").data('url')
+
     $.ajax({
         type: "GET",
         url: url,
@@ -478,6 +482,7 @@ $(document).ready(function () {
                     html.append(parent_div)
                 }
             }
+            $("#category-div").html('')
             $("#category-div").append(html)
         }
     });
@@ -516,7 +521,7 @@ function show_result() {
                     for (let product of data) {
                         let product_html = `
                             
-                            <div class="border-solid rounded pt-1 bg-white col-4 text-center pb-5" style="height: fit-content">
+                            <div class="border-solid rounded pt-1 bg-white col-12 col-md-4 text-center pb-5" style="height: available">
                                 <a href="${product_detail.replace('0', product.id)}" style="text-decoration: none" class="text-dark">
                                     <img style="width: 100px" class="mr-3" src="${product.image}">
                                     <div>

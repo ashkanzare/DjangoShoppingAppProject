@@ -49,7 +49,7 @@ function add_from_local_to_server(token) {
         url: url,
         data: {'token': token, 'session': session}, // serializes the form's elements.
         success: function (data) {
-            console.log(data)
+
         }
     });
 
@@ -108,7 +108,7 @@ function add_cart_to_database(token, product, color_id = null, property_id = nul
         delete_all = true
     }
 
-    console.log(data)
+
     $.ajax({
         type: "POST",
         url: url,
@@ -129,11 +129,11 @@ function add_cart_to_database(token, product, color_id = null, property_id = nul
                 let cart_discount = $('#cart-discount')
                 let cart_total_price = $('#cart-total-price')
 
-                cart_price_with_discount.html(`<h5>${toFarsiNumber(data.cart[0].toLocaleString())}</h5>`)
+                cart_price_with_discount.html(`<h5>${toFarsiNumber(data.cart[0].toLocaleString())} <span class="small-font mr-2"> تومان </span></h5> `)
                 cart_discount.html(` <h5 class="text-danger d-flex justify-content-end">
-                                        <span class="ml-2">(${toFarsiNumber(data.cart[2].toLocaleString())}%)  </span><span>${toFarsiNumber(data.cart[3].toLocaleString())}</span>
+                                        <span class="ml-2">(${toFarsiNumber(data.cart[2].toLocaleString())}%)  </span><span>${toFarsiNumber(data.cart[3].toLocaleString())}</span><span class="small-font mr-2"> تومان </span>
                                     </h5>`)
-                cart_total_price.html(`<h5>${toFarsiNumber(data.cart[1].toLocaleString())}</h5>`)
+                cart_total_price.html(`<h5>${toFarsiNumber(data.cart[1].toLocaleString())} <span class="small-font mr-2"> تومان </span></h5>`)
                 if (number) {
                     $('#mecoin-gift').html(toFarsiNumber(convert_to_mecoin(data.cart[1])))
                 }
@@ -223,7 +223,7 @@ function show_cart_from_local() {
             url: url,
             data: cart_obj, // serializes the form's elements.
             success: function (data) {
-                console.log(cart_obj)
+
             }
         });
 

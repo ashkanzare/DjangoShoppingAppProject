@@ -228,10 +228,19 @@ TOMAN_PER_MECOIN = 0.0001
 
 PRODUCT_MECOIN_UNIT = 100
 
-""" sms api """
-SMS_API_KEY = 'wv0peGeWq9JA2FW0OOt6lCEIc2YoGqsZr6F88hhhuy8='
-SMS_NUMBER = "+983000505"
-
 """ map default coordinate """
 MAP_X = 51.33776109571264
 MAP_Y = 35.70000461459449
+
+""" Order Created Successfully sms generator"""
+
+
+def order_sms(order):
+    text = f""" میشاپ
+{order['name']} عزیز
+سفارشتان ثبت شد و درحال پردازش آن هستیم.
+شما میتوانید وضعیت آن را از نشانی زیر پیگیری کنید:
+شماره سفارش: {order['order']}
+کد تحویل: {order['code']}
+لینک پیگیری:{order['link']} """
+    return text

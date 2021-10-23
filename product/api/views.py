@@ -1,5 +1,4 @@
 from django.db.models import Q
-from rest_framework import serializers
 from rest_framework import mixins, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -17,9 +16,9 @@ from product.api.serializers import (ProductSerializer,
                                      ColorAndPropertyByIdSerializer,
                                      CategoryAndProductSerializer,
                                      SearchByString,
-                                     CategoryByIdSerializer, BaseAPIProductSerializer
+                                     BaseAPIProductSerializer
                                      )
-from product.models import Product, Category, PropertyDescription, ProductFactorProperty, ProductColor
+from product.models import Product, Category, ProductFactorProperty, ProductColor
 from product.templatetags.product_extras import get_final_price_for_a_product, price_format
 
 
@@ -193,10 +192,13 @@ class SearchProductView(mixins.ListModelMixin, generics.GenericAPIView):
 
 
 class StandardResultsSetPagination(pagination.PageNumberPagination):
-    page_size = 1
+    page_size = 5
     page_query_param = 'page'
     page_size_query_param = 'per_page'
     max_page_size = 1000
+
+    def change_page_size(self, num):
+        self.page_size = num
 
 
 class GetProductsByCategoryView(generics.ListAPIView):
@@ -205,6 +207,11 @@ class GetProductsByCategoryView(generics.ListAPIView):
     pagination_class = StandardResultsSetPagination
 
     def get_queryset(self):
+        new_pagination = self.request.query_params.get('new_pagination', None)
+        if new_pagination and new_pagination.isnumeric():
+            self.pagination_class.page_size = int(new_pagination)
+        else:
+            self.pagination_class.page_size = 1
         return Product.objects.filter(category_id=self.request.query_params.get('category_id', None))
 
 
@@ -215,5 +222,5 @@ class GetProductByCategoryExceptGivenIdWithPaginationView(generics.ListAPIView):
 
     def get_queryset(self):
         product = self.request.query_params.get('product_id', 0)
-        print(product)
-        return Product.objects.filter(category_id=self.request.query_params.get('category_id', None)).exclude(id=product)
+        return Product.objects.filter(category_id=self.request.query_params.get('category_id', None)).exclude(
+            id=product)

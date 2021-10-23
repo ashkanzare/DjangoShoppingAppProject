@@ -89,7 +89,6 @@ $(document).ready(function () {
             }
         }
 
-        console.log(form.slice(0, -2))
         $.ajax({
             type: "PUT",
             url: url,

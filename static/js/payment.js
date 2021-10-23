@@ -5,7 +5,6 @@ function chang_color(icon_id, input) {
     let mecoin_icon = $("#mecoin-icon")
 
     $(input).attr('checked', true)
-    console.log(input)
 
     if (icon_id === '#credit-card-icon') {
         $("#cash-on-delivery-method input").attr('checked', false)
@@ -83,13 +82,13 @@ function check_discount() {
             token: token,
             order_id: order_id
         }
-        console.log(data)
+
         $.ajax({
             type: "POST",
             url: url,
             data: data,
             success: function (data) {
-                console.log(data)
+
                 window.location.reload()
             },
             error: function (err) {

@@ -89,6 +89,12 @@ class Customer(models.Model):
             return False
         return False
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        customer_wallet = MeCoinWallet.get_or_none(customer=self)
+        if not customer_wallet:
+            MeCoinWallet.objects.create(customer=self, coin=10)
+
     def use_mecoin(self, price):
         """ use customer wallet for purchase """
         price_per_mecoin = price / MECOIN_PER_TOMAN
@@ -181,3 +187,12 @@ class MeCoinWallet(models.Model):
     def convert_to_mecoin(cls, toman_amount):
         """ convert Toman to MeCoin """
         return toman_amount / MECOIN_PER_TOMAN
+
+    @classmethod
+    def get_or_none(cls, customer):
+        wallet = None
+        try:
+            wallet = cls.objects.get(customer=customer)
+        except cls.DoesNotExist:
+            pass
+        return wallet
